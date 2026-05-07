@@ -220,7 +220,7 @@ def generate_with_retries(
                 raise AIError.model_error(f"Provider function not found for: {provider}")
 
             result = provider_func(model=model_name, messages=messages, temperature=temperature, max_tokens=max_tokens)
-            content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = result
+            content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
 
             if spinner:
                 if skip_success_message:
@@ -230,7 +230,7 @@ def generate_with_retries(
                     console.print(f"✓ Generated {message_type} with {provider} {model_name}")
 
             if content is not None and content.strip():
-                return (content.strip(), prompt_tokens, completion_tokens, duration_ms, reasoning_tokens)
+                return (content.strip(), prompt_tokens, output_tokens, duration_ms, reasoning_tokens)
             else:
                 logger.warning(f"Empty or None content received from {provider} {model_name}: {repr(content)}")
                 raise AIError.model_error("Empty response from AI model")

@@ -143,7 +143,7 @@ class GroupedCommitWorkflow:
                     return WorkflowResult(success=True, exit_code=0)
             first_iteration = False
 
-            raw_response, prov_prompt_tokens, prov_completion_tokens, duration_ms, reasoning_tokens = (
+            raw_response, prov_prompt_tokens, prov_output_tokens, duration_ms, reasoning_tokens = (
                 generate_grouped_commits(
                     model=model,
                     prompt=conversation_messages,
@@ -157,7 +157,7 @@ class GroupedCommitWorkflow:
 
             record_tokens(
                 prov_prompt_tokens,
-                prov_completion_tokens,
+                prov_output_tokens,
                 model=model,
                 duration_ms=duration_ms,
                 reasoning_tokens=reasoning_tokens,
@@ -214,7 +214,7 @@ class GroupedCommitWorkflow:
                     commits=parsed["commits"],
                     raw_response=raw_response,
                     prompt_tokens=prov_prompt_tokens,
-                    completion_tokens=prov_completion_tokens,
+                    output_tokens=prov_output_tokens,
                     reasoning_tokens=reasoning_tokens,
                 ),
             )
@@ -227,7 +227,7 @@ class GroupedCommitWorkflow:
         model: str,
         prompt_tokens: int,
         quiet: bool,
-        completion_tokens: int = 0,
+        output_tokens: int = 0,
         reasoning_tokens: int = 0,
     ) -> None:
         """Display the generated grouped commits to the user."""
@@ -245,10 +245,10 @@ class GroupedCommitWorkflow:
                 console.print(Panel(commit_msg, title=f"Commit Message {idx}/{num_commits}", border_style="cyan"))
                 console.print()
 
-            if completion_tokens == 0:
-                completion_tokens = count_tokens(result.raw_response, model)
+            if output_tokens == 0:
+                output_tokens = count_tokens(result.raw_response, model)
             console.print(
-                f"[dim]Token usage: {format_token_usage(prompt_tokens, completion_tokens, reasoning_tokens)}[/dim]"
+                f"[dim]Token usage: {format_token_usage(prompt_tokens, output_tokens, reasoning_tokens)}[/dim]"
             )
 
     # ── Confirmation ─────────────────────────────────────────────────
@@ -398,7 +398,7 @@ class GroupedCommitWorkflow:
                 ctx.model,
                 commit_result.prompt_tokens,
                 ctx.quiet,
-                completion_tokens=commit_result.completion_tokens,
+                output_tokens=commit_result.output_tokens,
                 reasoning_tokens=commit_result.reasoning_tokens,
             )
 

@@ -70,7 +70,7 @@ def _execute_single_commit_workflow(ctx: WorkflowContext, config: GACConfig) -> 
                 return 0  # User declined due to token warning
         first_iteration = False
 
-        raw_commit_message, prov_prompt_tokens, prov_completion_tokens, duration_ms, reasoning_tokens = (
+        raw_commit_message, prov_prompt_tokens, prov_output_tokens, duration_ms, reasoning_tokens = (
             generate_commit_message(
                 model=ctx.model,
                 prompt=conversation_messages,
@@ -85,7 +85,7 @@ def _execute_single_commit_workflow(ctx: WorkflowContext, config: GACConfig) -> 
         logger.info(commit_message)
         record_tokens(
             prov_prompt_tokens,
-            prov_completion_tokens,
+            prov_output_tokens,
             model=ctx.model,
             duration_ms=duration_ms,
             reasoning_tokens=reasoning_tokens,
@@ -103,7 +103,7 @@ def _execute_single_commit_workflow(ctx: WorkflowContext, config: GACConfig) -> 
                 commit_message,
                 prov_prompt_tokens,
                 ctx.model,
-                completion_tokens=prov_completion_tokens,
+                output_tokens=prov_output_tokens,
                 reasoning_tokens=reasoning_tokens,
             )
 

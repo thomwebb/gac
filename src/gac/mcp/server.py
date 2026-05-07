@@ -475,7 +475,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
         # Generate commit message using AI
         from gac.stats import record_tokens
 
-        raw_commit_message, prov_pt, prov_ct, duration_ms, _reasoning_tokens = generate_commit_message(
+        raw_commit_message, prov_pt, prov_ot, duration_ms, _reasoning_tokens = generate_commit_message(
             model=model,
             prompt=conversation_messages,
             temperature=temperature,
@@ -483,7 +483,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
             max_retries=max_retries,
             quiet=True,
         )
-        record_tokens(prov_pt, prov_ct, model=model, duration_ms=duration_ms, reasoning_tokens=_reasoning_tokens)
+        record_tokens(prov_pt, prov_ot, model=model, duration_ms=duration_ms, reasoning_tokens=_reasoning_tokens)
         commit_message = clean_commit_message(raw_commit_message)
 
         if not commit_message:

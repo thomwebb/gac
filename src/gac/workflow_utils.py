@@ -19,12 +19,12 @@ class PromptFn(Protocol):
     def __call__(self, __msg: str, **kwargs: Any) -> str: ...
 
 
-def format_token_usage(prompt_tokens: int, completion_tokens: int, reasoning_tokens: int = 0) -> str:
+def format_token_usage(prompt_tokens: int, output_tokens: int, reasoning_tokens: int = 0) -> str:
     """Format token usage for display."""
-    total = prompt_tokens + completion_tokens + reasoning_tokens
+    total = prompt_tokens + output_tokens + reasoning_tokens
     if reasoning_tokens > 0:
-        return f"{prompt_tokens} prompt + {completion_tokens} completion + {reasoning_tokens} reasoning = {total} total"
-    return f"{prompt_tokens} prompt + {completion_tokens} completion = {total} total"
+        return f"{prompt_tokens} prompt + {output_tokens} output + {reasoning_tokens} reasoning = {total} total"
+    return f"{prompt_tokens} prompt + {output_tokens} output = {total} total"
 
 
 def handle_confirmation_loop(
@@ -119,17 +119,17 @@ def display_commit_message(
     commit_message: str,
     prompt_tokens: int,
     model: str,
-    completion_tokens: int | None = None,
+    output_tokens: int | None = None,
     reasoning_tokens: int = 0,
 ) -> None:
     console.print("[bold green]Generated commit message:[/bold green]")
     console.print(Panel(commit_message, title="Commit Message", border_style="cyan"))
 
-    if completion_tokens is None:
+    if output_tokens is None:
         from gac.ai_utils import count_tokens
 
-        completion_tokens = count_tokens(commit_message, model)
-    console.print(f"[dim]Token usage: {format_token_usage(prompt_tokens, completion_tokens, reasoning_tokens)}[/dim]")
+        output_tokens = count_tokens(commit_message, model)
+    console.print(f"[dim]Token usage: {format_token_usage(prompt_tokens, output_tokens, reasoning_tokens)}[/dim]")
 
 
 def restore_staging(staged_files: list[str], staged_diff: str | None = None) -> None:

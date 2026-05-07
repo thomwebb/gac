@@ -36,7 +36,7 @@ def generate_commit_message(
         quiet: If True, suppress progress indicators
 
     Returns:
-        Tuple of (content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens)
+        Tuple of (content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens)
 
     Raises:
         AIError: If generation fails after max_retries attempts
