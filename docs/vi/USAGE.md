@@ -490,7 +490,7 @@ gac -i -v
 
 gac theo dõi thống kê sử dụng nhẹ để bạn có thể xem hoạt động commit, chuỗi, sử dụng token, và các dự án và mô hình tích cực nhất của mình. Thống kê được lưu trữ cục bộ trong `~/.gac_stats.json` và không bao giờ được gửi đi đâu — không có thu thập dữ liệu từ xa.
 
-**Được theo dõi:** tổng số lần chạy gac, tổng số commit, tổng token prompt và completion, ngày sử dụng đầu/cuối, số đếm hàng ngày và hàng tuần (gacs, commits, tokens), chuỗi hiện tại và dài nhất, hoạt động theo dự án (gacs, commits, token prompt + completion) và hoạt động theo mô hình (gacs, token prompt + completion).
+**Được theo dõi:** tổng số lần chạy gac, tổng số commit, tổng token prompt, output và suy luận, ngày sử dụng đầu/cuối, số đếm hàng ngày và hàng tuần (gacs, commits, tokens), chuỗi hiện tại và dài nhất, hoạt động theo dự án (gacs, commits, tokens) và hoạt động theo mô hình (gacs, tokens).
 
 **Không được theo dõi:** thông điệp commit, nội dung mã, đường dẫn tệp, thông tin cá nhân, hoặc bất cứ điều gì ngoài số đếm, ngày tháng, tên dự án (lấy từ git remote hoặc tên thư mục) và tên mô hình.
 
@@ -544,12 +544,12 @@ Chạy `gac stats` hiển thị:
 
 Running `gac stats projects` hiển thị **tất cả** các dự án (không chỉ 5 dự án hàng đầu) với:
 
-- **Bảng tất cả dự án** — mỗi dự án được sắp xếp theo hoạt động, với số gac, số commit, token prompt, token completion, token suy luận và tổng token
-- **Mô hình hàng đầu** — 5 mô hình được sử dụng nhiều nhất với token prompt, completion và tổng số đã tiêu thụ
+- **Bảng tất cả dự án** — mỗi dự án được sắp xếp theo hoạt động, với số gac, số commit, token prompt, token output, token suy luận và tổng token
+- **Mô hình hàng đầu** — 5 mô hình được sử dụng nhiều nhất với token prompt, output và tổng số đã tiêu thụ
 
 Running `gac stats models` hiển thị **tất cả** các mô hình (không chỉ 5 mô hình hàng đầu) với:
 
-- **Bảng tất cả mô hình** — mỗi mô hình đã sử dụng được sắp xếp theo hoạt động, với số gac, tốc độ (token/giây), token prompt, token completion, token suy luận và tổng token
+- **Bảng tất cả mô hình** — mỗi mô hình đã sử dụng được sắp xếp theo hoạt động, với số gac, tốc độ (token/giây), token prompt, token output, token suy luận và tổng token
 - **Biểu đồ so sánh tốc độ** — biểu đồ thanh ngang của tất cả các mô hình có tốc độ đã biết, sắp xếp từ nhanh nhất đến chậm nhất, mã màu theo phần trăm tốc độ (🟡 siêu nhanh, 🟢 nhanh, 🔵 vừa phải, 🔘 chậm)
 - **Ăn mừng điểm cao** — 🏆 cúp khi bạn thiết lập kỷ lục hàng ngày, hàng tuần, token, hoặc chuỗi mới; 🥈 khi ngang bằng
 - **Tin nhắn khích lệ** — những nhắc nhở theo ngữ cảnh dựa trên hoạt động của bạn

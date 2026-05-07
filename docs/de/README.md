@@ -106,7 +106,7 @@ uv tool upgrade gac
 ### 📊 **Nutzungsstatistiken**
 
 - **Verfolgen Sie Ihre gacs**: Sehen Sie, wie viele Commits Sie mit gac gemacht haben, Ihren aktuellen Streak, die höchste tägliche/wöchentliche Aktivität und Top-Projekte
-- **Token-Tracking**: Gesamtzahl der Prompt- und Completion-Tokens nach Tag, Woche, Projekt und Modell — mit Highscore-Trophäen auch für die Token-Nutzung
+- **Token-Tracking**: Gesamtzahl der Prompt-, Output- und Reasoning-Tokens nach Tag, Woche, Projekt und Modell — mit Highscore-Trophäen auch für die Token-Nutzung
 - **Top-Modelle**: Sehen Sie, welche Modelle Sie am häufigsten verwenden und wie viele Tokens jedes verbraucht
 - **Projektspezifische Statistiken**: Zeigen Sie Statistiken für alle Repos mit `gac stats projects` an
 - **Highscore-Feiern**: 🏆 Trophäen, wenn Sie neue tägliche, wöchentliche, Token- oder Streak-Rekorde aufstellen; 🥈 wenn Sie diese einstellen

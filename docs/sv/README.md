@@ -106,7 +106,7 @@ uv tool upgrade gac
 ### 📊 **Användningsstatistik**
 
 - **Spåra dina gacs**: Se hur många commits du har gjort med gac, din nuvarande streak, topp dagliga/veckovisa aktivitet och topprojekt
-- **Token-spårning**: Totalt antal prompt- och completion-tokens per dag, vecka, projekt och modell — med highscore-troféer för tokenanvändning också
+- **Token-spårning**: Totalt antal prompt-, output- och reasoning-tokens per dag, vecka, projekt och modell — med highscore-troféer för tokenanvändning också
 - **Toppmodeller**: Se vilka modeller du använder mest och hur många tokens var och en förbrukar
 - **Projektspecifik statistik**: Visa statistik för alla repo med `gac stats projects`
 - **Highscore-firanden**: 🏆 troféer när du sätter nya dagliga, veckovisa, token- eller streak-rekord; 🥈 för att matcha dem

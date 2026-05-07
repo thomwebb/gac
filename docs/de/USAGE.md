@@ -539,7 +539,7 @@ gac -i -v
 
 gac erfasst leichtgewichtige Nutzungsstatistiken, damit Sie Ihre Commit-Aktivität, Streaks, Token-Nutzung und aktivsten Projekte und Modelle sehen können. Statistiken werden lokal in `~/.gac_stats.json` gespeichert und niemals versendet — es gibt keine Telemetrie.
 
-**Was erfasst wird:** Gesamtzahl der gac-Ausführungen, Gesamtzahl der Commits, Gesamtzahl der Prompt- und Completion-Tokens, erste/letzte Verwendungsdaten, tägliche und wöchentliche Zähler (gacs, Commits, Tokens), aktuelle und längste Streak, Aktivitätszähler pro Projekt (gacs, Commits, Prompt + Completion-Tokens) sowie Aktivitätszähler pro Modell (gacs, Prompt + Completion-Tokens).
+**Was erfasst wird:** Gesamtzahl der gac-Ausführungen, Gesamtzahl der Commits, Gesamtzahl der Prompt-, Output- und Reasoning-Tokens, erste/letzte Verwendungsdaten, tägliche und wöchentliche Zähler (gacs, Commits, Tokens), aktuelle und längste Streak, Aktivitätszähler pro Projekt (gacs, Commits, Tokens) sowie Aktivitätszähler pro Modell (gacs, Tokens).
 
 **Was NICHT erfasst wird:** Commit-Nachrichten, Code-Inhalte, Dateipfade, persönliche Informationen oder sonst etwas über Zähler, Daten, Projektnamen (abgeleitet vom Git-Remote/Verzeichnisnamen) und Modellnamen hinaus.
 
@@ -593,12 +593,12 @@ Die Ausführung von `gac stats` zeigt:
 
 Running `gac stats projects` zeigt **alle** Projekte (nicht nur die Top 5) mit:
 
-- **Alle Projekte-Tabelle** — jedes Projekt sortiert nach Aktivität, mit Gac-Anzahl, Commit-Anzahl, Prompt-Token, Completion-Token, Reasoning-Token und Gesamt-Token
-- **Top-Modelle** — Ihre 5 am häufigsten verwendeten Modelle mit Prompt-, Completion- und insgesamt verbrauchten Tokens
+- **Alle Projekte-Tabelle** — jedes Projekt sortiert nach Aktivität, mit Gac-Anzahl, Commit-Anzahl, Prompt-Token, Output-Token, Reasoning-Token und Gesamt-Token
+- **Top-Modelle** — Ihre 5 am häufigsten verwendeten Modelle mit Prompt-, Output- und insgesamt verbrauchten Tokens
 
 Running `gac stats models` zeigt **alle** Modelle (nicht nur die Top 5) mit:
 
-- **Alle Modelle-Tabelle** — jedes verwendete Modell sortiert nach Aktivität, mit Gac-Anzahl, Geschwindigkeit (Tokens/Sek), Prompt-Token, Completion-Token, Reasoning-Token und Gesamt-Token
+- **Alle Modelle-Tabelle** — jedes verwendete Modell sortiert nach Aktivität, mit Gac-Anzahl, Geschwindigkeit (Tokens/Sek), Prompt-Token, Output-Token, Reasoning-Token und Gesamt-Token
 - **Geschwindigkeitsvergleich** — ein horizontales Balkendiagramm aller Modelle mit bekannten Geschwindigkeiten, sortiert von schnellstem zu langsamstem, farbcodiert nach Geschwindigkeitsperzentil (🟡 blitzschnell, 🟢 schnell, 🔵 moderat, 🔘 langsam)
 - **Highscore-Feiern** — 🏆 Trophäen, wenn Sie neue tägliche, wöchentliche, Token- oder Streak-Rekorde aufstellen; 🥈 wenn Sie diese einstellen
 - **Ermutigungsnachrichten** — kontextbezogene Ermutigungen basierend auf Ihrer Aktivität

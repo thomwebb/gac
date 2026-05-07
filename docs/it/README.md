@@ -106,7 +106,7 @@ uv tool upgrade gac
 ### 📊 **Statistiche di Utilizzo**
 
 - **Traccia i tuoi gac**: Vedi quanti commit hai fatto con gac, la tua serie attuale, picchi di attività giornaliera/settimanale e progetti principali
-- **Tracciamento dei token**: Token di prompt e completion totali per giorno, settimana, progetto e modello — con trofei per record anche sull'utilizzo dei token
+- **Tracciamento dei token**: Token totali di prompt, output e ragionamento per giorno, settimana, progetto e modello — con trofei per record anche sull'utilizzo dei token
 - **Modelli principali**: Vedi quali modelli usi di più e quanti token ne consuma ciascuno
 - **Statistiche per progetto**: Visualizza le statistiche di tutti i repository con `gac stats projects`
 - **Celebrazioni dei record**: 🏆 trofei quando stabilisci nuovi record giornalieri, settimanali, di token o di serie; 🥈 per pareggiarli

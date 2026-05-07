@@ -537,7 +537,7 @@ gac -i -v
 
 gac tracks lightweight usage statistics so you can see your commit activity, streaks, token usage, and most-active projects and models. Stats are stored locally in `~/.gac_stats.json` and never sent anywhere — there is no telemetry.
 
-**What's tracked:** total gac runs, total commits, total prompt and completion tokens, first/last used dates, daily and weekly counts (gacs, commits, tokens), current and longest streak, per-project activity (gacs, commits, prompt + completion tokens), and per-model activity (gacs, prompt + completion tokens).
+**What's tracked:** total gac runs, total commits, total prompt, output, and reasoning tokens, first/last used dates, daily and weekly counts (gacs, commits, tokens), current and longest streak, per-project activity (gacs, commits, tokens), and per-model activity (gacs, tokens).
 
 **What's NOT tracked:** commit messages, code content, file paths, personal information, or anything beyond counts, dates, project names (derived from git remote or directory name), and model names.
 
@@ -591,12 +591,12 @@ Running `gac stats` displays:
 
 Running `gac stats projects` shows **all** projects (not just the top 5) with:
 
-- **All Projects table** — every project sorted by activity, with gac count, commit count, prompt tokens, completion tokens, reasoning tokens, and total tokens
-- **Top models** — your 5 most-used models with prompt, completion, and total tokens consumed
+- **All Projects table** — every project sorted by activity, with gac count, commit count, prompt tokens, output tokens, reasoning tokens, and total tokens
+- **Top models** — your 5 most-used models with prompt, output, and total tokens consumed
 
 Running `gac stats models` shows **all** models (not just the top 5) with:
 
-- **All Models table** — every model you've used sorted by activity, with gac count, speed (tokens/sec), prompt tokens, completion tokens, reasoning tokens, and total tokens
+- **All Models table** — every model you've used sorted by activity, with gac count, speed (tokens/sec), prompt tokens, output tokens, reasoning tokens, and total tokens
 - **Speed Comparison chart** — a horizontal bar chart of all models with known speeds, sorted fastest to slowest, color-coded by speed percentile (🟡 blazing, 🟢 fast, 🔵 moderate, 🔘 slow)
 - **High score celebrations** — 🏆 trophies when you set new daily, weekly, token, or streak records; 🥈 for tying them
 - **Encouragement messages** — contextual nudges based on your activity

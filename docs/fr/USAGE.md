@@ -539,7 +539,7 @@ gac -i -v
 
 gac suit des statistiques d'utilisation légères pour que vous puissiez voir votre activité de commits, séries, utilisation des tokens, et projets et modèles les plus actifs. Les statistiques sont stockées localement dans `~/.gac_stats.json` et ne sont jamais envoyées nulle part — il n'y a pas de télémétrie.
 
-**Ce qui est suivi :** nombre total d'exécutions gac, nombre total de commits, total des tokens de prompt et de completion, dates de première/dernière utilisation, comptes quotidiens et hebdomadaires (gacs, commits, tokens), série actuelle et la plus longue, activité par projet (gacs, commits, tokens de prompt + completion) et activité par modèle (gacs, tokens de prompt + completion).
+**Ce qui est suivi :** nombre total d'exécutions gac, nombre total de commits, total des tokens de prompt, output et de raisonnement, dates de première/dernière utilisation, comptes quotidiens et hebdomadaires (gacs, commits, tokens), série actuelle et la plus longue, activité par projet (gacs, commits, tokens) et activité par modèle (gacs, tokens).
 
 **Ce qui n'est PAS suivi :** messages de commit, contenu de code, chemins de fichiers, informations personnelles ou quoi que ce soit au-delà des comptes, dates, noms de projets (dérivés du remote ou du répertoire git) et noms de modèles.
 
@@ -593,12 +593,12 @@ Exécuter `gac stats` affiche :
 
 Running `gac stats projects` affiche **tous** les projets (pas seulement les 5 premiers) avec :
 
-- **Tableau de tous les projets** — chaque projet trié par activité, avec nombre de gac, nombre de commits, tokens de prompt, tokens de completion, tokens de raisonnement et tokens totaux
-- **Modèles principaux** — vos 5 modèles les plus utilisés avec tokens de prompt, completion et totaux consommés
+- **Tableau de tous les projets** — chaque projet trié par activité, avec nombre de gac, nombre de commits, tokens de prompt, tokens de output, tokens de raisonnement et tokens totaux
+- **Modèles principaux** — vos 5 modèles les plus utilisés avec tokens de prompt, output et totaux consommés
 
 Running `gac stats models` affiche **tous** les modèles (pas seulement les 5 premiers) avec :
 
-- **Tableau de tous les modèles** — chaque modèle utilisé trié par activité, avec nombre de gac, vitesse (tokens/sec), tokens de prompt, tokens de completion, tokens de raisonnement et tokens totaux
+- **Tableau de tous les modèles** — chaque modèle utilisé trié par activité, avec nombre de gac, vitesse (tokens/sec), tokens de prompt, tokens de output, tokens de raisonnement et tokens totaux
 - **Graphique de comparaison de vitesse** — un graphique à barres horizontales de tous les modèles avec vitesses connues, triés du plus rapide au plus lent, colorés par percentile de vitesse (🟡 éclair, 🟢 rapide, 🔵 modéré, 🔘 lent)
 - **Célébrations de records** — 🏆 trophées quand vous établissez de nouveaux records quotidiens, hebdomadaires, de tokens ou de série ; 🥈 pour les égaler
 - **Messages d'encouragement** — suggestions contextuelles basées sur votre activité

@@ -490,7 +490,7 @@ gac -i -v
 
 gac spårar lättviktig användningsstatistik så att du kan se din commit-aktivitet, streaks, tokenanvändning och mest aktiva projekt och modeller. Statistik lagras lokalt i `~/.gac_stats.json` och skickas aldrig någonstans — det finns ingen telemetri.
 
-**Vad spåras:** totalt antal gac-körningar, totalt antal commits, totalt antal prompt- och completion-tokens, första/senaste användningsdatum, dagliga och veckovisa antal (gacs, commits, tokens), nuvarande och längsta streak, aktivitet per projekt (gacs, commits, prompt + completion-tokens) och aktivitet per modell (gacs, prompt + completion-tokens).
+**Vad spåras:** totalt antal gac-körningar, totalt antal commits, totalt antal prompt-, output- och reasoning-tokens, första/senaste användningsdatum, dagliga och veckovisa antal (gacs, commits, tokens), nuvarande och längsta streak, aktivitet per projekt (gacs, commits, tokens) och aktivitet per modell (gacs, tokens).
 
 **Vad INTE spåras:** commit-meddelanden, kodinnehåll, filsökvägar, personlig information eller något utöver antal, datum, projektnamn (härledda från git remote eller katalognamn) och modellnamn.
 
@@ -544,12 +544,12 @@ Att köra `gac stats` visar:
 
 Running `gac stats projects` visar **alla** projekt (inte bara topp 5) med:
 
-- **Alla projekt-tabell** — varje projekt sorterat efter aktivitet, med gac-antal, commit-antal, prompt-tokens, completion-tokens, reasoning-tokens och totala tokens
-- **Toppmodeller** — dina 5 mest använda modeller med förbrukade prompt-, completion- och totala tokens
+- **Alla projekt-tabell** — varje projekt sorterat efter aktivitet, med gac-antal, commit-antal, prompt-tokens, output-tokens, reasoning-tokens och totala tokens
+- **Toppmodeller** — dina 5 mest använda modeller med förbrukade prompt-, output- och totala tokens
 
 Running `gac stats models` visar **alla** modeller (inte bara topp 5) med:
 
-- **Alla modeller-tabell** — varje använd modell sorterad efter aktivitet, med gac-antal, hastighet (tokens/sek), prompt-tokens, completion-tokens, reasoning-tokens och totala tokens
+- **Alla modeller-tabell** — varje använd modell sorterad efter aktivitet, med gac-antal, hastighet (tokens/sek), prompt-tokens, output-tokens, reasoning-tokens och totala tokens
 - **Hastighetsjämförelse** — ett horisontellt stapeldiagram av alla modeller med kända hastigheter, sorterade från snabbast till långsammast, färgkodade efter hastighetspercentil (🟡 blixtsnabbt, 🟢 snabbt, 🔵 måttligt, 🔘 långsamt)
 - **Highscore-firanden** — 🏆 troféer när du sätter nya dagliga, veckovisa, token- eller streak-rekord; 🥈 för att matcha dem
 - **Uppmuntransmeddelanden** — kontextuella uppmuntringar baserade på din aktivitet

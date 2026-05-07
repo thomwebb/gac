@@ -535,7 +535,7 @@ gac -i -v
 
 gac traccia statistiche di utilizzo leggere per permetterti di vedere la tua attività di commit, serie, utilizzo dei token e progetti e modelli più attivi. Le statistiche sono memorizzate localmente in `~/.gac_stats.json` e non vengono mai inviate da nessuna parte — non c'è telemetria.
 
-**Cosa viene tracciato:** esecuzioni totali di gac, commit totali, token di prompt e completion totali, date primo/ultimo utilizzo, conteggi giornalieri e settimanali (gac, commit, token), serie attuale e più lunga, attività per progetto (gac, commit, token di prompt + completion) e attività per modello (gac, token di prompt + completion).
+**Cosa viene tracciato:** esecuzioni totali di gac, commit totali, token totali di prompt, output e ragionamento, date primo/ultimo utilizzo, conteggi giornalieri e settimanali (gac, commit, token), serie attuale e più lunga, attività per progetto (gac, commit, token) e attività per modello (gac, token).
 
 **Cosa NON viene tracciato:** messaggi di commit, contenuto del codice, percorsi dei file, informazioni personali o qualsiasi cosa oltre conteggi, date, nomi di progetti (derivati dal remote o dalla directory git) e nomi di modelli.
 
@@ -589,12 +589,12 @@ Eseguire `gac stats` mostra:
 
 Running `gac stats projects` mostra **tutti** i progetti (non solo i primi 5) con:
 
-- **Tabella di tutti i progetti** — ogni progetto ordinato per attività, con conteggio gac, conteggio commit, token di prompt, token di completion, token di ragionamento e token totali
-- **Modelli principali** — i tuoi 5 modelli più usati con token di prompt, completion e totali consumati
+- **Tabella di tutti i progetti** — ogni progetto ordinato per attività, con conteggio gac, conteggio commit, token di prompt, token di output, token di ragionamento e token totali
+- **Modelli principali** — i tuoi 5 modelli più usati con token di prompt, output e totali consumati
 
 Running `gac stats models` mostra **tutti** i modelli (non solo i primi 5) con:
 
-- **Tabella di tutti i modelli** — ogni modello utilizzato ordinato per attività, con conteggio gac, velocità (token/sec), token di prompt, token di completion, token di ragionamento e token totali
+- **Tabella di tutti i modelli** — ogni modello utilizzato ordinato per attività, con conteggio gac, velocità (token/sec), token di prompt, token di output, token di ragionamento e token totali
 - **Grafico comparativo della velocità** — un grafico a barre orizzontali di tutti i modelli con velocità note, ordinati dal più veloce al più lento, colorati per percentile di velocità (🟡 fulmineo, 🟢 veloce, 🔵 moderato, 🔘 lento)
 - **Celebrazioni dei record** — 🏆 trofei quando stabilisci nuovi record giornalieri, settimanali, di token o di serie; 🥈 per pareggiarli
 - **Messaggi di incoraggiamento** — suggerimenti contestuali basati sulla tua attività

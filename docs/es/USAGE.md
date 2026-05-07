@@ -539,7 +539,7 @@ gac -i -v
 
 gac rastrea estadísticas de uso ligeras para que puedas ver tu actividad de commits, rachas, uso de tokens, y proyectos y modelos más activos. Las estadísticas se almacenan localmente en `~/.gac_stats.json` y nunca se envían a ningún lugar — no hay telemetría.
 
-**Qué se rastrea:** ejecuciones totales de gac, commits totales, tokens de prompt y completion totales, fechas de primer/último uso, conteos diarios y semanales (gacs, commits, tokens), racha actual y más larga, actividad por proyecto (gacs, commits, tokens de prompt + completion) y actividad por modelo (gacs, tokens de prompt + completion).
+**Qué se rastrea:** ejecuciones totales de gac, commits totales, tokens totales de prompt, output y razonamiento, fechas de primer/último uso, conteos diarios y semanales (gacs, commits, tokens), racha actual y más larga, actividad por proyecto (gacs, commits, tokens) y actividad por modelo (gacs, tokens).
 
 **Qué NO se rastrea:** mensajes de commit, contenido de código, rutas de archivos, información personal o cualquier cosa más allá de conteos, fechas, nombres de proyectos (derivados del remoto o directorio de git) y nombres de modelos.
 
@@ -593,12 +593,12 @@ Ejecutar `gac stats` muestra:
 
 Running `gac stats projects` muestra **todos** los proyectos (no solo los 5 principales) con:
 
-- **Tabla de todos los proyectos** — cada proyecto ordenado por actividad, con conteo de gac, conteo de commits, tokens de prompt, tokens de completion, tokens de razonamiento y tokens totales
-- **Modelos principales** — tus 5 modelos más usados con tokens de prompt, completion y totales consumidos
+- **Tabla de todos los proyectos** — cada proyecto ordenado por actividad, con conteo de gac, conteo de commits, tokens de prompt, tokens de output, tokens de razonamiento y tokens totales
+- **Modelos principales** — tus 5 modelos más usados con tokens de prompt, output y totales consumidos
 
 Running `gac stats models` muestra **todos** los modelos (no solo los 5 principales) con:
 
-- **Tabla de todos los modelos** — cada modelo usado ordenado por actividad, con conteo de gac, velocidad (tokens/seg), tokens de prompt, tokens de completion, tokens de razonamiento y tokens totales
+- **Tabla de todos los modelos** — cada modelo usado ordenado por actividad, con conteo de gac, velocidad (tokens/seg), tokens de prompt, tokens de output, tokens de razonamiento y tokens totales
 - **Gráfico de comparación de velocidad** — un gráfico de barras horizontal de todos los modelos con velocidades conocidas, ordenados de más rápido a más lento, codificados por color según percentil de velocidad (🟡 rapidísimo, 🟢 rápido, 🔵 moderado, 🔘 lento)
 - **Celebraciones de récord** — 🏆 trofeos cuando estableces nuevos récords diarios, semanales, de tokens o de racha; 🥈 por empatarlos
 - **Mensajes de ánimo** — sugerencias contextuales basadas en tu actividad

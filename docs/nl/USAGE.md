@@ -490,7 +490,7 @@ gac -i -v
 
 gac houdt lichtgewicht gebruikstatistieken bij, zodat u uw commitactiviteit, streaks, tokengebruik en meest actieve projecten en modellen kunt bekijken. Statistieken worden lokaal opgeslagen in `~/.gac_stats.json` en worden nergens naartoe gestuurd — er is geen telemetrie.
 
-**Wat wordt bijgehouden:** totaal aantal gac-uitvoeringen, totaal aantal commits, totaal aantal prompt- en completion-tokens, eerste/laatste gebruiksdata, dagelijkse en wekelijkse tellingen (gacs, commits, tokens), huidige en langste streak, activiteit per project (gacs, commits, prompt + completion-tokens) en activiteit per model (gacs, prompt + completion-tokens).
+**Wat wordt bijgehouden:** totaal aantal gac-uitvoeringen, totaal aantal commits, totaal aantal prompt-, output- en reasoning-tokens, eerste/laatste gebruiksdata, dagelijkse en wekelijkse tellingen (gacs, commits, tokens), huidige en langste streak, activiteit per project (gacs, commits, tokens) en activiteit per model (gacs, tokens).
 
 **Wat NIET wordt bijgehouden:** commitberichten, code-inhoud, bestandspaden, persoonlijke informatie of iets anders dan tellingen, data, projectnamen (afgeleid van git remote of mapnaam) en modelnamen.
 
@@ -544,12 +544,12 @@ Het uitvoeren van `gac stats` toont:
 
 Running `gac stats projects` toont **alle** projecten (niet alleen de top 5) met:
 
-- **Alle projecten-tabel** — elk project gesorteerd op activiteit, met gac-aantal, commit-aantal, prompt-tokens, completion-tokens, reasoning-tokens en totale tokens
-- **Topmodellen** — uw 5 meest gebruikte modellen met verbruikte prompt-, completion- en totale tokens
+- **Alle projecten-tabel** — elk project gesorteerd op activiteit, met gac-aantal, commit-aantal, prompt-tokens, output-tokens, reasoning-tokens en totale tokens
+- **Topmodellen** — uw 5 meest gebruikte modellen met verbruikte prompt-, output- en totale tokens
 
 Running `gac stats models` toont **alle** modellen (niet alleen de top 5) met:
 
-- **Alle modellen-tabel** — elk gebruikt model gesorteerd op activiteit, met gac-aantal, snelheid (tokens/sec), prompt-tokens, completion-tokens, reasoning-tokens en totale tokens
+- **Alle modellen-tabel** — elk gebruikt model gesorteerd op activiteit, met gac-aantal, snelheid (tokens/sec), prompt-tokens, output-tokens, reasoning-tokens en totale tokens
 - **Snelheidsvergelijking** — een horizontaal staafdiagram van alle modellen met bekende snelheden, gesorteerd van snelst naar traagst, kleurgecodeerd op snelheidspercentiel (🟡 bliksemsnel, 🟢 snel, 🔵 matig, 🔘 traag)
 - **Highscore-vieringen** — 🏆 trofeeën wanneer u nieuwe dagelijkse, wekelijkse, token- of streak-records vestigt; 🥈 voor het evenaren ervan
 - **Aanmoedigingsberichten** — contextuele aanmoedigingen op basis van uw activiteit

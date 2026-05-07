@@ -106,7 +106,7 @@ uv tool upgrade gac
 ### 📊 **Thống Kê Sử Dụng**
 
 - **Theo dõi các gac của bạn**: Xem bạn đã thực hiện bao nhiêu commit với gac, chuỗi hiện tại, hoạt động đỉnh hàng ngày/hàng tuần, và các dự án hàng đầu
-- **Theo dõi token**: Tổng token prompt và completion theo ngày, tuần, dự án và mô hình — với cúp kỷ lục cho việc sử dụng token
+- **Theo dõi token**: Tổng token prompt, output và suy luận theo ngày, tuần, dự án và mô hình — với cúp kỷ lục cho việc sử dụng token
 - **Mô hình hàng đầu**: Xem mô hình nào bạn sử dụng nhiều nhất và mỗi mô hình tiêu thụ bao nhiêu token
 - **Thống kê theo dự án**: Xem thống kê cho tất cả repo với `gac stats projects`
 - **Ăn mừng điểm cao**: 🏆 cúp khi bạn thiết lập kỷ lục hàng ngày, hàng tuần, token, hoặc chuỗi mới; 🥈 khi ngang bằng
