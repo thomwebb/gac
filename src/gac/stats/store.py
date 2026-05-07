@@ -17,7 +17,7 @@ _FALSY_VALUES = {"", "0", "false", "no", "off", "n"}
 _DURATION_DEFAULTS: dict[str, int] = {
     "total_duration_ms": 0,
     "duration_count": 0,
-    "timed_completion_tokens": 0,
+    "timed_output_tokens": 0,
     "timed_reasoning_tokens": 0,
     "min_duration_ms": 0,
     "max_duration_ms": 0,
@@ -36,28 +36,28 @@ class GACStats(TypedDict):
     total_gacs: int  # Number of gac workflow runs
     total_commits: int  # Number of actual commits created
     total_prompt_tokens: int  # Total prompt tokens consumed
-    total_completion_tokens: int  # Total completion tokens consumed
+    total_output_tokens: int  # Total output tokens consumed (excludes reasoning)
     total_reasoning_tokens: int  # Total reasoning/thinking tokens consumed
-    biggest_gac_tokens: int  # Most tokens (prompt+completion+reasoning) in a single gac run
+    biggest_gac_tokens: int  # Most tokens (prompt+output+reasoning) in a single gac run
     biggest_gac_date: str | None  # ISO datetime when the biggest gac occurred
     first_used: str | None
     last_used: str | None
     daily_gacs: dict[str, int]  # date -> gac count
     daily_commits: dict[str, int]  # date -> commit count
     daily_prompt_tokens: dict[str, int]  # date -> prompt token count
-    daily_completion_tokens: dict[str, int]  # date -> completion token count
+    daily_output_tokens: dict[str, int]  # date -> output token count (excludes reasoning)
     daily_reasoning_tokens: dict[str, int]  # date -> reasoning token count
     weekly_gacs: dict[str, int]  # ISO week (e.g. 2026-W18) -> gac count
     weekly_commits: dict[str, int]  # ISO week -> commit count
     weekly_prompt_tokens: dict[str, int]  # ISO week -> prompt token count
-    weekly_completion_tokens: dict[str, int]  # ISO week -> completion token count
+    weekly_output_tokens: dict[str, int]  # ISO week -> output token count (excludes reasoning)
     weekly_reasoning_tokens: dict[str, int]  # ISO week -> reasoning token count
-    projects: dict[str, Any]  # project_name -> {gacs, commits, prompt_tokens, completion_tokens, reasoning_tokens}
-    models: dict[str, Any]  # model_name -> {gacs, prompt_tokens, completion_tokens, reasoning_tokens}
+    projects: dict[str, Any]  # project_name -> {gacs, commits, prompt_tokens, output_tokens, reasoning_tokens}
+    models: dict[str, Any]  # model_name -> {gacs, prompt_tokens, output_tokens, reasoning_tokens}
     _version: int  # Schema version for migrations
 
 
-_CURRENT_STATS_VERSION = 2  # v2: completion_tokens excludes reasoning_tokens
+_CURRENT_STATS_VERSION = 3  # v3: output_tokens excludes reasoning_tokens; rename completion→output
 
 
 # =============================================================================
@@ -78,11 +78,11 @@ def _enrich_models_with_speed(models: list[tuple[str, Any]]) -> list[tuple[str, 
         avg_tps = None
         avg_latency_ms = None
         if data.get("duration_count", 0) > 0 and data.get("total_duration_ms", 0) > 0:
-            # Speed = all output tokens (completion + reasoning) per second.
+            # Speed = all output tokens (output text + reasoning) per second.
             # Reasoning tokens are generated during the same wall-clock
             # duration, so excluding them understates throughput for
             # thinking models like o3, deepseek-r1, etc.
-            timed_output = data["timed_completion_tokens"] + data.get("timed_reasoning_tokens", 0)
+            timed_output = data["timed_output_tokens"] + data.get("timed_reasoning_tokens", 0)
             avg_tps = round(timed_output * 1000 / data["total_duration_ms"])
             # Average latency = mean wall-clock time per API call (ms)
             avg_latency_ms = round(data["total_duration_ms"] / data["duration_count"])
@@ -234,7 +234,83 @@ def _migrate_v1_to_v2(data: dict[str, Any]) -> dict[str, Any]:
         data["biggest_gac_tokens"] = 0
         data["biggest_gac_date"] = None
 
-    data["_version"] = _CURRENT_STATS_VERSION
+    data["_version"] = 2
+    return data
+
+
+def _migrate_v2_to_v3(data: dict[str, Any]) -> dict[str, Any]:
+    """Migrate stats from v2 (completion_tokens) to v3 (output_tokens).
+
+    v2 already stores completion/output tokens *exclusive* of reasoning
+    (normalized at provider parse time).  v3 keeps the same numeric
+    contract, but renames the fields to reduce ambiguity around the word
+    "completion" for thinking models.
+
+    Renames:
+    - total_completion_tokens -> total_output_tokens
+    - daily_completion_tokens -> daily_output_tokens
+    - weekly_completion_tokens -> weekly_output_tokens
+    - models[*].completion_tokens -> output_tokens
+    - models[*].timed_completion_tokens -> timed_output_tokens
+    - projects[*].completion_tokens -> output_tokens
+    """
+    if int(data.get("_version", 0)) >= 3:
+        return data
+
+    def _rename_top_level_int(old: str, new: str) -> None:
+        if new not in data and old in data:
+            data[new] = int(data.get(old, 0))
+            del data[old]
+        elif old in data:
+            # Prefer the new key when both exist (avoid accidental double-count).
+            del data[old]
+
+    def _rename_top_level_dict(old: str, new: str) -> None:
+        if new not in data and old in data and isinstance(data[old], dict):
+            data[new] = data[old]
+            del data[old]
+        elif old in data:
+            del data[old]
+
+    _rename_top_level_int("total_completion_tokens", "total_output_tokens")
+    _rename_top_level_dict("daily_completion_tokens", "daily_output_tokens")
+    _rename_top_level_dict("weekly_completion_tokens", "weekly_output_tokens")
+
+    # models: completion_tokens -> output_tokens; timed_completion_tokens -> timed_output_tokens
+    models = data.get("models", {})
+    if isinstance(models, dict):
+        for _name, m in models.items():
+            if not isinstance(m, dict):
+                continue
+            if "output_tokens" not in m and "completion_tokens" in m:
+                m["output_tokens"] = m["completion_tokens"]
+            m.pop("completion_tokens", None)
+            if "timed_output_tokens" not in m and "timed_completion_tokens" in m:
+                m["timed_output_tokens"] = m["timed_completion_tokens"]
+            m.pop("timed_completion_tokens", None)
+
+    # projects: completion_tokens -> output_tokens
+    projects = data.get("projects", {})
+    if isinstance(projects, dict):
+        for _name, p in projects.items():
+            if not isinstance(p, dict):
+                continue
+            if "output_tokens" not in p and "completion_tokens" in p:
+                p["output_tokens"] = p["completion_tokens"]
+            p.pop("completion_tokens", None)
+
+    data["_version"] = 3
+    return data
+
+
+def _migrate(data: dict[str, Any]) -> dict[str, Any]:
+    """Apply schema migrations in order until reaching the current version."""
+    version = int(data.get("_version", 0))
+    if version < 2:
+        data = _migrate_v1_to_v2(data)
+        version = int(data.get("_version", 0))
+    if version < 3:
+        data = _migrate_v2_to_v3(data)
     return data
 
 
@@ -249,7 +325,7 @@ def _empty_stats() -> GACStats:
         "total_gacs": 0,
         "total_commits": 0,
         "total_prompt_tokens": 0,
-        "total_completion_tokens": 0,
+        "total_output_tokens": 0,
         "total_reasoning_tokens": 0,
         "biggest_gac_tokens": 0,
         "biggest_gac_date": None,
@@ -258,12 +334,12 @@ def _empty_stats() -> GACStats:
         "daily_gacs": {},
         "daily_commits": {},
         "daily_prompt_tokens": {},
-        "daily_completion_tokens": {},
+        "daily_output_tokens": {},
         "daily_reasoning_tokens": {},
         "weekly_gacs": {},
         "weekly_commits": {},
         "weekly_prompt_tokens": {},
-        "weekly_completion_tokens": {},
+        "weekly_output_tokens": {},
         "weekly_reasoning_tokens": {},
         "projects": {},
         "models": {},
@@ -286,9 +362,10 @@ def load_stats() -> GACStats:
         with open(STATS_FILE) as f:
             data = json.load(f)
 
-        pre_version = data.get("_version", 0)
-        data = _migrate_v1_to_v2(data)
-        if pre_version < _CURRENT_STATS_VERSION:
+        pre_version = int(data.get("_version", 0))
+        data = _migrate(data)
+        post_version = int(data.get("_version", _CURRENT_STATS_VERSION))
+        if pre_version < post_version:
             try:
                 STATS_FILE.parent.mkdir(parents=True, exist_ok=True)
                 tmp = STATS_FILE.with_suffix(".tmp")
@@ -302,7 +379,7 @@ def load_stats() -> GACStats:
             "total_gacs": data.get("total_gacs", 0),
             "total_commits": data.get("total_commits", 0),
             "total_prompt_tokens": data.get("total_prompt_tokens", 0),
-            "total_completion_tokens": data.get("total_completion_tokens", 0),
+            "total_output_tokens": data.get("total_output_tokens", 0),
             "total_reasoning_tokens": data.get("total_reasoning_tokens", 0),
             "biggest_gac_tokens": data.get("biggest_gac_tokens", 0),
             "biggest_gac_date": data.get("biggest_gac_date"),
@@ -311,12 +388,12 @@ def load_stats() -> GACStats:
             "daily_gacs": data.get("daily_gacs", {}),
             "daily_commits": data.get("daily_commits", {}),
             "daily_prompt_tokens": data.get("daily_prompt_tokens", {}),
-            "daily_completion_tokens": data.get("daily_completion_tokens", {}),
+            "daily_output_tokens": data.get("daily_output_tokens", {}),
             "daily_reasoning_tokens": data.get("daily_reasoning_tokens", {}),
             "weekly_gacs": data.get("weekly_gacs", {}),
             "weekly_commits": data.get("weekly_commits", {}),
             "weekly_prompt_tokens": data.get("weekly_prompt_tokens", {}),
-            "weekly_completion_tokens": data.get("weekly_completion_tokens", {}),
+            "weekly_output_tokens": data.get("weekly_output_tokens", {}),
             "weekly_reasoning_tokens": data.get("weekly_reasoning_tokens", {}),
             "projects": data.get("projects", {}),
             "models": _normalize_models(data.get("models", {})),
@@ -351,15 +428,13 @@ def save_stats(stats: GACStats) -> None:
 
 
 def compute_total_tokens(data: dict[str, Any]) -> int:
-    """Compute total tokens from a stats dict with prompt/completion/reasoning keys.
+    """Compute total tokens from a stats dict with prompt/output/reasoning keys.
 
-    In v2 stats schema, completion_tokens excludes reasoning_tokens
-    (normalized at provider parse time), so total = prompt + completion +
-    reasoning (three distinct additive components).
+    In v3 stats schema, output_tokens excludes reasoning_tokens (normalized
+    at provider parse time), so total = prompt + output + reasoning (three
+    distinct additive components).
     """
-    return (
-        int(data.get("prompt_tokens", 0)) + int(data.get("completion_tokens", 0)) + int(data.get("reasoning_tokens", 0))
-    )
+    return int(data.get("prompt_tokens", 0)) + int(data.get("output_tokens", 0)) + int(data.get("reasoning_tokens", 0))
 
 
 def format_tokens(n: int) -> str:
@@ -372,14 +447,14 @@ def project_activity(project_data: tuple[str, Any]) -> tuple[int, int]:
 
     Args:
         project_data: Tuple of (project_name, data) where data is a dict
-            with 'gacs', 'commits', 'prompt_tokens', 'completion_tokens', and
+            with 'gacs', 'commits', 'prompt_tokens', 'output_tokens', and
             'reasoning_tokens' keys.
 
     Returns:
         Tuple of (activity, total_tokens) — higher sorts first when reverse=True.
 
-    NOTE: In v2 stats schema, completion_tokens excludes reasoning_tokens
-    (normalized at provider parse time), so total = prompt + completion +
+    NOTE: In v3 stats schema, output_tokens excludes reasoning_tokens
+    (normalized at provider parse time), so total = prompt + output +
     reasoning (three distinct additive components).
     """
     data = project_data[1]
@@ -393,13 +468,13 @@ def model_activity(model_data: tuple[str, Any]) -> tuple[int, int]:
 
     Args:
         model_data: Tuple of (model_name, data) where data is a dict
-            with 'gacs', 'prompt_tokens', 'completion_tokens', and 'reasoning_tokens' keys.
+            with 'gacs', 'prompt_tokens', 'output_tokens', and 'reasoning_tokens' keys.
 
     Returns:
         Tuple of (gacs, total_tokens) — higher sorts first when reverse=True.
 
-    NOTE: In v2 stats schema, completion_tokens excludes reasoning_tokens
-    (normalized at provider parse time), so total = prompt + completion +
+    NOTE: In v3 stats schema, output_tokens excludes reasoning_tokens
+    (normalized at provider parse time), so total = prompt + output +
     reasoning (three distinct additive components).
     """
     data = model_data[1]

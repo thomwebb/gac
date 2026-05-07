@@ -57,13 +57,13 @@ def report(weeks: int) -> None:
     daily_total_tokens: dict[str, int] = {}
 
     daily_prompt = stats.get("daily_prompt_tokens", {})
-    daily_completion = stats.get("daily_completion_tokens", {})
+    daily_output = stats.get("daily_output_tokens", {})
     daily_reasoning = stats.get("daily_reasoning_tokens", {})
-    # completion_tokens excludes reasoning (normalized at provider parse time),
-    # so total = prompt + completion + reasoning (three distinct numbers).
-    for day_key in set(daily_prompt) | set(daily_completion) | set(daily_reasoning):
+    # output_tokens excludes reasoning (normalized at provider parse time),
+    # so total = prompt + output + reasoning (three distinct numbers).
+    for day_key in set(daily_prompt) | set(daily_output) | set(daily_reasoning):
         daily_total_tokens[day_key] = (
-            daily_prompt.get(day_key, 0) + daily_completion.get(day_key, 0) + daily_reasoning.get(day_key, 0)
+            daily_prompt.get(day_key, 0) + daily_output.get(day_key, 0) + daily_reasoning.get(day_key, 0)
         )
 
     if not daily_gacs and not daily_commits and not daily_total_tokens:
@@ -281,7 +281,7 @@ def report(weeks: int) -> None:
             model_table.add_column("Gacs", style="bold cyan", justify="right")
             model_table.add_column("Speed", style="bold cyan", justify="right")
             model_table.add_column("Prompt", style="bold cyan", justify="right")
-            model_table.add_column("Completion", style="bold cyan", justify="right")
+            model_table.add_column("Output", style="bold cyan", justify="right")
             model_table.add_column("Reasoning", style="bold cyan", justify="right")
             model_table.add_column("Total", style="bold cyan", justify="right")
 
@@ -290,22 +290,22 @@ def report(weeks: int) -> None:
             for name, data in sorted(active_models, key=model_activity, reverse=True)[:5]:
                 g = int(data.get("gacs", 0))
                 pt = int(data.get("prompt_tokens", 0))
-                ct = int(data.get("completion_tokens", 0))
+                ot = int(data.get("output_tokens", 0))
                 rt = int(data.get("reasoning_tokens", 0))
                 total = compute_total_tokens(data)
                 dur = int(data.get("total_duration_ms", 0))
                 dur_count = int(data.get("duration_count", 0))
-                timed_ct = int(data.get("timed_completion_tokens", 0))
+                timed_ot = int(data.get("timed_output_tokens", 0))
                 timed_rt = int(data.get("timed_reasoning_tokens", 0))
                 if dur > 0 and dur_count > 0:
-                    timed_output = timed_ct + timed_rt
+                    timed_output = timed_ot + timed_rt
                     avg_tps = round(timed_output * 1000 / dur)
                     speed = f"{avg_tps} tps"
                 else:
                     speed = "\u2014"
                 reasoning_str = format_tokens(rt) if rt > 0 else "\u2014"
                 model_table.add_row(
-                    name, str(g), speed, format_tokens(pt), format_tokens(ct), reasoning_str, format_tokens(total)
+                    name, str(g), speed, format_tokens(pt), format_tokens(ot), reasoning_str, format_tokens(total)
                 )
 
             console.print(model_table)

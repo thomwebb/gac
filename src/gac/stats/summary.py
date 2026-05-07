@@ -17,9 +17,9 @@ def get_stats_summary() -> dict[str, Any]:
     total_gacs = stats["total_gacs"]
     total_commits = stats["total_commits"]
     total_prompt_tokens = stats.get("total_prompt_tokens", 0)
-    total_completion_tokens = stats.get("total_completion_tokens", 0)
+    total_output_tokens = stats.get("total_output_tokens", 0)
     total_reasoning_tokens = stats.get("total_reasoning_tokens", 0)
-    total_tokens = total_prompt_tokens + total_completion_tokens + total_reasoning_tokens
+    total_tokens = total_prompt_tokens + total_output_tokens + total_reasoning_tokens
     biggest_gac_tokens = stats.get("biggest_gac_tokens", 0)
     biggest_gac_date = stats.get("biggest_gac_date")
     first_used = stats["first_used"]
@@ -27,26 +27,26 @@ def get_stats_summary() -> dict[str, Any]:
     daily_gacs = stats["daily_gacs"]
     daily_commits = stats["daily_commits"]
     daily_prompt_tokens = stats.get("daily_prompt_tokens", {})
-    daily_completion_tokens = stats.get("daily_completion_tokens", {})
+    daily_output_tokens = stats.get("daily_output_tokens", {})
     daily_reasoning_tokens = stats.get("daily_reasoning_tokens", {})
     weekly_gacs = stats["weekly_gacs"]
     weekly_commits = stats["weekly_commits"]
     weekly_prompt_tokens = stats.get("weekly_prompt_tokens", {})
-    weekly_completion_tokens = stats.get("weekly_completion_tokens", {})
+    weekly_output_tokens = stats.get("weekly_output_tokens", {})
     weekly_reasoning_tokens = stats.get("weekly_reasoning_tokens", {})
 
     # Combine daily/weekly token totals
     daily_total_tokens: dict[str, int] = {}
-    for day_key in set(daily_prompt_tokens) | set(daily_completion_tokens) | set(daily_reasoning_tokens):
+    for day_key in set(daily_prompt_tokens) | set(daily_output_tokens) | set(daily_reasoning_tokens):
         daily_total_tokens[day_key] = (
             daily_prompt_tokens.get(day_key, 0)
-            + daily_completion_tokens.get(day_key, 0)
+            + daily_output_tokens.get(day_key, 0)
             + daily_reasoning_tokens.get(day_key, 0)
         )
     weekly_total_tokens: dict[str, int] = {}
-    for wk in set(weekly_prompt_tokens) | set(weekly_completion_tokens) | set(weekly_reasoning_tokens):
+    for wk in set(weekly_prompt_tokens) | set(weekly_output_tokens) | set(weekly_reasoning_tokens):
         weekly_total_tokens[wk] = (
-            weekly_prompt_tokens.get(wk, 0) + weekly_completion_tokens.get(wk, 0) + weekly_reasoning_tokens.get(wk, 0)
+            weekly_prompt_tokens.get(wk, 0) + weekly_output_tokens.get(wk, 0) + weekly_reasoning_tokens.get(wk, 0)
         )
     today = datetime.now().strftime("%Y-%m-%d")
     streak = 0
@@ -127,7 +127,7 @@ def get_stats_summary() -> dict[str, Any]:
         "total_gacs": total_gacs,
         "total_commits": total_commits,
         "total_prompt_tokens": total_prompt_tokens,
-        "total_completion_tokens": total_completion_tokens,
+        "total_output_tokens": total_output_tokens,
         "total_reasoning_tokens": total_reasoning_tokens,
         "total_tokens": total_tokens,
         "biggest_gac_tokens": biggest_gac_tokens,
@@ -145,13 +145,13 @@ def get_stats_summary() -> dict[str, Any]:
         "daily_gacs": daily_gacs,
         "daily_commits": daily_commits,
         "daily_prompt_tokens": daily_prompt_tokens,
-        "daily_completion_tokens": daily_completion_tokens,
+        "daily_output_tokens": daily_output_tokens,
         "daily_reasoning_tokens": daily_reasoning_tokens,
         "daily_total_tokens": daily_total_tokens,
         "weekly_gacs": weekly_gacs,
         "weekly_commits": weekly_commits,
         "weekly_prompt_tokens": weekly_prompt_tokens,
-        "weekly_completion_tokens": weekly_completion_tokens,
+        "weekly_output_tokens": weekly_output_tokens,
         "weekly_reasoning_tokens": weekly_reasoning_tokens,
         "weekly_total_tokens": weekly_total_tokens,
         "peak_daily_gacs": peak_daily_gacs,

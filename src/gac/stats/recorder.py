@@ -110,7 +110,7 @@ def record_gac(project_name: str | None = None, model: str | None = None) -> Non
                 "gacs": 0,
                 "commits": 0,
                 "prompt_tokens": 0,
-                "completion_tokens": 0,
+                "output_tokens": 0,
             }
         stats["projects"][project_name]["gacs"] += 1
 
@@ -120,10 +120,10 @@ def record_gac(project_name: str | None = None, model: str | None = None) -> Non
             stats["models"][model] = {
                 "gacs": 0,
                 "prompt_tokens": 0,
-                "completion_tokens": 0,
+                "output_tokens": 0,
                 "total_duration_ms": 0,
                 "duration_count": 0,
-                "timed_completion_tokens": 0,
+                "timed_output_tokens": 0,
                 "timed_reasoning_tokens": 0,
                 "min_duration_ms": 0,
                 "max_duration_ms": 0,
@@ -187,7 +187,7 @@ def record_commit(project_name: str | None = None) -> None:
                 "gacs": 0,
                 "commits": 0,
                 "prompt_tokens": 0,
-                "completion_tokens": 0,
+                "output_tokens": 0,
             }
         stats["projects"][project_name]["commits"] += 1
 
@@ -197,7 +197,7 @@ def record_commit(project_name: str | None = None) -> None:
 
 def record_tokens(
     prompt_tokens: int,
-    completion_tokens: int,
+    output_tokens: int,
     model: str | None = None,
     project_name: str | None = None,
     duration_ms: int | None = None,
@@ -207,7 +207,7 @@ def record_tokens(
 
     Args:
         prompt_tokens: Number of prompt (input) tokens used.
-        completion_tokens: Number of completion (output) tokens used.
+        output_tokens: Number of output (text) tokens used (excludes reasoning).
         model: Name of the AI model used (e.g. 'anthropic:claude-haiku-4-5').
         project_name: Name of the project. Auto-detected from git if not provided.
         duration_ms: Wall-clock duration of the API call in milliseconds. When provided and > 0,
@@ -219,7 +219,7 @@ def record_tokens(
     if not store.stats_enabled():
         return
 
-    if prompt_tokens <= 0 and completion_tokens <= 0:
+    if prompt_tokens <= 0 and output_tokens <= 0 and reasoning_tokens <= 0:
         return
 
     if project_name is None:
@@ -232,17 +232,17 @@ def record_tokens(
     week_key = f"{iso_week[0]}-W{iso_week[1]:02d}"
 
     stats["total_prompt_tokens"] += prompt_tokens
-    stats["total_completion_tokens"] += completion_tokens
+    stats["total_output_tokens"] = stats.get("total_output_tokens", 0) + output_tokens
     stats["total_reasoning_tokens"] = stats.get("total_reasoning_tokens", 0) + reasoning_tokens
 
     # Accumulate into per-gac token total (finalized by record_gac)
-    _accumulator.add(prompt_tokens + completion_tokens + reasoning_tokens)
+    _accumulator.add(prompt_tokens + output_tokens + reasoning_tokens)
 
     stats["daily_prompt_tokens"][today] = stats["daily_prompt_tokens"].get(today, 0) + prompt_tokens
-    stats["daily_completion_tokens"][today] = stats["daily_completion_tokens"].get(today, 0) + completion_tokens
+    stats["daily_output_tokens"][today] = stats.get("daily_output_tokens", {}).get(today, 0) + output_tokens
     stats["daily_reasoning_tokens"][today] = stats.get("daily_reasoning_tokens", {}).get(today, 0) + reasoning_tokens
     stats["weekly_prompt_tokens"][week_key] = stats["weekly_prompt_tokens"].get(week_key, 0) + prompt_tokens
-    stats["weekly_completion_tokens"][week_key] = stats["weekly_completion_tokens"].get(week_key, 0) + completion_tokens
+    stats["weekly_output_tokens"][week_key] = stats.get("weekly_output_tokens", {}).get(week_key, 0) + output_tokens
     stats["weekly_reasoning_tokens"][week_key] = (
         stats.get("weekly_reasoning_tokens", {}).get(week_key, 0) + reasoning_tokens
     )
@@ -253,12 +253,12 @@ def record_tokens(
                 "gacs": 0,
                 "commits": 0,
                 "prompt_tokens": 0,
-                "completion_tokens": 0,
+                "output_tokens": 0,
                 "reasoning_tokens": 0,
             }
         proj = stats["projects"][project_name]
         proj["prompt_tokens"] = proj.get("prompt_tokens", 0) + prompt_tokens
-        proj["completion_tokens"] = proj.get("completion_tokens", 0) + completion_tokens
+        proj["output_tokens"] = proj.get("output_tokens", 0) + output_tokens
         proj["reasoning_tokens"] = proj.get("reasoning_tokens", 0) + reasoning_tokens
 
     if model:
@@ -266,23 +266,23 @@ def record_tokens(
             stats["models"][model] = {
                 "gacs": 0,
                 "prompt_tokens": 0,
-                "completion_tokens": 0,
+                "output_tokens": 0,
                 "reasoning_tokens": 0,
                 "total_duration_ms": 0,
                 "duration_count": 0,
-                "timed_completion_tokens": 0,
+                "timed_output_tokens": 0,
                 "timed_reasoning_tokens": 0,
                 "min_duration_ms": 0,
                 "max_duration_ms": 0,
             }
         m = stats["models"][model]
         m["prompt_tokens"] = m.get("prompt_tokens", 0) + prompt_tokens
-        m["completion_tokens"] = m.get("completion_tokens", 0) + completion_tokens
+        m["output_tokens"] = m.get("output_tokens", 0) + output_tokens
         m["reasoning_tokens"] = m.get("reasoning_tokens", 0) + reasoning_tokens
         if duration_ms is not None and duration_ms > 0:
             m["total_duration_ms"] = m.get("total_duration_ms", 0) + duration_ms
             m["duration_count"] = m.get("duration_count", 0) + 1
-            m["timed_completion_tokens"] = m.get("timed_completion_tokens", 0) + completion_tokens
+            m["timed_output_tokens"] = m.get("timed_output_tokens", 0) + output_tokens
             m["timed_reasoning_tokens"] = m.get("timed_reasoning_tokens", 0) + reasoning_tokens
             if m.get("duration_count", 0) == 1:
                 m["min_duration_ms"] = duration_ms
@@ -293,5 +293,5 @@ def record_tokens(
 
     store.save_stats(stats)
     logger.debug(
-        f"Recorded tokens. Total prompt: {stats['total_prompt_tokens']}, completion: {stats['total_completion_tokens']}"
+        f"Recorded tokens. Total prompt: {stats['total_prompt_tokens']}, output: {stats.get('total_output_tokens', 0)}"
     )
