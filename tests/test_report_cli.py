@@ -22,7 +22,7 @@ class TestReportCLI:
                 "daily_gacs": {},
                 "daily_commits": {},
                 "daily_prompt_tokens": {},
-                "daily_completion_tokens": {},
+                "daily_output_tokens": {},
                 "daily_reasoning_tokens": {},
             }
             result = runner.invoke(cli, ["report"])
@@ -36,7 +36,7 @@ class TestReportCLI:
                 "daily_gacs": {"2026-05-01": 3, "2026-05-02": 5},
                 "daily_commits": {"2026-05-01": 4, "2026-05-02": 7},
                 "daily_prompt_tokens": {"2026-05-01": 1000, "2026-05-02": 2000},
-                "daily_completion_tokens": {"2026-05-01": 200, "2026-05-02": 400},
+                "daily_output_tokens": {"2026-05-01": 200, "2026-05-02": 400},
                 "daily_reasoning_tokens": {},
                 "projects": {},
                 "models": {},
@@ -60,12 +60,12 @@ class TestReportCLI:
                 "daily_gacs": {"2026-05-02": 5},
                 "daily_commits": {"2026-05-02": 7},
                 "daily_prompt_tokens": {"2026-05-02": 2000},
-                "daily_completion_tokens": {"2026-05-02": 400},
+                "daily_output_tokens": {"2026-05-02": 400},
                 "daily_reasoning_tokens": {},
                 "weekly_gacs": {"2026-W18": 5},
                 "weekly_commits": {"2026-W18": 7},
                 "weekly_prompt_tokens": {"2026-W18": 2000},
-                "weekly_completion_tokens": {"2026-W18": 400},
+                "weekly_output_tokens": {"2026-W18": 400},
                 "weekly_reasoning_tokens": {},
                 "projects": {},
                 "models": {},
@@ -81,14 +81,14 @@ class TestReportCLI:
                 "daily_gacs": {"2026-05-02": 5},
                 "daily_commits": {"2026-05-02": 7},
                 "daily_prompt_tokens": {"2026-05-02": 2000},
-                "daily_completion_tokens": {"2026-05-02": 400},
+                "daily_output_tokens": {"2026-05-02": 400},
                 "daily_reasoning_tokens": {},
                 "projects": {
                     "my-proj": {
                         "gacs": 5,
                         "commits": 7,
                         "prompt_tokens": 2000,
-                        "completion_tokens": 400,
+                        "output_tokens": 400,
                         "reasoning_tokens": 100,
                     },
                 },
@@ -106,18 +106,18 @@ class TestReportCLI:
                 "daily_gacs": {"2026-05-02": 5},
                 "daily_commits": {"2026-05-02": 7},
                 "daily_prompt_tokens": {"2026-05-02": 2000},
-                "daily_completion_tokens": {"2026-05-02": 400},
+                "daily_output_tokens": {"2026-05-02": 400},
                 "daily_reasoning_tokens": {},
                 "projects": {},
                 "models": {
                     "openai:gpt-4": {
                         "gacs": 5,
                         "prompt_tokens": 2000,
-                        "completion_tokens": 400,
+                        "output_tokens": 400,
                         "reasoning_tokens": 0,
                         "total_duration_ms": 1000,
                         "duration_count": 1,
-                        "timed_completion_tokens": 400,
+                        "timed_output_tokens": 400,
                     },
                 },
             }
@@ -133,27 +133,27 @@ class TestReportCLI:
                 "daily_gacs": {"2026-05-02": 3},
                 "daily_commits": {"2026-05-02": 3},
                 "daily_prompt_tokens": {"2026-05-02": 5000},
-                "daily_completion_tokens": {"2026-05-02": 1500},
+                "daily_output_tokens": {"2026-05-02": 1500},
                 "daily_reasoning_tokens": {"2026-05-02": 500},
                 "projects": {},
                 "models": {
                     "anthropic:claude-3-5-sonnet": {
                         "gacs": 3,
                         "prompt_tokens": 5000,
-                        "completion_tokens": 1500,
+                        "output_tokens": 1500,
                         "reasoning_tokens": 500,
                         "total_duration_ms": 2000,
                         "duration_count": 2,
-                        "timed_completion_tokens": 1500,
+                        "timed_output_tokens": 1500,
                     },
                     "openai:gpt-4o": {
                         "gacs": 2,
                         "prompt_tokens": 3000,
-                        "completion_tokens": 800,
+                        "output_tokens": 800,
                         "reasoning_tokens": 0,
                         "total_duration_ms": 0,
                         "duration_count": 0,
-                        "timed_completion_tokens": 0,
+                        "timed_output_tokens": 0,
                     },
                 },
             }
@@ -161,7 +161,7 @@ class TestReportCLI:
             assert result.exit_code == 0
             # Column headers should appear
             assert "Prompt" in result.output
-            assert "Completion" in result.output
+            assert "Output" in result.output
             assert "Reasoning" in result.output
             assert "Total" in result.output
             # Model with reasoning should show the value
@@ -176,18 +176,18 @@ class TestReportCLI:
                 "daily_gacs": {"2026-05-02": 1},
                 "daily_commits": {"2026-05-02": 1},
                 "daily_prompt_tokens": {"2026-05-02": 1000},
-                "daily_completion_tokens": {"2026-05-02": 500},
+                "daily_output_tokens": {"2026-05-02": 500},
                 "daily_reasoning_tokens": {"2026-05-02": 1500},
                 "projects": {},
                 "models": {
                     "deepseek:deepseek-r1": {
                         "gacs": 5,
                         "prompt_tokens": 5000,
-                        "completion_tokens": 500,
+                        "output_tokens": 500,
                         "reasoning_tokens": 1500,
                         "total_duration_ms": 2000,
                         "duration_count": 1,
-                        "timed_completion_tokens": 500,
+                        "timed_output_tokens": 500,
                         "timed_reasoning_tokens": 1500,
                     },
                 },
@@ -217,7 +217,7 @@ class TestReportCLI:
                 "daily_gacs": {},
                 "daily_commits": {},
                 "daily_prompt_tokens": {"2026-05-02": 1000},
-                "daily_completion_tokens": {"2026-05-02": 200},
+                "daily_output_tokens": {"2026-05-02": 200},
                 "daily_reasoning_tokens": {},
                 "projects": {},
                 "models": {},

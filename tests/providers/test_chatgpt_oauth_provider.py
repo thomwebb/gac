@@ -163,7 +163,7 @@ class TestChatGPTOAuthProviderSSEParsing:
         result = ChatGPTOAuthProvider._parse_sse_stream_from_lines(lines)
         assert result.content == "Hello world"
         assert result.prompt_tokens == 10
-        assert result.completion_tokens == 5
+        assert result.output_tokens == 5
 
     def test_parse_sse_with_reasoning_tokens(self):
         """Parse SSE stream that includes reasoning tokens."""
@@ -178,7 +178,7 @@ class TestChatGPTOAuthProviderSSEParsing:
         result = ChatGPTOAuthProvider._parse_sse_stream_from_lines(lines)
         assert result.content == "Thinking..."
         assert result.prompt_tokens == 100
-        assert result.completion_tokens == 30  # 50 - 20 reasoning
+        assert result.output_tokens == 30  # 50 - 20 reasoning
         assert result.reasoning_tokens == 20
 
     def test_parse_sse_empty_content_raises(self):
@@ -259,8 +259,8 @@ class TestChatGPTOAuthProviderSSEParsing:
         assert result.content == "Here is the commit"
         # No explicit reasoning_tokens in usage, but we estimated from text
         assert result.reasoning_tokens > 0
-        # completion_tokens should be 50 minus the estimated reasoning
-        assert result.completion_tokens < 50
+        # output_tokens should be 50 minus the estimated reasoning
+        assert result.output_tokens < 50
 
     def test_parse_sse_reasoning_done_overrides_deltas(self):
         """response.reasoning.done event overrides accumulated reasoning deltas."""
@@ -283,7 +283,7 @@ class TestChatGPTOAuthProviderSSEParsing:
         assert result.content == "Final answer"
         # reasoning.done text (340 chars) should override delta ("partial thinking")
         assert result.reasoning_tokens == 100  # 340 / 3.4 = 100
-        assert result.completion_tokens == 50  # 150 - 100
+        assert result.output_tokens == 50  # 150 - 100
 
     def test_parse_sse_reasoning_delta_but_explicit_tokens_win(self):
         """When API reports reasoning_tokens explicitly, that wins over estimation."""
@@ -301,7 +301,7 @@ class TestChatGPTOAuthProviderSSEParsing:
         result = ChatGPTOAuthProvider._parse_sse_stream_from_lines(lines)
         # Explicit reasoning_tokens=15 should win over character estimation
         assert result.reasoning_tokens == 15
-        assert result.completion_tokens == 35  # 50 - 15
+        assert result.output_tokens == 35  # 50 - 15
 
     def test_parse_sse_explicit_zero_reasoning_tokens_no_estimate(self):
         """When API explicitly reports reasoning_tokens=0, don't estimate."""
@@ -319,7 +319,7 @@ class TestChatGPTOAuthProviderSSEParsing:
         result = ChatGPTOAuthProvider._parse_sse_stream_from_lines(lines)
         # Explicit reasoning_tokens=0 means "API says zero" — no estimation
         assert result.reasoning_tokens == 0
-        assert result.completion_tokens == 50
+        assert result.output_tokens == 50
 
     def test_parse_sse_no_reasoning_events_no_estimate(self):
         """No reasoning events → reasoning_tokens stays 0."""
@@ -333,7 +333,7 @@ class TestChatGPTOAuthProviderSSEParsing:
         ]
         result = ChatGPTOAuthProvider._parse_sse_stream_from_lines(lines)
         assert result.reasoning_tokens == 0
-        assert result.completion_tokens == 5
+        assert result.output_tokens == 5
 
     def test_parse_sse_reasoning_done_empty_text_falls_back_to_deltas(self):
         """reasoning.done with empty text → fall back to accumulated deltas."""

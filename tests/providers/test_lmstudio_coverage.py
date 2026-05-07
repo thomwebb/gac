@@ -31,8 +31,8 @@ class TestLMStudioParseResponse:
 
             result = call_lmstudio_api("local-model", [], 0.7, 1000)
             assert result[0] == "test response"
-            # completion_tokens should be normalized (50 - 20 = 30)
-            assert result[2] == 30  # completion_tokens
+            # output_tokens should be normalized (50 - 20 = 30)
+            assert result[2] == 30  # output_tokens
             assert result[4] == 20  # reasoning_tokens
 
     def test_usage_non_int_prompt_tokens(self):
@@ -66,7 +66,7 @@ class TestLMStudioParseResponse:
             result = call_lmstudio_api("local-model", [], 0.7, 1000)
             assert result[0] == "test response"
             # Non-int results in -1 from _parse_response, then generate() fallback counts
-            assert result[2] >= 0  # completion_tokens (fallback from count_tokens)
+            assert result[2] >= 0  # output_tokens (fallback from count_tokens)
 
     def test_text_field_empty_content(self):
         """Test text field with empty content raises error."""
@@ -93,7 +93,7 @@ class TestLMStudioParseResponse:
             assert result[0] == "test response"
             # No usage field -> -1 from _parse_response, then fallback token count
             assert result[1] >= 0  # prompt_tokens
-            assert result[2] >= 0  # completion_tokens
+            assert result[2] >= 0  # output_tokens
 
     def test_reasoning_tokens_non_int(self):
         """Test reasoning_tokens with non-integer value."""

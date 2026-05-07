@@ -118,7 +118,7 @@ class TestTokenUsageDisplay:
         assert (
             "Token usage:" in output_text
             and "prompt +" in output_text
-            and "completion =" in output_text
+            and "output =" in output_text
             and "total" in output_text
         )
 

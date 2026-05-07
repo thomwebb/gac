@@ -23,7 +23,7 @@ class TestModelSpeedTracking:
             m = stats["models"]["openai:gpt-4"]
             assert m["total_duration_ms"] == 1000
             assert m["duration_count"] == 1
-            assert m["timed_completion_tokens"] == 50
+            assert m["timed_output_tokens"] == 50
             assert m["min_duration_ms"] == 1000
             assert m["max_duration_ms"] == 1000
 
@@ -36,7 +36,7 @@ class TestModelSpeedTracking:
             m = stats["models"]["openai:gpt-4"]
             assert m["total_duration_ms"] == 1500
             assert m["duration_count"] == 2
-            assert m["timed_completion_tokens"] == 150
+            assert m["timed_output_tokens"] == 150
             assert m["min_duration_ms"] == 500
             assert m["max_duration_ms"] == 1000
 
@@ -60,7 +60,7 @@ class TestModelSpeedTracking:
             m = stats["models"]["openai:gpt-4"]
             assert m["total_duration_ms"] == 0
             assert m["duration_count"] == 0
-            assert m["timed_completion_tokens"] == 0
+            assert m["timed_output_tokens"] == 0
             assert m["min_duration_ms"] == 0
             assert m["max_duration_ms"] == 0
 
@@ -100,7 +100,7 @@ class TestModelSpeedTracking:
             m = stats["models"]["openai:gpt-4"]
             assert m["total_duration_ms"] == 0
             assert m["duration_count"] == 0
-            assert m["timed_completion_tokens"] == 0
+            assert m["timed_output_tokens"] == 0
             assert m["min_duration_ms"] == 0
             assert m["max_duration_ms"] == 0
 
@@ -133,7 +133,7 @@ class TestModelSpeedTracking:
             m = stats["models"]["openai:gpt-4"]
             assert m["total_duration_ms"] == 500
             assert m["duration_count"] == 1
-            assert m["timed_completion_tokens"] == 80
+            assert m["timed_output_tokens"] == 80
             assert m["min_duration_ms"] == 500
             assert m["max_duration_ms"] == 500
 
@@ -162,7 +162,7 @@ class TestModelSpeedTracking:
             record_tokens(100, 60, model="openai:o3", reasoning_tokens=20)
             stats = load_stats()
             assert stats["models"]["openai:o3"]["reasoning_tokens"] == 50
-            assert stats["models"]["openai:o3"]["completion_tokens"] == 140
+            assert stats["models"]["openai:o3"]["output_tokens"] == 140
 
     def test_record_tokens_reasoning_defaults_zero(self, tmp_path):
         """reasoning_tokens defaults to 0 when not provided."""
@@ -204,7 +204,7 @@ class TestBiggestGac:
             stats = load_stats()
             assert (
                 stats["biggest_gac_tokens"] == 650
-            )  # 500+100+50 (completion excludes reasoning, so three distinct numbers)
+            )  # 500+100+50 (output excludes reasoning, so three distinct numbers)
             assert stats["biggest_gac_date"] is not None
 
     def test_biggest_gac_updates_on_larger_gac(self, tmp_path):
@@ -223,7 +223,7 @@ class TestBiggestGac:
             record_gac(model="openai:gpt-4")
 
             stats = load_stats()
-            assert stats["biggest_gac_tokens"] == 5700  # 5000+500+200 (completion excludes reasoning)
+        assert stats["biggest_gac_tokens"] == 5700  # 5000+500+200 (output excludes reasoning)
 
     def test_biggest_gac_preserved_on_smaller_gac(self, tmp_path):
         """A smaller gac doesn't overwrite the record."""
@@ -256,7 +256,7 @@ class TestBiggestGac:
             record_gac(model="openai:gpt-4")
 
             stats = load_stats()
-            assert stats["biggest_gac_tokens"] == 4375  # 3500+700+175 (completion excludes reasoning)
+        assert stats["biggest_gac_tokens"] == 4375  # 3500+700+175 (output excludes reasoning)
 
     def test_biggest_gac_in_summary(self, tmp_path):
         """get_stats_summary includes biggest_gac_tokens and biggest_gac_date."""

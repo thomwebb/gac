@@ -636,25 +636,25 @@ class TestFormatTokenUsage:
         from gac.workflow_utils import format_token_usage
 
         result = format_token_usage(100, 50)
-        assert result == "100 prompt + 50 completion = 150 total"
+        assert result == "100 prompt + 50 output = 150 total"
 
     def test_with_reasoning_tokens(self) -> None:
         from gac.workflow_utils import format_token_usage
 
         result = format_token_usage(100, 50, 25)
-        assert result == "100 prompt + 50 completion + 25 reasoning = 175 total"
+        assert result == "100 prompt + 50 output + 25 reasoning = 175 total"
 
     def test_zero_tokens(self) -> None:
         from gac.workflow_utils import format_token_usage
 
         result = format_token_usage(0, 0, 0)
-        assert result == "0 prompt + 0 completion = 0 total"
+        assert result == "0 prompt + 0 output = 0 total"
 
     def test_reasoning_only(self) -> None:
         from gac.workflow_utils import format_token_usage
 
         result = format_token_usage(0, 0, 100)
-        assert result == "0 prompt + 0 completion + 100 reasoning = 100 total"
+        assert result == "0 prompt + 0 output + 100 reasoning = 100 total"
 
 
 class TestExecuteCommit:

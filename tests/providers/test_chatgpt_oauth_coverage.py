@@ -33,7 +33,7 @@ class TestParseResponseEdgeCases:
     def test_valid_parsed_response(self):
         """_parse_response returns the ParsedResponse when valid."""
         provider = _make_provider()
-        parsed = ParsedResponse(content="test", prompt_tokens=5, completion_tokens=2, reasoning_tokens=0)
+        parsed = ParsedResponse(content="test", prompt_tokens=5, output_tokens=2, reasoning_tokens=0)
         result = provider._parse_response({"_parsed_response": parsed})
         assert result.content == "test"
 
@@ -137,9 +137,9 @@ class TestGenerateMethod:
             max_tokens=100,
         )
         assert result[0] == "Result"  # content
-        # Falls back to count_tokens for both prompt and completion
+        # Falls back to count_tokens for both prompt and output
         assert result[1] == 10  # prompt_tokens from count_tokens
-        assert result[2] == 10  # completion_tokens from count_tokens
+        assert result[2] == 10  # output_tokens from count_tokens
 
     @patch("gac.providers.chatgpt_oauth.get_ssl_verify", return_value=True)
     @patch("gac.providers.chatgpt_oauth.load_stored_tokens", return_value=None)
@@ -169,10 +169,10 @@ class TestGenerateMethod:
             temperature=0.7,
             max_tokens=100,
         )
-        content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = result
+        content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
         assert content == "Hello world"
         assert prompt_tokens == 10
-        assert completion_tokens == 5
+        assert output_tokens == 5
         assert duration_ms >= 0
         assert reasoning_tokens == 0
 

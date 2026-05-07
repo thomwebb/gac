@@ -186,7 +186,7 @@ class TestOpenAICompatibleProvider:
                 max_tokens=100,
             )
 
-            content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = result
+            content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
             assert isinstance(duration_ms, int)
             assert duration_ms >= 0
             assert isinstance(reasoning_tokens, int)
@@ -298,8 +298,8 @@ class TestAnthropicCompatibleProvider:
         assert parsed.content == "Here is the commit message"
         assert parsed.reasoning_tokens > 0  # Estimated from thinking text
         assert parsed.prompt_tokens == 100
-        # output_tokens (200) minus reasoning_tokens should be completion_tokens
-        assert parsed.completion_tokens == 200 - parsed.reasoning_tokens
+        # output_tokens (200) minus reasoning_tokens should be output text tokens
+        assert parsed.output_tokens == 200 - parsed.reasoning_tokens
 
     def test_anthropic_no_thinking_blocks_no_estimate(self):
         """No thinking blocks → reasoning_tokens stays 0."""
@@ -310,7 +310,7 @@ class TestAnthropicCompatibleProvider:
         }
         parsed = provider._parse_response(response)
         assert parsed.reasoning_tokens == 0
-        assert parsed.completion_tokens == 30
+        assert parsed.output_tokens == 30
 
     def test_anthropic_empty_thinking_no_estimate(self):
         """Empty thinking block text → reasoning_tokens stays 0."""
@@ -351,7 +351,7 @@ class TestAnthropicCompatibleProvider:
         assert parsed.content == "The answer"
         # 17 + 1 (newline) + 17 = 35 chars → round(35/3.4) = 10
         assert parsed.reasoning_tokens == 10
-        assert parsed.completion_tokens == 40  # 50 - 10
+        assert parsed.output_tokens == 40  # 50 - 10
 
     def test_anthropic_prefers_type_text_block(self):
         """When multiple blocks have .text, prefer type='text' over others."""
@@ -391,8 +391,8 @@ class TestAnthropicCompatibleProvider:
         parsed = provider._parse_response(response)
         assert parsed.content == think_content + "\nfeat: add feature"
         assert parsed.reasoning_tokens > 0  # Estimated from think tags
-        # completion_tokens should be 200 minus estimated reasoning
-        assert parsed.completion_tokens < 200
+        # output_tokens should be 200 minus estimated reasoning
+        assert parsed.output_tokens < 200
 
     def test_openai_explicit_reasoning_tokens_win_over_think_tags(self):
         """When API reports reasoning_tokens explicitly, it wins over think-tag estimation."""
@@ -410,8 +410,8 @@ class TestAnthropicCompatibleProvider:
         parsed = provider._parse_response(response)
         # Explicit 42 wins, not the ~68 estimate from think tags
         assert parsed.reasoning_tokens == 42
-        # completion_tokens = 200 - 42 = 158
-        assert parsed.completion_tokens == 158
+        # output_tokens = 200 - 42 = 158
+        assert parsed.output_tokens == 158
 
     def test_openai_reasoning_content_field_estimates_tokens(self):
         """DeepSeek-style reasoning_content field should populate reasoning tokens."""
@@ -431,7 +431,7 @@ class TestAnthropicCompatibleProvider:
         parsed = provider._parse_response(response)
         assert parsed.content == "feat: add feature"
         assert parsed.reasoning_tokens > 0
-        assert parsed.completion_tokens < 200
+        assert parsed.output_tokens < 200
 
     def test_openai_reasoning_content_overrides_zero_from_api(self):
         """When API reports reasoning_tokens=0 but reasoning_content is non-empty
@@ -456,7 +456,7 @@ class TestAnthropicCompatibleProvider:
         }
         parsed = provider._parse_response(response)
         assert parsed.reasoning_tokens > 0
-        assert parsed.completion_tokens < 200
+        assert parsed.output_tokens < 200
 
     def test_openai_reasoning_field_openrouter_style(self):
         """OpenRouter-style `reasoning` field should also populate reasoning tokens."""
@@ -475,7 +475,7 @@ class TestAnthropicCompatibleProvider:
         }
         parsed = provider._parse_response(response)
         assert parsed.reasoning_tokens > 0
-        assert parsed.completion_tokens < 150
+        assert parsed.output_tokens < 150
 
     def test_openai_null_reasoning_content_no_change(self):
         """Null reasoning_content should not affect existing zero-reasoning behavior."""
@@ -493,7 +493,7 @@ class TestAnthropicCompatibleProvider:
         }
         parsed = provider._parse_response(response)
         assert parsed.reasoning_tokens == 0
-        assert parsed.completion_tokens == 50
+        assert parsed.output_tokens == 50
 
     def test_openai_explicit_nonzero_reasoning_wins_over_content_field(self):
         """When API reports nonzero reasoning_tokens, trust it over reasoning_content estimate."""
@@ -517,7 +517,7 @@ class TestAnthropicCompatibleProvider:
         parsed = provider._parse_response(response)
         # Trust the explicit nonzero count, not the estimate
         assert parsed.reasoning_tokens == 25
-        assert parsed.completion_tokens == 175
+        assert parsed.output_tokens == 175
 
     def test_generic_http_crash_proof_non_dict_choices(self):
         """GenericHTTPProvider should not crash on non-dict entries in choices."""

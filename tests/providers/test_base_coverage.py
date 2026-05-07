@@ -24,7 +24,7 @@ from gac.providers.base import (
     OpenAICompatibleProvider,
     ParsedResponse,
     ProviderConfig,
-    _normalize_completion_tokens,
+    _normalize_output_tokens,
 )
 
 # ── Concrete test providers ──────────────────────────────────────────
@@ -151,7 +151,7 @@ class TestOpenAIParseResponseUsageDetails:
         parsed = provider._parse_response(response)
         assert parsed.prompt_tokens == 50
         # completion_tokens should be 100 - 30 = 70 (reasoning subtracted)
-        assert parsed.completion_tokens == 70
+        assert parsed.output_tokens == 70
         assert parsed.reasoning_tokens == 30
 
     def test_usage_with_non_int_prompt_tokens(self):
@@ -172,7 +172,7 @@ class TestOpenAIParseResponseUsageDetails:
             "usage": {"prompt_tokens": 10, "completion_tokens": "lots"},
         }
         parsed = provider._parse_response(response)
-        assert parsed.completion_tokens == -1
+        assert parsed.output_tokens == -1
 
     def test_usage_details_with_non_int_reasoning_tokens(self):
         """Non-integer reasoning_tokens should default to 0."""
@@ -187,7 +187,7 @@ class TestOpenAIParseResponseUsageDetails:
         }
         parsed = provider._parse_response(response)
         assert parsed.reasoning_tokens == 0
-        assert parsed.completion_tokens == 50  # 50 - 0 = 50
+        assert parsed.output_tokens == 50  # 50 - 0 = 50
 
     def test_no_usage_dict(self):
         """Missing usage dict should return -1 for tokens."""
@@ -195,7 +195,7 @@ class TestOpenAIParseResponseUsageDetails:
         response = {"choices": [{"message": {"content": "hello"}}]}
         parsed = provider._parse_response(response)
         assert parsed.prompt_tokens == -1
-        assert parsed.completion_tokens == -1
+        assert parsed.output_tokens == -1
         assert parsed.reasoning_tokens == 0
 
     def test_usage_with_reasoning_tokens_exceeds_completion(self):
@@ -213,7 +213,7 @@ class TestOpenAIParseResponseUsageDetails:
         }
         parsed = provider._parse_response(response)
         # 5 < 10 → API already excluded reasoning, keep 5 as-is
-        assert parsed.completion_tokens == 5
+        assert parsed.output_tokens == 5
         assert parsed.reasoning_tokens == 10
 
 
@@ -292,7 +292,7 @@ class TestAnthropicParseResponseEdgeCases:
             "usage": {"input_tokens": 10, "output_tokens": "lots"},
         }
         parsed = provider._parse_response(response)
-        assert parsed.completion_tokens == -1
+        assert parsed.output_tokens == -1
 
     def test_no_usage_returns_negative_tokens(self):
         """Missing usage dict should return -1 for both tokens."""
@@ -300,7 +300,7 @@ class TestAnthropicParseResponseEdgeCases:
         response = {"content": [{"text": "hello"}]}
         parsed = provider._parse_response(response)
         assert parsed.prompt_tokens == -1
-        assert parsed.completion_tokens == -1
+        assert parsed.output_tokens == -1
 
     def test_missing_content_key_raises(self):
         """Response without 'content' key should raise AIError."""
@@ -359,7 +359,7 @@ class TestGenericHTTPExtended:
         parsed = provider._parse_response(response)
         assert parsed.content == "ollama says hi"
         assert parsed.prompt_tokens == 42
-        assert parsed.completion_tokens == 13
+        assert parsed.output_tokens == 13
 
     def test_ollama_style_with_non_int_token_counts(self):
         """Ollama-style response with non-integer token counts should default to -1."""
@@ -372,7 +372,7 @@ class TestGenericHTTPExtended:
         parsed = provider._parse_response(response)
         assert parsed.content == "ollama says hi"
         assert parsed.prompt_tokens == -1
-        assert parsed.completion_tokens == -1
+        assert parsed.output_tokens == -1
 
     def test_fallback_long_string_value(self):
         """Response with a long string value as fallback."""
@@ -382,7 +382,7 @@ class TestGenericHTTPExtended:
         assert "long string" in parsed.content
 
     def test_usage_with_reasoning_tokens_normalization(self):
-        """GenericHTTP usage with reasoning_tokens should normalize completion_tokens."""
+        """GenericHTTP usage with reasoning_tokens should normalize output_tokens."""
         provider = GenericHTTPProvider(ProviderConfig(name="Gen", api_key_env="KEY", base_url="http://test.url"))
         response = {
             "choices": [{"message": {"content": "reasoned response"}}],
@@ -394,7 +394,7 @@ class TestGenericHTTPExtended:
         }
         parsed = provider._parse_response(response)
         # 80 - 20 = 60 (OpenAI convention: completion includes reasoning)
-        assert parsed.completion_tokens == 60
+        assert parsed.output_tokens == 60
         assert parsed.reasoning_tokens == 20
 
     def test_usage_with_input_tokens_fallback(self):
@@ -406,47 +406,47 @@ class TestGenericHTTPExtended:
         }
         parsed = provider._parse_response(response)
         assert parsed.prompt_tokens == 15
-        assert parsed.completion_tokens == 35
+        assert parsed.output_tokens == 35
 
 
-# ── _normalize_completion_tokens helper ──────────────────────────────
+# ── _normalize_output_tokens helper ─────────────────────────────────
 
 
-class TestNormalizeCompletionTokens:
-    """Test the _normalize_completion_tokens helper that fixes the Crof.ai
-    GLM bug where completion_tokens already excludes reasoning."""
+class TestNormalizeOutputTokens:
+    """Test the _normalize_output_tokens helper that fixes the Crof.ai
+    GLM bug where output_tokens already excludes reasoning."""
 
     def test_openai_convention_subtracts_reasoning(self):
         """When completion >= reasoning (OpenAI convention), subtract reasoning."""
-        assert _normalize_completion_tokens(100, 30) == 70
+        assert _normalize_output_tokens(100, 30) == 70
 
     def test_openai_convention_exact_equal(self):
         """When completion == reasoning, result is 0 (all output was reasoning)."""
-        assert _normalize_completion_tokens(30, 30) == 0
+        assert _normalize_output_tokens(30, 30) == 0
 
     def test_crof_glm_convention_no_subtract(self):
         """When completion < reasoning, API already excluded reasoning — don't subtract."""
-        assert _normalize_completion_tokens(81, 559) == 81
+        assert _normalize_output_tokens(81, 559) == 81
 
     def test_zero_reasoning_no_subtract(self):
         """When reasoning_tokens is 0, no subtraction needed."""
-        assert _normalize_completion_tokens(100, 0) == 100
+        assert _normalize_output_tokens(100, 0) == 100
 
     def test_negative_reasoning_no_subtract(self):
         """When reasoning_tokens is negative (shouldn't happen), no subtraction."""
-        assert _normalize_completion_tokens(100, -1) == 100
+        assert _normalize_output_tokens(100, -1) == 100
 
     def test_negative_completion_passthrough(self):
         """When completion_tokens is -1 (unknown), pass through as-is."""
-        assert _normalize_completion_tokens(-1, 30) == -1
+        assert _normalize_output_tokens(-1, 30) == -1
 
     def test_zero_completion_with_reasoning(self):
         """When completion is 0 and reasoning > 0, keep 0 (API already excluded)."""
-        assert _normalize_completion_tokens(0, 559) == 0
+        assert _normalize_output_tokens(0, 559) == 0
 
     def test_zero_completion_zero_reasoning(self):
         """Both zero: keep 0."""
-        assert _normalize_completion_tokens(0, 0) == 0
+        assert _normalize_output_tokens(0, 0) == 0
 
 
 # ── Lines 214-217: generate() with model not in body ────────────────
@@ -552,7 +552,7 @@ class TestGenerateTokenEstimationFallback:
         ):
             mock_post.return_value.json.return_value = {
                 "choices": [{"message": {"content": "hello world"}}],
-                # No usage dict -> prompt_tokens = -1, completion_tokens = -1
+                # No usage dict -> prompt_tokens = -1, output_tokens = -1
             }
             mock_post.return_value.raise_for_status = MagicMock()
             mock_count.return_value = 42
@@ -564,8 +564,8 @@ class TestGenerateTokenEstimationFallback:
                 max_tokens=100,
             )
 
-            # count_tokens should have been called for both prompt and completion estimation
+            # count_tokens should have been called for both prompt and output estimation
             assert mock_count.call_count == 2
-            content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = result
+            content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
             assert prompt_tokens == 42
-            assert completion_tokens == 42
+            assert output_tokens == 42

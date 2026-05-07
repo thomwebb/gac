@@ -2,7 +2,7 @@
 
 These tests cover the wiring between the AI generation step and the stats
 module. They mock external dependencies (git, AI, hooks) but assert that
-`record_tokens` is actually called with the expected (prompt, completion, model)
+`record_tokens` is actually called with the expected (prompt, output, model)
 values from:
     - gac.main (single commit flow)
     - gac.grouped_commit_workflow (grouped commits flow)
@@ -110,9 +110,9 @@ class TestMainWorkflowRecordsTokens:
         # Tokens were recorded exactly once for the single AI call.
         assert len(base_cli_mocks["record_tokens"]) == 1
         args, kwargs = base_cli_mocks["record_tokens"][0]
-        # Signature: record_tokens(prompt_tokens, completion_tokens, model=...)
+        # Signature: record_tokens(prompt_tokens, output_tokens, model=...)
         assert args[0] == 10  # prompt (from provider)
-        assert args[1] == 5  # completion (from provider)
+        assert args[1] == 5  # output (from provider)
         assert kwargs.get("model") == "anthropic:test-model"
 
         # record_gac was passed the model too
@@ -193,7 +193,7 @@ class TestGroupedWorkflowRecordsTokens:
         # Generation succeeded
         assert result.success
 
-        # Tokens were recorded with prompt=500, completion=80, model=openai:gpt-test
+        # Tokens were recorded with prompt=500, output=80, model=openai:gpt-test
         assert len(calls) == 1
         args, kwargs = calls[0]
         assert args[0] == 500

@@ -249,4 +249,4 @@ class TestOllamaProviderEdgeCases:
             assert result[0] == "ok"
             # Non-int token counts -> -1 from _parse_response, generate() uses fallback
             assert result[1] >= 0  # prompt_tokens (fallback)
-            assert result[2] >= 0  # completion_tokens (fallback)
+            assert result[2] >= 0  # output_tokens (fallback)

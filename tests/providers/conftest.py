@@ -104,10 +104,10 @@ class BaseProviderTest(ABC):
 
             assert isinstance(result, tuple)
             assert len(result) == 5
-            content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = result
+            content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
             assert content == "feat: Add new feature"
             assert isinstance(prompt_tokens, int) and prompt_tokens >= 0
-            assert isinstance(completion_tokens, int) and completion_tokens >= 0
+            assert isinstance(output_tokens, int) and output_tokens >= 0
             assert isinstance(duration_ms, int) and duration_ms >= 0
             assert isinstance(reasoning_tokens, int) and reasoning_tokens >= 0
             mock_post.assert_called_once()

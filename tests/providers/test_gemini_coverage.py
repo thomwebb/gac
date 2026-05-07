@@ -68,7 +68,7 @@ class TestGeminiParseResponseCoverage:
                 result = call_gemini_api("gemini-2.5-flash-lite", [{"role": "user", "content": "hi"}], 0.7, 1000)
                 assert result[0] == "response"
                 assert result[1] >= 0  # prompt_tokens (fallback from count_tokens)
-                assert result[2] >= 0  # completion_tokens (fallback from count_tokens)
+                assert result[2] >= 0  # output_tokens (fallback from count_tokens)
 
     def test_usage_metadata_negative_candidates_tokens(self):
         """Test normalization with negative candidatesTokenCount."""

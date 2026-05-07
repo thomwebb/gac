@@ -97,7 +97,7 @@ class TestReplicateProviderMocked(BaseProviderTest):
 
                 assert isinstance(result, tuple)
                 assert len(result) == 5
-                content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = result
+                content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
                 assert content == "feat: Add new feature"
                 assert isinstance(duration_ms, int) and duration_ms >= 0
                 assert isinstance(reasoning_tokens, int) and reasoning_tokens >= 0

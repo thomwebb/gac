@@ -23,7 +23,7 @@ def _empty_stats() -> GACStats:
         "total_gacs": 0,
         "total_commits": 0,
         "total_prompt_tokens": 0,
-        "total_completion_tokens": 0,
+        "total_output_tokens": 0,
         "total_reasoning_tokens": 0,
         "biggest_gac_tokens": 0,
         "biggest_gac_date": None,
@@ -32,16 +32,16 @@ def _empty_stats() -> GACStats:
         "daily_gacs": {},
         "daily_commits": {},
         "daily_prompt_tokens": {},
-        "daily_completion_tokens": {},
+        "daily_output_tokens": {},
         "daily_reasoning_tokens": {},
         "weekly_gacs": {},
         "weekly_commits": {},
         "weekly_prompt_tokens": {},
-        "weekly_completion_tokens": {},
+        "weekly_output_tokens": {},
         "weekly_reasoning_tokens": {},
         "projects": {},
         "models": {},
-        "_version": 2,
+        "_version": 3,
     }
 
 
@@ -390,10 +390,10 @@ class TestResetModelStats:
             "wafer:deepseek-v4-pro": {
                 "gacs": 10,
                 "prompt_tokens": 5000,
-                "completion_tokens": 2000,
+                "output_tokens": 2000,
                 "reasoning_tokens": 500,
             },
-            "openai:gpt-4": {"gacs": 5, "prompt_tokens": 3000, "completion_tokens": 1500, "reasoning_tokens": 0},
+            "openai:gpt-4": {"gacs": 5, "prompt_tokens": 3000, "output_tokens": 1500, "reasoning_tokens": 0},
         }
         stats_file.write_text(json.dumps(stats))
 
@@ -418,7 +418,7 @@ class TestResetModelStats:
             "Wafer:DeepSeek-V4-PRO": {
                 "gacs": 10,
                 "prompt_tokens": 5000,
-                "completion_tokens": 2000,
+                "output_tokens": 2000,
                 "reasoning_tokens": 500,
             },
         }
@@ -466,13 +466,13 @@ class TestResetModelStats:
         stats["total_gacs"] = 100
         stats["total_commits"] = 250
         stats["total_prompt_tokens"] = 50000
-        stats["total_completion_tokens"] = 20000
+        stats["total_output_tokens"] = 20000
         stats["total_reasoning_tokens"] = 5000
         stats["models"] = {
             "wafer:deepseek-v4-pro": {
                 "gacs": 10,
                 "prompt_tokens": 5000,
-                "completion_tokens": 2000,
+                "output_tokens": 2000,
                 "reasoning_tokens": 500,
             },
         }
@@ -487,7 +487,7 @@ class TestResetModelStats:
             assert loaded["total_gacs"] == 100
             assert loaded["total_commits"] == 250
             assert loaded["total_prompt_tokens"] == 50000
-            assert loaded["total_completion_tokens"] == 20000
+            assert loaded["total_output_tokens"] == 20000
             assert loaded["total_reasoning_tokens"] == 5000
 
     def test_reset_model_other_models_unaffected(self, tmp_path):
@@ -495,9 +495,9 @@ class TestResetModelStats:
         stats_file = tmp_path / "stats.json"
         stats: GACStats = _empty_stats()
         stats["models"] = {
-            "model-a": {"gacs": 10, "prompt_tokens": 5000, "completion_tokens": 2000, "reasoning_tokens": 0},
-            "model-b": {"gacs": 5, "prompt_tokens": 2500, "completion_tokens": 1000, "reasoning_tokens": 0},
-            "model-c": {"gacs": 3, "prompt_tokens": 1500, "completion_tokens": 600, "reasoning_tokens": 0},
+            "model-a": {"gacs": 10, "prompt_tokens": 5000, "output_tokens": 2000, "reasoning_tokens": 0},
+            "model-b": {"gacs": 5, "prompt_tokens": 2500, "output_tokens": 1000, "reasoning_tokens": 0},
+            "model-c": {"gacs": 3, "prompt_tokens": 1500, "output_tokens": 600, "reasoning_tokens": 0},
         }
         stats_file.write_text(json.dumps(stats))
 

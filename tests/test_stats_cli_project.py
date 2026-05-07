@@ -20,7 +20,7 @@ def _base_summary(**overrides):
         "total_commits": 20,
         "total_tokens": 50000,
         "total_prompt_tokens": 30000,
-        "total_completion_tokens": 15000,
+        "total_output_tokens": 15000,
         "total_reasoning_tokens": 5000,
         "biggest_gac_tokens": 50000,
         "biggest_gac_date": "2024-01-01",
@@ -47,10 +47,10 @@ def _base_summary(**overrides):
         "weekly_commits": {this_week_key: 8, "2024-W01": 100},
         "weekly_total_tokens": {this_week_key: 8000, "2024-W01": 200000},
         "daily_prompt_tokens": {},
-        "daily_completion_tokens": {},
+        "daily_output_tokens": {},
         "daily_reasoning_tokens": {},
         "weekly_prompt_tokens": {},
-        "weekly_completion_tokens": {},
+        "weekly_output_tokens": {},
         "weekly_reasoning_tokens": {},
         "top_projects": [],
         "top_models": [],
@@ -96,14 +96,14 @@ class TestProjectSubcommand:
                         "gacs": 5,
                         "commits": 10,
                         "prompt_tokens": 3000,
-                        "completion_tokens": 1500,
+                        "output_tokens": 1500,
                         "reasoning_tokens": 500,
                     },
                     "other-proj": {
                         "gacs": 2,
                         "commits": 3,
                         "prompt_tokens": 1000,
-                        "completion_tokens": 500,
+                        "output_tokens": 500,
                         "reasoning_tokens": 0,
                     },
                 }
@@ -123,7 +123,7 @@ class TestProjectSubcommand:
                         "gacs": 1,
                         "commits": 1,
                         "prompt_tokens": 100,
-                        "completion_tokens": 50,
+                        "output_tokens": 50,
                         "reasoning_tokens": 0,
                     }
                 }
@@ -141,7 +141,7 @@ class TestProjectSubcommand:
                         "gacs": 3,
                         "commits": 5,
                         "prompt_tokens": 0,
-                        "completion_tokens": 0,
+                        "output_tokens": 0,
                         "reasoning_tokens": 0,
                     }
                 }
@@ -172,7 +172,7 @@ class TestTopModelsAndProjects:
                             "gacs": 10,
                             "commits": 20,
                             "prompt_tokens": 5000,
-                            "completion_tokens": 2000,
+                            "output_tokens": 2000,
                             "reasoning_tokens": 0,
                         },
                     )
@@ -184,7 +184,7 @@ class TestTopModelsAndProjects:
                         "gacs": 10,
                         "commits": 20,
                         "prompt_tokens": 5000,
-                        "completion_tokens": 2000,
+                        "output_tokens": 2000,
                         "reasoning_tokens": 0,
                     }
                 },
@@ -207,7 +207,7 @@ class TestTopModelsAndProjects:
                         {
                             "gacs": 5,
                             "prompt_tokens": 3000,
-                            "completion_tokens": 1000,
+                            "output_tokens": 1000,
                             "reasoning_tokens": 500,
                             "avg_tps": 42,
                         },
@@ -234,7 +234,7 @@ class TestTopModelsAndProjects:
                         {
                             "gacs": 2,
                             "prompt_tokens": 1000,
-                            "completion_tokens": 500,
+                            "output_tokens": 500,
                             "reasoning_tokens": 0,
                             "avg_tps": None,
                         },

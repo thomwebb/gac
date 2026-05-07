@@ -161,7 +161,7 @@ class TestCrofGLMReasoningTokenBug:
                 mock_response.raise_for_status = MagicMock()
                 mock_post.return_value = mock_response
 
-                content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens = call_crof_api(
+                content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = call_crof_api(
                     "glm-4.7-flash",
                     [{"role": "user", "content": "commit"}],
                     0.7,
@@ -172,5 +172,5 @@ class TestCrofGLMReasoningTokenBug:
                 assert prompt_tokens == 1714
                 # BUG WAS HERE: old code did max(81 - 559, 0) = 0
                 # Fixed: 81 < 559 → API already excluded reasoning → keep 81
-                assert completion_tokens == 81
+                assert output_tokens == 81
                 assert reasoning_tokens == 559

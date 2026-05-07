@@ -148,7 +148,7 @@ class TestMalformedStats:
 
     def test_migration_v1_to_v2_subtracts_reasoning_from_completion(self, tmp_path):
         """V1 stats (inclusive completion) are migrated to V2 (exclusive)."""
-        from gac.stats import _CURRENT_STATS_VERSION, _migrate_v1_to_v2
+        from gac.stats import _migrate_v1_to_v2
 
         v1_data = {
             "total_prompt_tokens": 1000,
@@ -198,14 +198,14 @@ class TestMalformedStats:
         assert migrated["biggest_gac_tokens"] == 0
         assert migrated["biggest_gac_date"] is None
         # version set
-        assert migrated["_version"] == _CURRENT_STATS_VERSION
+        assert migrated["_version"] == 2
 
     def test_migration_idempotent(self, tmp_path):
         """Running migration on already-v2 data is a no-op."""
-        from gac.stats import _CURRENT_STATS_VERSION, _migrate_v1_to_v2
+        from gac.stats import _migrate_v1_to_v2
 
         v2_data = {
-            "_version": _CURRENT_STATS_VERSION,
+            "_version": 2,
             "total_completion_tokens": 600,
             "total_reasoning_tokens": 200,
             "models": {
@@ -316,7 +316,7 @@ class TestMalformedStats:
             (
                 "deepseek:deepseek-r1",
                 {
-                    "timed_completion_tokens": 500,
+                    "timed_output_tokens": 500,
                     "timed_reasoning_tokens": 1500,
                     "total_duration_ms": 2000,
                     "duration_count": 1,
@@ -335,7 +335,7 @@ class TestMalformedStats:
             (
                 "openai:gpt-4",
                 {
-                    "timed_completion_tokens": 600,
+                    "timed_output_tokens": 600,
                     "total_duration_ms": 3000,
                     "duration_count": 2,
                 },
@@ -400,7 +400,7 @@ class TestRetryTokenInflation:
             stats = load_stats()
             # Daily/weekly/total stats include ALL tokens (both calls)
             assert stats["total_prompt_tokens"] == 200000  # Both calls
-            assert stats["total_completion_tokens"] == 1000
+            assert stats["total_output_tokens"] == 1000
             assert stats["total_reasoning_tokens"] == 400
 
     def test_multiple_retries_only_last_counts(self, tmp_path):
