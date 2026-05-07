@@ -10,7 +10,7 @@ import os
 from typing import Any
 
 from gac.errors import AIError
-from gac.providers.base import AnthropicCompatibleProvider, ParsedResponse, ProviderConfig, _normalize_completion_tokens
+from gac.providers.base import AnthropicCompatibleProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +116,7 @@ class CustomAnthropicProvider(AnthropicCompatibleProvider):
             return ParsedResponse(
                 content=content,
                 prompt_tokens=prompt_tokens,
-                completion_tokens=_normalize_completion_tokens(completion_tokens, reasoning_tokens),
+                output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
                 reasoning_tokens=reasoning_tokens,
             )
         except AIError:

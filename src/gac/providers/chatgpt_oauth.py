@@ -22,7 +22,7 @@ from gac.oauth.chatgpt import (
     load_stored_tokens,
     refresh_token_if_expired,
 )
-from gac.providers.base import BaseConfiguredProvider, ParsedResponse, ProviderConfig, _normalize_completion_tokens
+from gac.providers.base import BaseConfiguredProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
 from gac.utils import get_ssl_verify
 
 logger = logging.getLogger(__name__)
@@ -222,7 +222,7 @@ class ChatGPTOAuthProvider(BaseConfiguredProvider):
         return ParsedResponse(
             content=content,
             prompt_tokens=prompt_tokens,
-            completion_tokens=_normalize_completion_tokens(completion_tokens, reasoning_tokens),
+            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
             reasoning_tokens=reasoning_tokens,
         )
 
@@ -289,8 +289,6 @@ class ChatGPTOAuthProvider(BaseConfiguredProvider):
         from gac.ai_utils import count_tokens
 
         prompt_tokens = parsed.prompt_tokens if parsed.prompt_tokens >= 0 else count_tokens(messages, model)
-        completion_tokens = (
-            parsed.completion_tokens if parsed.completion_tokens >= 0 else count_tokens(parsed.content, model)
-        )
+        output_tokens = parsed.output_tokens if parsed.output_tokens >= 0 else count_tokens(parsed.content, model)
 
-        return (parsed.content, prompt_tokens, completion_tokens, duration_ms, parsed.reasoning_tokens)
+        return (parsed.content, prompt_tokens, output_tokens, duration_ms, parsed.reasoning_tokens)

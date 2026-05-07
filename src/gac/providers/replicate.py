@@ -135,8 +135,8 @@ class ReplicateProvider(GenericHTTPProvider):
                     if not content:
                         raise AIError.model_error("Replicate API returned empty content")
                     prompt_tokens = count_tokens(messages, model)
-                    completion_tokens = count_tokens(content, model)
-                    return (content, prompt_tokens, completion_tokens, duration_ms, 0)
+                    output_tokens = count_tokens(content, model)
+                    return (content, prompt_tokens, output_tokens, duration_ms, 0)
                 elif status_data["status"] == "failed":
                     raise AIError.model_error(
                         f"Replicate prediction failed: {status_data.get('error', 'Unknown error')}"

@@ -3,7 +3,7 @@
 import os
 from typing import Any
 
-from gac.providers.base import OpenAICompatibleProvider, ParsedResponse, ProviderConfig, _normalize_completion_tokens
+from gac.providers.base import OpenAICompatibleProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
 
 
 class OllamaProvider(OpenAICompatibleProvider):
@@ -59,7 +59,7 @@ class OllamaProvider(OpenAICompatibleProvider):
         from gac.postprocess import extract_think_tag_text
 
         prompt_tokens = response.get("prompt_eval_count", -1)
-        completion_tokens = response.get("eval_count", -1)
+        completion_tokens = response.get("eval_count", -1)  # API field (may include reasoning for thinking models)
         if not isinstance(prompt_tokens, int):
             prompt_tokens = -1
         if not isinstance(completion_tokens, int):
@@ -82,11 +82,11 @@ class OllamaProvider(OpenAICompatibleProvider):
         thinking_text = extract_think_tag_text(content)
         reasoning_tokens = normalize_reasoning_tokens(None, thinking_text)
 
-        completion_tokens = _normalize_completion_tokens(completion_tokens, reasoning_tokens)
+        output_tokens = _normalize_output_tokens(completion_tokens, reasoning_tokens)
 
         return ParsedResponse(
             content=content,
             prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens,
+            output_tokens=output_tokens,
             reasoning_tokens=reasoning_tokens,
         )

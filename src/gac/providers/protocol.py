@@ -27,7 +27,7 @@ class ProviderProtocol(Protocol):
             **kwargs: Additional provider-specific parameters
 
         Returns:
-            Tuple of (content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens)
+            Tuple of (content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens)
 
         Raises:
             AIError: For any generation-related errors

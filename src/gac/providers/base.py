@@ -20,48 +20,47 @@ from gac.utils import get_ssl_verify
 class ParsedResponse:
     """Structured result from parsing an API response.
 
-    ``completion_tokens`` excludes reasoning tokens. Provider APIs vary:
-    some (OpenAI/OpenRouter convention) return ``completion_tokens`` inclusive
-    of reasoning; others (e.g. Crof.ai GLM models) already exclude reasoning.
-    The
-    ``_normalize_completion_tokens`` helper detects the convention and
+    ``output_tokens`` excludes reasoning tokens. Provider APIs vary:
+    some (OpenAI/OpenRouter convention) return "completion/output" token
+    counts inclusive of reasoning; others already exclude reasoning.
+    The ``_normalize_output_tokens`` helper detects the convention and
     subtracts reasoning only when appropriate so downstream code always
     gets two distinct, non-overlapping numbers.
     """
 
     content: str
     prompt_tokens: int = -1
-    completion_tokens: int = -1  # output tokens only (excludes reasoning)
+    output_tokens: int = -1  # output text tokens only (excludes reasoning)
     reasoning_tokens: int = 0
 
 
 logger = logging.getLogger(__name__)
 
 
-def _normalize_completion_tokens(completion_tokens: int, reasoning_tokens: int) -> int:
-    """Subtract reasoning tokens from completion tokens when the API includes
-    reasoning in its ``completion_tokens`` count (OpenAI convention).
+def _normalize_output_tokens(output_tokens: int, reasoning_tokens: int) -> int:
+    """Subtract reasoning tokens from output tokens when the API includes
+    reasoning in its "output/completion" token count (OpenAI convention).
 
     Some providers (e.g. Crof.ai with GLM models) already report
-    ``completion_tokens`` *exclusive* of reasoning.  When
-    ``completion_tokens < reasoning_tokens``, subtraction would produce a
+    output tokens *exclusive* of reasoning. When ``output_tokens <
+    reasoning_tokens``, subtraction would produce a
     negative number, which is impossible if reasoning is a subset of
     completion — so we detect this case and skip subtraction to avoid a
     false-zero completion count.
 
-    Note: If a provider reports ``completion_tokens`` exclusive of reasoning
-    *and* ``completion_tokens >= reasoning_tokens``, this heuristic can't
+    Note: If a provider reports output tokens exclusive of reasoning
+    *and* ``output_tokens >= reasoning_tokens``, this heuristic can't
     disambiguate and will assume the OpenAI convention (subtract).
     """
-    if completion_tokens < 0:
-        return completion_tokens  # -1 means "unknown", pass through
+    if output_tokens < 0:
+        return output_tokens  # -1 means "unknown", pass through
     if reasoning_tokens <= 0:
-        return completion_tokens  # nothing to subtract
-    if completion_tokens >= reasoning_tokens:
-        # Standard (OpenAI) convention: completion_tokens includes reasoning
-        return completion_tokens - reasoning_tokens
-    # completion_tokens < reasoning_tokens → API already excluded reasoning
-    return completion_tokens
+        return output_tokens  # nothing to subtract
+    if output_tokens >= reasoning_tokens:
+        # Standard (OpenAI) convention: output/completion tokens include reasoning
+        return output_tokens - reasoning_tokens
+    # output_tokens < reasoning_tokens → API already excluded reasoning
+    return output_tokens
 
 
 @dataclass
@@ -159,7 +158,7 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
 
         Returns:
             ParsedResponse with content and optional token counts.
-            Set prompt_tokens/completion_tokens to -1 to request estimation.
+            Set prompt_tokens/output_tokens to -1 to request estimation.
         """
         pass
 
@@ -230,7 +229,7 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
             **kwargs: Additional provider-specific parameters
 
         Returns:
-            Tuple of (content, prompt_tokens, completion_tokens, duration_ms, reasoning_tokens)
+            Tuple of (content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens)
 
         Raises:
             AIError: For any API-related errors (via decorator)
@@ -250,11 +249,9 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
 
         parsed = self._parse_response(response_data)
         prompt_tokens = parsed.prompt_tokens if parsed.prompt_tokens >= 0 else count_tokens(messages, model)
-        completion_tokens = (
-            parsed.completion_tokens if parsed.completion_tokens >= 0 else count_tokens(parsed.content, model)
-        )
+        output_tokens = parsed.output_tokens if parsed.output_tokens >= 0 else count_tokens(parsed.content, model)
 
-        return (parsed.content, prompt_tokens, completion_tokens, duration_ms, parsed.reasoning_tokens)
+        return (parsed.content, prompt_tokens, output_tokens, duration_ms, parsed.reasoning_tokens)
 
 
 class OpenAICompatibleProvider(BaseConfiguredProvider):
@@ -296,7 +293,7 @@ class OpenAICompatibleProvider(BaseConfiguredProvider):
             raise AIError.model_error("Invalid response: empty content")
         usage = response.get("usage")
         prompt_tokens = -1
-        completion_tokens = -1
+        completion_tokens = -1  # API field (may include reasoning)
         reasoning_tokens: int | None = None  # None = not reported by API
         if isinstance(usage, dict):
             pt = usage.get("prompt_tokens", -1)
@@ -336,7 +333,7 @@ class OpenAICompatibleProvider(BaseConfiguredProvider):
             # downstream gets two distinct, non-overlapping numbers.
             # When the API already excludes reasoning (e.g. Crof.ai
             # GLM models), skip subtraction to avoid a false zero.
-            completion_tokens=_normalize_completion_tokens(completion_tokens, reasoning_tokens),
+            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
             reasoning_tokens=reasoning_tokens,
         )
 
@@ -410,7 +407,7 @@ class AnthropicCompatibleProvider(BaseConfiguredProvider):
             raise AIError.model_error("Invalid response: empty content")
         usage = response.get("usage")
         prompt_tokens = -1
-        completion_tokens = -1
+        completion_tokens = -1  # API field (output_tokens; may include reasoning)
         reasoning_tokens: int | None = None  # None = not reported by API
         if isinstance(usage, dict):
             pt = usage.get("input_tokens", -1)
@@ -430,7 +427,7 @@ class AnthropicCompatibleProvider(BaseConfiguredProvider):
             # Normalize: when the API includes reasoning in
             # output_tokens (Anthropic convention), subtract it.
             # When the API already excludes reasoning, skip subtraction.
-            completion_tokens=_normalize_completion_tokens(completion_tokens, reasoning_tokens),
+            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
             reasoning_tokens=reasoning_tokens,
         )
 
@@ -451,7 +448,7 @@ class GenericHTTPProvider(BaseConfiguredProvider):
 
         usage = response.get("usage")
         prompt_tokens: int = -1
-        completion_tokens: int = -1
+        completion_tokens: int = -1  # API field (may include reasoning)
         reasoning_tokens: int | None = None  # None = not reported by API
         if isinstance(usage, dict):
             pt = usage.get("prompt_tokens", usage.get("input_tokens", -1))
@@ -502,11 +499,11 @@ class GenericHTTPProvider(BaseConfiguredProvider):
             # Normalize: when the API includes reasoning in
             # completion_tokens, subtract it.  When the API already
             # excludes reasoning, skip subtraction.
-            norm_completion = _normalize_completion_tokens(completion_tokens, reasoning_tokens)
+            norm_output = _normalize_output_tokens(completion_tokens, reasoning_tokens)
             return ParsedResponse(
                 content=extracted_content,
                 prompt_tokens=prompt_tokens,
-                completion_tokens=norm_completion,
+                output_tokens=norm_output,
                 reasoning_tokens=reasoning_tokens,
             )
 
@@ -520,5 +517,5 @@ __all__ = [
     "OpenAICompatibleProvider",
     "ParsedResponse",
     "ProviderConfig",
-    "_normalize_completion_tokens",
+    "_normalize_output_tokens",
 ]

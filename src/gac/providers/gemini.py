@@ -92,7 +92,7 @@ class GeminiProvider(GenericHTTPProvider):
 
         usage_meta = response.get("usageMetadata")
         prompt_tokens = -1
-        completion_tokens = -1
+        output_tokens = -1
         reasoning_tokens: int | None = None  # None = not reported by API
         if isinstance(usage_meta, dict):
             pt = usage_meta.get("promptTokenCount", -1)
@@ -105,26 +105,26 @@ class GeminiProvider(GenericHTTPProvider):
             # Normalize: candidatesTokenCount includes thoughts; subtract
             # so completion = output tokens only (excludes reasoning).
             if reasoning_tokens is not None:
-                completion_tokens = max(raw_completion - reasoning_tokens, 0) if raw_completion >= 0 else raw_completion
+                output_tokens = max(raw_completion - reasoning_tokens, 0) if raw_completion >= 0 else raw_completion
             else:
-                completion_tokens = raw_completion
+                output_tokens = raw_completion
         else:
-            completion_tokens = -1
+            output_tokens = -1
 
         # Estimate reasoning tokens from <think> tags when the API
         # doesn't report them explicitly.
         thinking_text = extract_think_tag_text(content_text)
         reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, thinking_text)
 
-        # Recompute completion_tokens with the final reasoning_tokens value.
+        # Recompute output_tokens with the final reasoning_tokens value.
         if isinstance(usage_meta, dict):
             ct = usage_meta.get("candidatesTokenCount", -1)
             raw_completion = ct if isinstance(ct, int) else -1
-            completion_tokens = max(raw_completion - reasoning_tokens, 0) if raw_completion >= 0 else raw_completion
+            output_tokens = max(raw_completion - reasoning_tokens, 0) if raw_completion >= 0 else raw_completion
 
         return ParsedResponse(
             content=content_text,
             prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens,
+            output_tokens=output_tokens,
             reasoning_tokens=reasoning_tokens,
         )
