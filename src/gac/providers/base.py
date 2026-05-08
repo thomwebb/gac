@@ -2,6 +2,7 @@
 
 import logging
 import os
+import sys
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -247,6 +248,16 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
         response_data = self._make_http_request(url, body, headers)
         duration_ms = int((time.perf_counter() - start) * 1000)
 
+        # Dump full response for debugging when GAC_DUMP_RESPONSES is set
+        if os.environ.get("GAC_DUMP_RESPONSES"):
+            import json
+
+            print("\n" + "=" * 72, file=sys.stderr)
+            print(f"[GAC_DUMP] {self.config.name} / {model}", file=sys.stderr)
+            print("=" * 72, file=sys.stderr)
+            print(json.dumps(response_data, indent=2, ensure_ascii=False), file=sys.stderr)
+            print("=" * 72 + "\n", file=sys.stderr)
+
         parsed = self._parse_response(response_data)
         prompt_tokens = parsed.prompt_tokens if parsed.prompt_tokens >= 0 else count_tokens(messages, model)
         output_tokens = parsed.output_tokens if parsed.output_tokens >= 0 else count_tokens(parsed.content, model)
@@ -300,9 +311,13 @@ class OpenAICompatibleProvider(BaseConfiguredProvider):
             ct = usage.get("completion_tokens", -1)
             prompt_tokens = pt if isinstance(pt, int) else -1
             completion_tokens = ct if isinstance(ct, int) else -1
+            # Try OpenAI-style nested location first, then top-level fallback
             details = usage.get("completion_tokens_details")
             if isinstance(details, dict) and "reasoning_tokens" in details:
                 rt = details["reasoning_tokens"]
+                reasoning_tokens = rt if isinstance(rt, int) else None
+            elif "reasoning_tokens" in usage:
+                rt = usage["reasoning_tokens"]
                 reasoning_tokens = rt if isinstance(rt, int) else None
 
         # Collect reasoning text from inline <think> tags AND from separate
