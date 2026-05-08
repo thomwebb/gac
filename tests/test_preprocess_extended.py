@@ -310,18 +310,21 @@ class TestSmartTruncationEdgeCases:
 
     @patch("gac.preprocess.count_tokens")
     def test_smart_truncate_diff_high_token_limit(self, mock_count):
-        """Test truncation with very high token limit (special case)."""
+        """Test truncation with high token limit — all sections fit, count_tokens called."""
         sections = [
-            ("section1", 5.0),
-            ("section2", 3.0),
+            ("diff --git a/file1.py b/file1.py\n+code here", 5.0),
+            ("diff --git a/file2.py b/file2.py\n+code here", 3.0),
         ]
+        # Mock must return actual integers, not MagicMock
+        mock_count.return_value = 30  # Each section "costs" 30 tokens
 
         result = smart_truncate_diff(sections, token_limit=1000, model="test:model")
 
-        # Should include all sections when limit is high
-        assert "section1" in result
-        assert "section2" in result
-        mock_count.assert_not_called()  # Special case should skip counting
+        # Both sections fit (30 + 30 = 60 <= 1000)
+        assert "file1.py" in result
+        assert "file2.py" in result
+        # count_tokens should be called (no more sentinel bypass)
+        assert mock_count.called
 
     @patch("gac.preprocess.count_tokens")
     def test_smart_truncate_diff_empty_sections(self, mock_count):

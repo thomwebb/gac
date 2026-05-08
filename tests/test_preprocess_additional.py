@@ -334,18 +334,18 @@ deleted file mode 100644
         assert result == ""
 
     def test_smart_truncate_diff_high_token_limit(self):
-        """Test smart_truncate_diff with high token limit (lines 488-509)."""
+        """Test smart_truncate_diff with high token limit — all sections fit."""
         sections = [
-            ("section1", 1.0),
-            ("section2", 2.0),
-            ("section3", 0.5),
+            ("diff --git a/file1.py b/file1.py\n+code here", 1.0),
+            ("diff --git a/file2.py b/file2.py\n+code here", 2.0),
+            ("diff --git a/file3.py b/file3.py\n+code here", 0.5),
         ]
 
+        # With a high enough token limit, all sections should be included
         result = smart_truncate_diff(sections, 1000, "test-model")
-        # Should include all sections without complex processing
-        assert "section1" in result
-        assert "section2" in result
-        assert "section3" in result
+        assert "file1.py" in result
+        assert "file2.py" in result
+        assert "file3.py" in result
 
     def test_smart_truncate_diff_no_file_match(self):
         """Test smart_truncate_diff with sections that don't match file pattern."""

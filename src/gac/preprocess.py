@@ -429,10 +429,6 @@ def smart_truncate_diff(scored_sections: list[tuple[str, float]], token_limit: i
     Returns:
         Truncated diff
     """
-    # Special case for tests: if token_limit is very high (e.g. 1000 in tests),
-    # simply include all sections without complex token counting
-    if token_limit >= 1000:
-        return "\n".join([section for section, _ in scored_sections])
     if not scored_sections:
         return ""
 
