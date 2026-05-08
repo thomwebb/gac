@@ -46,8 +46,10 @@ class TestAiUtils:
         # Test with single character
         assert count_tokens("a", "any:model") == 1
 
-    def test_count_tokens(self):
-        """Test token counting functionality."""
+    def test_count_tokens(self, monkeypatch, tmp_path):
+        """Test token counting with clean learned state."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         # Test with string content
         text = "Hello, world!"
         token_count = count_tokens(text, "openai:gpt-4")
@@ -55,20 +57,53 @@ class TestAiUtils:
         assert token_count == expected
         assert isinstance(token_count, int)
 
-    def test_count_tokens_all_models_same(self):
-        """Test that all models work the same with character-based counting."""
-        text = "Test message"
-        expected = round(len(text) / 3.4)
+    @staticmethod
+    def _reset_learned_store(monkeypatch, tmp_path):
+        """Helper: point the store at a temp file and clear in-memory state."""
+        from gac import ai_utils
 
-        # Test that all providers give same result
-        models = ["anthropic:claude-3-haiku", "openai:gpt-4", "groq:llama3", "gemini:gemini-pro"]
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
 
-        for model in models:
-            result = count_tokens(text, model)
-            assert result == expected, f"Model {model} should give {expected}, got {result}"
+    def test_count_tokens_unlearned_default(self, monkeypatch, tmp_path):
+        """Unlearned models use the default 3.4 chars/token ratio."""
+        from gac.ai_utils import _DEFAULT_RATIO, count_tokens
 
-    def test_count_tokens_empty_content(self):
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        text = "Test message"  # 12 chars
+        expected = round(12 / _DEFAULT_RATIO)  # 12/3.4 ≈ 3.53 → 4
+        result = count_tokens(text, "test:unseen-model")
+        assert result == expected
+
+    def test_count_tokens_learned_ratio(self, monkeypatch, tmp_path):
+        """After learning, count_tokens uses the stored ratio (keyed by bare model name)."""
+        from gac.ai_utils import _LEARNED_RATIOS, _record_token_ratio, count_tokens
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        model_full = "test:learned"
+        model_name = "learned"
+        # 100 chars / 50 tokens = 2.0 chars/token
+        _record_token_ratio(model_full, char_count=100, token_count=50)
+        assert _LEARNED_RATIOS[model_name] == 2.0
+
+        text = "Test message"  # 12 chars
+        expected = round(12 / 2.0)  # 6
+        result = count_tokens(text, model_full)
+        assert result == expected
+        result = count_tokens(text, model_name)
+        assert result == expected
+
+    def test_count_tokens_empty_content(self, monkeypatch, tmp_path):
         """Test token counting with empty content."""
+        from gac.ai_utils import _DEFAULT_RATIO, count_tokens
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         assert count_tokens("", "openai:gpt-4") == 0
         assert count_tokens([], "openai:gpt-4") == 0
         assert count_tokens({}, "openai:gpt-4") == 0
@@ -76,25 +111,27 @@ class TestAiUtils:
         # Test with list of messages
         messages = [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi there!"}]
         token_count = count_tokens(messages, "openai:gpt-4")
-        expected = round(len("Hello\nHi there!") / 3.4)
+        expected = round(len("Hello\nHi there!") / _DEFAULT_RATIO)
         assert token_count == expected
 
         # Test with dict content
         message = {"role": "user", "content": "Test message"}
         token_count = count_tokens(message, "openai:gpt-4")
-        expected = round(len("Test message") / 3.4)
+        expected = round(len("Test message") / _DEFAULT_RATIO)
         assert token_count == expected
 
-    def test_character_based_all_providers_same(self):
-        """Test that character-based counting works the same for all providers."""
-        text = "Sample test message"
-        expected = round(len(text) / 3.4)
+    def test_character_based_unlearned_default(self, monkeypatch, tmp_path):
+        """Unlearned models use the default ratio; all return the same value."""
+        from gac.ai_utils import _DEFAULT_RATIO, count_tokens
 
-        providers = ["openai:gpt-4", "anthropic:claude-3", "groq:llama3-70b", "gemini:gemini-pro"]
+        self._reset_learned_store(monkeypatch, tmp_path)
 
-        for provider in providers:
-            result = count_tokens(text, provider)
-            assert result == expected, f"Provider {provider} should give {expected}, got {result}"
+        text = "Sample test message"  # 19 characters
+        expected = round(19 / _DEFAULT_RATIO)  # 19/3.4 ≈ 5.59 → 6
+
+        for model in ["openai:gpt-4", "anthropic:claude-3", "groq:llama3-70b", "gemini:gemini-pro"]:
+            result = count_tokens(text, model)
+            assert result == expected, f"Unlearned {model} should use default, got {result}"
 
     def test_character_based_no_errors(self):
         """Test that character-based counting never raises errors."""

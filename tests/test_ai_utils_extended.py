@@ -60,24 +60,91 @@ class TestExtractTextContentExtended:
 class TestCharacterBasedCountingExtended:
     """Test character-based counting function with various scenarios."""
 
-    def test_all_providers_same_result(self):
-        """Test that all providers provide the same result (no provider-specific logic)."""
-        text = "Sample test message"
-        expected = round(len(text) / 3.4)
 
-        providers = [
-            "openai:gpt-4",
-            "anthropic:claude-3",
-            "groq:llama3-70b",
-            "gemini:gemini-pro",
-            "ollama:llama2",
-            "custom-openai:local-model",
-            "lm-studio:local-model",
-        ]
+class TestLearnedTokenRatio:
+    """Tests for the learned token-ratio system."""
 
-        for provider in providers:
-            result = count_tokens(text, provider)
-            assert result == expected, f"Provider {provider} should give {expected}, got {result}"
+    @staticmethod
+    def _reset_learned_store(monkeypatch, tmp_path):
+        """Helper: point the store at a temp file and clear in-memory state."""
+        from gac import ai_utils
+
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        # Reset the lazy-load flag and clear in-memory cache.
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
+
+    def test_unlearned_model_uses_default(self, monkeypatch, tmp_path):
+        """Unlearned models fall back to _DEFAULT_RATIO (3.4)."""
+        from gac.ai_utils import _DEFAULT_RATIO, count_tokens
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        text = "Sample test message"  # 19 chars
+        expected = round(19 / _DEFAULT_RATIO)  # 19/3.4 ≈ 5.59 → 6
+        result = count_tokens(text, "test:unseen")
+        assert result == expected
+
+    def test_learned_ratio_is_used(self, monkeypatch, tmp_path):
+        """After recording, count_tokens uses the stored ratio (keyed by bare model name)."""
+        from gac.ai_utils import _LEARNED_RATIOS, _record_token_ratio, count_tokens
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        model_full = "test:learned-model"
+        model_name = "learned-model"
+        # Learn a ratio: 100 chars → 50 tokens = 2.0 chars/token
+        _record_token_ratio(model_full, char_count=100, token_count=50)
+        assert _LEARNED_RATIOS[model_name] == 2.0
+
+        text = "Hello world"  # 11 chars
+        expected = round(11 / 2.0)  # 5.5 → 6
+        result = count_tokens(text, model_full)
+        assert result == expected
+        # Also works with bare model name
+        result = count_tokens(text, model_name)
+        assert result == expected
+
+    def test_running_average_blending(self, monkeypatch, tmp_path):
+        """Multiple observations are blended as a running average (70/30)."""
+        from gac.ai_utils import _LEARNED_RATIOS, _record_token_ratio
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        model_full = "test:blended"
+        model_name = "blended"
+        # First observation: 100 chars / 50 tokens = 2.0
+        _record_token_ratio(model_full, char_count=100, token_count=50)
+        assert _LEARNED_RATIOS[model_name] == 2.0
+
+        # Second observation: 100 chars / 25 tokens = 4.0
+        # Running average: 0.7 * 2.0 + 0.3 * 4.0 = 1.4 + 1.2 = 2.6
+        _record_token_ratio(model_full, char_count=100, token_count=25)
+        assert _LEARNED_RATIOS[model_name] == 2.6
+
+    def test_zero_counts_are_ignored(self, monkeypatch, tmp_path):
+        """Zero or negative char/token counts don't corrupt the store."""
+        from gac.ai_utils import _LEARNED_RATIOS, _record_token_ratio
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        model_full = "test:zero"
+        model_name = "zero"
+        _record_token_ratio(model_full, char_count=0, token_count=50)
+        _record_token_ratio(model_full, char_count=100, token_count=0)
+        _record_token_ratio(model_full, char_count=-1, token_count=50)
+
+        # None of those should have stored anything.
+        assert model_name not in _LEARNED_RATIOS
+
+    def test_count_tokens_minimum_one(self):
+        """Non-empty content always returns at least 1 token."""
+        from gac.ai_utils import count_tokens
+
+        # 1 char / 3.4 = 0.29 → rounds to 0, but floor is 1
+        assert count_tokens("x", "any:model") == 1
 
     def test_various_text_lengths(self):
         """Test token counting with various text lengths."""

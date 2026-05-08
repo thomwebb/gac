@@ -5,8 +5,10 @@ This module provides utility functions that support the AI provider implementati
 
 import logging
 import os
+import threading
 import time
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, cast
 
 from rich.status import Status
@@ -42,29 +44,161 @@ def extract_text_content(content: str | list[dict[str, str]] | dict[str, Any]) -
     return ""
 
 
+# ---------------------------------------------------------------------------
+# Learned token-per-character ratios
+# ---------------------------------------------------------------------------
+# When the API reports real prompt_tokens we can compute the actual
+# chars-per-token ratio for that model and store it keyed by the bare
+# model name (the part after ``:``).  Future ``count_tokens`` calls use the
+# stored ratio for that model, falling back to a hardcoded default.
+#
+# The store is lazily loaded on first access so that tests can set
+# ``GAC_TOKEN_RATIOS_PATH`` (or monkeypatch ``_TOKEN_RATIOS_PATH``) before
+# the module reads the real home-directory file.
+
+_DEFAULT_RATIO = 3.4
+
+# In-memory cache — populated lazily by ``_ensure_ratios_loaded()``.
+_LEARNED_RATIOS: dict[str, float] = {}
+_ratios_loaded: bool = False
+_ratios_lock = threading.Lock()
+
+# Path to the learned-ratios store.  Overridable via the env var
+# ``GAC_TOKEN_RATIOS_PATH`` or, in tests, via ``monkeypatch``.
+_TOKEN_RATIOS_PATH: Path = Path(
+    os.path.expanduser(os.environ.get("GAC_TOKEN_RATIOS_PATH", str(Path.home() / ".gac/token_ratios.json")))
+)
+
+
+def _ensure_ratios_loaded() -> None:
+    """Populate ``_LEARNED_RATIOS`` from disk on first call (idempotent)."""
+    global _ratios_loaded
+    with _ratios_lock:
+        if _ratios_loaded:
+            return
+        _LEARNED_RATIOS.clear()
+        _LEARNED_RATIOS.update(_load_learned_ratios())
+        _ratios_loaded = True
+
+
+def _load_learned_ratios() -> dict[str, float]:
+    """Load learned token ratios from the on-disk JSON file.
+
+    Returns an empty dict when the file doesn't exist or is corrupt —
+    callers fall back to ``_DEFAULT_RATIO``.
+    """
+    import json
+
+    try:
+        if _TOKEN_RATIOS_PATH.is_file():
+            data = json.loads(_TOKEN_RATIOS_PATH.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                return {k: float(v) for k, v in data.items() if isinstance(v, (int, float)) and v > 0}
+    except (OSError, json.JSONDecodeError, ValueError):
+        pass
+    return {}
+
+
+def _save_learned_ratios(ratios: dict[str, float]) -> None:
+    """Persist learned token ratios to disk atomically (best-effort, never raises)."""
+    import json
+    import tempfile
+
+    try:
+        # Write to a temporary file in the same directory, then atomically replace.
+        # This avoids leaving a partial/corrupt file on crash or concurrent write.
+        parent = _TOKEN_RATIOS_PATH.parent
+        parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp_name = tempfile.mkstemp(dir=parent, suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as tmp:
+                json.dump(ratios, tmp, indent=2)
+            os.replace(tmp_name, str(_TOKEN_RATIOS_PATH))
+        except OSError:
+            # Clean up temp file if replace failed
+            try:
+                os.unlink(tmp_name)
+            except OSError:
+                pass
+            raise
+    except OSError:
+        pass  # Silently ignore write failures (permissions, disk full, etc.)
+
+
+def _record_token_ratio(model: str, char_count: int, token_count: int) -> None:
+    """Record an observed chars-per-token ratio for *model*.
+
+    Called after a successful API response where we know both the input
+    character count and the actual prompt token count.  Stores a running
+    average keyed by the bare model name (the part after ``:``) so that
+    the same model accessed through different providers shares the estimate.
+    """
+    if char_count <= 0 or token_count <= 0:
+        return
+
+    # Extract bare model name: "wafer:glm5.1" → "glm5.1", "gpt-4o" stays "gpt-4o"
+    model_name = model.split(":", 1)[1] if ":" in model else model
+
+    _ensure_ratios_loaded()
+
+    new_ratio = char_count / token_count
+    # Clamp to plausible bounds: no real tokenizer produces < 1 or > 10 chars/token.
+    new_ratio = max(1.0, min(10.0, new_ratio))
+
+    # Running average: weight the new observation at 30% so the estimate
+    # adapts to the real tokenizer without swinging on every call.
+    with _ratios_lock:
+        old = _LEARNED_RATIOS.get(model_name)
+        if old is not None:
+            blended = 0.7 * old + 0.3 * new_ratio
+        else:
+            blended = new_ratio
+        _LEARNED_RATIOS[model_name] = round(blended, 4)
+        _save_learned_ratios(_LEARNED_RATIOS)
+
+
+# ---- public API ----
+
+
 def count_tokens(content: str | list[dict[str, str]] | dict[str, Any], model: str) -> int:
-    """Count tokens in content using character-based estimation (1 token per 3.4 characters)."""
+    """Count tokens using a character-based heuristic.
+
+    If we have a *learned* chars-per-token ratio for *model* (exact match
+    first, then bare model-name fallback), use it.  Otherwise fall back to
+    ``_DEFAULT_RATIO`` (3.4).
+
+    Args:
+        content: The text or message list to count tokens for.
+        model: Model identifier string (e.g. "wafer:glm5.1", "anthropic:claude-sonnet",
+               or bare "glm5.1" — all resolve to the same key).
+
+    Returns:
+        Estimated token count (always >= 1 for non-empty input).
+    """
+    _ensure_ratios_loaded()
+
     text = extract_text_content(content)
     if not text:
         return 0
-    result = round(len(text) / 3.4)
+
+    # Look up by bare model name (strip provider prefix if present).
+    model_name = model.split(":", 1)[1] if ":" in model else model
+    ratio = _LEARNED_RATIOS.get(model_name, _DEFAULT_RATIO)
+
+    result = round(len(text) / ratio)
     return result if result > 0 else 1
 
 
 def estimate_reasoning_tokens(reasoning_text: str) -> int:
     """Estimate reasoning tokens from the reasoning/thinking content text.
 
-    Uses the same 3.4 chars/token ratio as ``count_tokens``, but explicitly
-    for reasoning content.  Returns 0 when the text is empty; callers can
-    use it as a fallback when explicit token counts are unavailable.
-
-    The estimate is approximate — real tokenisation depends on the model's
-    BPE vocabulary — but it's far more accurate than reporting 0 when the
-    model actually did significant reasoning work.
+    Uses ``_DEFAULT_RATIO`` (3.4 chars/token).  Returns 0 for empty text.
+    (No model-specific ratio yet — call sites don't pass a model identifier
+    through to reasoning estimation.)
     """
     if not reasoning_text or not reasoning_text.strip():
         return 0
-    result = round(len(reasoning_text) / 3.4)
+    result = round(len(reasoning_text) / _DEFAULT_RATIO)
     return result if result > 0 else 1
 
 
@@ -191,16 +325,17 @@ def generate_with_retries(
     else:
         message_type = task_description
 
-    # Calculate estimated token count for display
-    total_tokens = sum(count_tokens(msg.get("content", ""), model_name) for msg in messages)
-    # Format with comma separator for readability
-    formatted_tokens = f"{total_tokens:,}"
+    # Calculate estimated token count for display (input only)
+    total_input_tokens = sum(count_tokens(msg.get("content", ""), model) for msg in messages)
+    # Also compute exact char count so we can learn the real ratio later.
+    input_char_count = sum(len(msg.get("content", "")) for msg in messages)
+    formatted_input = f"{total_input_tokens:,}"
 
     if quiet:
         spinner = None
     else:
         spinner = Status(
-            f"Generating {message_type} with {formatted_tokens} est. tokens using {provider} {model_name}..."
+            f"Generating {message_type} with ~{formatted_input} input tokens using {provider} {model_name}..."
         )
         spinner.start()
 
@@ -221,6 +356,11 @@ def generate_with_retries(
 
             result = provider_func(model=model_name, messages=messages, temperature=temperature, max_tokens=max_tokens)
             content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
+
+            # Learn the real chars/token ratio for this model when the API
+            # reported a positive prompt token count.
+            if prompt_tokens > 0 and input_char_count > 0:
+                _record_token_ratio(model, input_char_count, prompt_tokens)
 
             if spinner:
                 if skip_success_message:

@@ -100,38 +100,58 @@ class TestAIUtilsMissingCoverage:
         result = extract_text_content(content)
         assert result == ""
 
-    def test_character_based_no_external_dependencies(self):
-        """Test that character-based counting has no external dependencies."""
-        text = "Simple test text"
-        expected = round(len(text) / 3.4)
+    def test_character_based_no_external_dependencies(self, monkeypatch, tmp_path):
+        """Test that count_tokens works without external dependencies."""
+        from gac import ai_utils
+        from gac.ai_utils import _DEFAULT_RATIO, count_tokens
 
-        # Should work regardless of environment
+        # Reset to clean state
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
+
+        text = "Simple test text"  # 16 characters
+        expected = round(16 / _DEFAULT_RATIO)  # 16/3.4 ≈ 4.71 → 5
+
+        # Unlearned model uses default
         result = count_tokens(text, "any:provider-model")
         assert result == expected
+        assert isinstance(result, int)
 
-        # Should work for any provider (no provider-specific logic)
-        providers = ["openai", "anthropic", "groq", "gemini", "ollama"]
-        for provider in providers:
-            result = count_tokens(text, f"{provider}:some-model")
-            assert result == expected
-            assert isinstance(result, int)  # Always returns an integer token count
+    def test_character_based_unlearned_all_default(self, monkeypatch, tmp_path):
+        """All unlearned models use the same default ratio."""
+        from gac import ai_utils
+        from gac.ai_utils import _DEFAULT_RATIO, count_tokens
 
-    def test_character_based_no_model_specific_logic(self):
-        """Test that character-based counting has no model-specific logic."""
-        # Since we removed get_encoding, we just test that all models work the same
-        text = "Test message"
-        expected = round(len(text) / 3.4)
+        # Reset to clean state
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
 
-        # All models should give the same result regardless of provider
-        models = ["openai:gpt-4", "anthropic:claude-3", "groq:llama3-70b", "gemini:gemini-pro", "ollama:llama2"]
+        text = "Test message"  # 12 characters
+        expected = round(12 / _DEFAULT_RATIO)  # 12/3.4 ≈ 3.53 → 4
 
-        for model in models:
+        for model in ["openai:gpt-4", "anthropic:claude-3", "groq:llama3-70b", "gemini:gemini-pro", "ollama:llama2"]:
             result = count_tokens(text, model)
-            assert result == expected, f"Model {model} should give {expected} tokens, got {result}"
+            assert result == expected, f"Unlearned {model} gave {result}, expected {expected}"
+            assert isinstance(result, int)
 
-    def test_character_based_token_counting_no_env_dependency(self):
-        """Test that character-based token counting doesn't depend on any environment variables."""
-        # Test that the function works the same regardless of environment variables
+    def test_character_based_token_counting_no_env_dependency(self, monkeypatch, tmp_path):
+        """Test that token counting doesn't depend on environment variables."""
+        from gac import ai_utils
+        from gac.ai_utils import count_tokens
+
+        # Reset to clean state
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
+
         text = "Hello world"
         expected = round(len(text) / 3.4)
 
@@ -139,7 +159,7 @@ class TestAIUtilsMissingCoverage:
         actual = count_tokens(text, "openai:gpt-4")
         assert actual == expected
 
-        # Test with various env vars that don't affect token counting anymore
+        # Test with various env vars that don't affect token counting
         with mock.patch.dict(os.environ, {"SOME_OTHER_VAR": "true"}):
             actual = count_tokens(text, "openai:gpt-4")
             assert actual == expected
@@ -384,8 +404,18 @@ class TestAIUtilsMissingCoverage:
             )
         assert "Failed to generate commit message after 2 retries" in str(exc_info.value)
 
-    def test_character_based_no_fallback_needed(self):
-        """Test that character-based counting never needs fallback."""
+    def test_character_based_no_fallback_needed(self, monkeypatch, tmp_path):
+        """Test that count_tokens uses the default ratio for unlearned models."""
+        from gac import ai_utils
+        from gac.ai_utils import count_tokens
+
+        # Reset to clean state
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
+
         text = "Hello world"
         expected = round(len(text) / 3.4)
 

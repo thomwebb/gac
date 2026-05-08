@@ -19,8 +19,19 @@ from gac.errors import AIError  # noqa: E402
 class TestCountTokens:
     """Test count_tokens function."""
 
-    def test_count_tokens(self):
-        """Test character-based token counting functionality."""
+    @staticmethod
+    def _reset_learned_store(monkeypatch, tmp_path):
+        """Helper: isolate the learned-ratios store to a temp file."""
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        monkeypatch.setattr(ai_utils, "_save_learned_ratios", lambda ratios: None, raising=True)
+
+    def test_count_tokens(self, monkeypatch, tmp_path):
+        """Test character-based token counting with clean learned state."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         # Test with string content - "Hello, world!" = 13 chars
         # 13 / 3.4 = 3.82, rounded = 4 tokens
         text = "Hello, world!"
@@ -44,19 +55,22 @@ class TestCountTokens:
         assert ai_utils.count_tokens("", "openai:gpt-4") == 0
         assert ai_utils.count_tokens("   ", "openai:gpt-4") == 1  # 3 spaces = 3/3.4 = 0.88, rounded = 1
 
-    def test_count_tokens_empty_content(self):
+    def test_count_tokens_empty_content(self, monkeypatch, tmp_path):
         """Test token counting with empty content."""
+        self._reset_learned_store(monkeypatch, tmp_path)
         assert ai_utils.count_tokens("", "openai:gpt-4") == 0
         assert ai_utils.count_tokens([], "openai:gpt-4") == 0
         assert ai_utils.count_tokens({}, "openai:gpt-4") == 0
 
-    def test_all_providers_use_same_character_based_counting(self):
-        """Test that all providers use the same character-based counting."""
+    def test_all_providers_use_same_character_based_counting(self, monkeypatch, tmp_path):
+        """Test that all unlearned providers use the same default ratio."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         text = "Hello, world!"  # 13 chars
         # 13 / 3.4 = 3.82, rounded = 4 tokens
         expected_tokens = round(len(text) / 3.4)
 
-        # Test various providers - all should give the same result
+        # Test various providers - all should give the same result (unlearned)
         providers_and_models = [
             "openai:gpt-4",
             "anthropic:claude-3",
@@ -74,8 +88,10 @@ class TestCountTokens:
                 f"Provider {model} should give {expected_tokens} tokens, got {token_count}"
             )
 
-    def test_character_based_calculation_examples(self):
+    def test_character_based_calculation_examples(self, monkeypatch, tmp_path):
         """Test specific examples of character-based token calculation."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         test_cases = [
             ("Hello", 1),  # 5 chars / 3.4 = 1.47 -> 1 token
             ("Hello world", 3),  # 11 chars / 3.4 = 3.24 -> 3 tokens
@@ -90,8 +106,10 @@ class TestCountTokens:
                 f"Text '{text}' should give {expected_tokens} tokens, got {token_count}"
             )
 
-    def test_character_based_calculation_edge_cases(self):
+    def test_character_based_calculation_edge_cases(self, monkeypatch, tmp_path):
         """Test edge cases for character-based token calculation."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         # Test very short text
         assert ai_utils.count_tokens("a", "openai:gpt-4") == 1  # 1 char, forced to 1 token
 
@@ -107,8 +125,10 @@ class TestCountTokens:
         actual = ai_utils.count_tokens(text_with_spaces, "openai:gpt-4")
         assert actual == expected, f"Expected {expected}, got {actual}"
 
-    def test_character_based_calculation_accuracy(self):
+    def test_character_based_calculation_accuracy(self, monkeypatch, tmp_path):
         """Test that character-based calculation gives reasonable results."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
         # Test that our calculation gives consistent results
         text = "The quick brown fox jumps over the lazy dog"
         token_count = ai_utils.count_tokens(text, "any:model")
