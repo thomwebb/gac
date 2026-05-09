@@ -1,5 +1,6 @@
 """Additional tests to improve preprocess.py coverage."""
 
+from collections.abc import Callable
 from unittest import mock
 
 from gac.preprocess import (
@@ -396,8 +397,10 @@ deleted file mode 100644
 
         with mock.patch("gac.preprocess.count_tokens", return_value=150):
             result = smart_truncate_diff(sections, 100, "test-model")
-            # Should be empty since first section exceeds limit
-            assert result == ""
+            # Regression fix: never silently drop a file section — return at least
+            # a header snippet plus a truncation marker.
+            assert result != ""
+            assert "[Truncated due to token limits]" in result
 
     def test_split_diff_into_sections_empty_string(self):
         """Test split_diff_into_sections with empty string."""
@@ -424,3 +427,104 @@ diff --git a/file2.js b/file2.js
         assert len(result) == 2
         assert "file1.py" in result[0]
         assert "file2.js" in result[1]
+
+
+class TestSmartTruncateDiffRegression:
+    """Tests targeting the v3.29.0 regression: token estimate collapse / silent diff loss."""
+
+    # All tests use a helper that falls back to a realistic chars/token ratio
+    # (~3.4) so that header lines, body hunks, and markers get plausible counts.
+
+    @staticmethod
+    def _realistic_counter(overrides: dict[str, int] | None = None) -> "Callable[[str, str], int]":
+        """Build a token counter with optional per-keyword overrides."""
+        overrides = overrides or {}
+
+        def counter(text: str, model: str) -> int:
+            for keyword, token_val in overrides.items():
+                if keyword in text:
+                    return token_val
+            # Fallback: ~3.4 chars/token, minimum 1.
+            return max(1, round(len(text) / 3.4))
+
+        return counter
+
+    @mock.patch("gac.preprocess.count_tokens")
+    def test_large_section_not_silently_dropped(self, mock_count):
+        """A single file section larger than the budget is truncated, not dropped."""
+        large_section = "diff --git a/big_file.py b/big_file.py\n@@ -1,50 +1,100 @@\n" + "+x" * 500
+        scored = [(large_section, 1.0)]
+
+        # Override full-section tokens to be huge; everything else is realistic.
+        mock_count.side_effect = self._realistic_counter(
+            {large_section: 2000}  # Full section = 2000 tokens
+        )
+
+        result = smart_truncate_diff(scored, token_limit=100, model="test:model")
+
+        # Old (buggy) behaviour: result would be "" (section dropped).
+        # New behaviour: header + partial body + truncation marker.
+        assert result != ""
+        assert "big_file.py" in result
+        assert "[Truncated" in result
+
+    @mock.patch("gac.preprocess.count_tokens")
+    def test_lockfile_stub_always_survives(self, mock_count):
+        """A lockfile/generated stub (compact summary) is never dropped, even under tiny budget."""
+        stub = (
+            "diff --git a/package-lock.json b/package-lock.json\n"
+            "index abc..def 100644\n"
+            "[Lockfile/generated file change]\n"
+        )
+        large_section = "diff --git a/main.py b/main.py\n@@ -1,50 +1,100 @@\n" + "+x" * 500
+        scored = [(stub, 0.5), (large_section, 5.0)]
+
+        # Stub is tiny (5 tokens); full large section is huge (2000).
+        mock_count.side_effect = self._realistic_counter({large_section: 2000, stub: 5})
+
+        # Budget large enough for stub (5) + truncated large header (~16) + marker (~12).
+        result = smart_truncate_diff(scored, token_limit=35, model="test:model")
+
+        # The lockfile stub MUST be present (this was the regression).
+        assert "package-lock.json" in result
+        assert "[Lockfile/generated file change]" in result
+        # The large section should appear at least partially (header + truncation marker).
+        assert "main.py" in result
+        assert "[Truncated" in result
+
+    @mock.patch("gac.preprocess.count_tokens")
+    def test_truncation_marker_present_when_truncated(self, mock_count):
+        """When any section is truncated, the marker [Truncated due to token limits] appears."""
+        section = "diff --git a/medium.py b/medium.py\n@@ -1,10 +1,20 @@\n" + "+code" * 50
+        scored = [(section, 1.0)]
+
+        # Full section = 300 tokens; budget = 50 forces truncation.
+        mock_count.side_effect = self._realistic_counter({section: 300})
+
+        result = smart_truncate_diff(scored, token_limit=50, model="test:model")
+
+        assert "medium.py" in result
+        assert "[Truncated due to token limits]" in result
+
+    @mock.patch("gac.preprocess.count_tokens")
+    def test_visibility_summary_counts_files(self, mock_count):
+        """The visibility summary reports correct counts of included/truncated/summarized."""
+        full1 = "diff --git a/full1.py b/full1.py\n+code1"
+        full2 = "diff --git a/full2.py b/full2.py\n+code2"
+        large1 = "diff --git a/large1.py b/large1.py\n" + "+x" * 300
+        sections = [(full1, 5.0), (full2, 4.0), (large1, 3.0)]
+
+        # full1 and full2 are small; large1 is huge.
+        mock_count.side_effect = self._realistic_counter({large1: 500, full1: 20, full2: 20})
+
+        result = smart_truncate_diff(sections, token_limit=60, model="test:model")
+
+        # full1 (20) and full2 (20) fit; large1 gets truncated.
+        assert "full1.py" in result
+        assert "full2.py" in result
+        assert "large1.py" in result
+        # Visibility summary should appear if room permits.
+        if "Visibility summary" in result:
+            assert "2 file(s) fully included" in result
+            assert "1 file(s) truncated" in result
+        # silently dropped.

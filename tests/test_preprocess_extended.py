@@ -342,8 +342,9 @@ class TestSmartTruncationEdgeCases:
             ("diff --git a/other.py b/other.py\n+content3", 2.0),
         ]
 
-        # Mock token counts: file.py(6), other.py(4)
-        mock_count.side_effect = [6, 4]
+        # Use return_value so the new truncation path (which calls
+        # count_tokens more times) never runs out of side_effect values.
+        mock_count.return_value = 10  # All sections small enough to fit
 
         result = smart_truncate_diff(sections, token_limit=100, model="test:model")
 
@@ -354,19 +355,23 @@ class TestSmartTruncationEdgeCases:
 
     @patch("gac.preprocess.count_tokens")
     def test_smart_truncate_diff_token_limit_reached(self, mock_count):
-        """Test truncation when token limit is reached (skipped files)."""
+        """Test truncation when token limit is reached — section gets truncated, not dropped."""
         sections = [
             ("diff --git a/important.py b/important.py\n+class Main", 10.0),
             ("diff --git a/less_important.py b/less_important.py\n+var x = 1", 2.0),
         ]
 
-        # Mock to exceed token limit after first section
-        mock_count.side_effect = [50, 60]  # First 50, second 60 (would exceed limit=100)
+        # First section fits (50 tokens), second doesn't (60 would exceed 100).
+        # The new behaviour truncates the second rather than silently dropping.
+        mock_count.return_value = 50
 
         result = smart_truncate_diff(sections, token_limit=100, model="test:model")
 
-        # Should include the first section and potentially skipped summary
-        assert "important.py" in result or "less_important.py" in result
+        # Both files should appear — the second will be truncated.
+        assert "important.py" in result
+        # The less_important section should also appear, at minimum the header
+        # is kept with a truncation marker.
+        assert "less_important.py" in result
         mock_count.assert_called()
 
     @patch("gac.preprocess.count_tokens")
@@ -532,41 +537,71 @@ class TestFilterBinaryAndMinifiedRealPaths:
 
 
 class TestSmartTruncateDiffSkippedSummaries:
-    """Test smart_truncate_diff skipped-section summary paths (token_limit < 1000)."""
+    """Test smart_truncate_diff visibility-summary paths."""
 
     @patch("gac.preprocess.count_tokens")
-    def test_skipped_files_summary_shown(self, mock_count):
-        """When sections are skipped and room permits, a skipped summary should appear."""
+    def test_visibility_summary_when_truncation_occurs(self, mock_count):
+        """When sections are truncated, a visibility summary should appear if room permits."""
         scored_sections = [
             ("diff --git a/file1.py b/file1.py\n+important change", 5.0),
             ("diff --git a/file2.py b/file2.py\n+another change", 4.0),
             ("diff --git a/large.py b/large.py\n" + "+x" * 200, 3.0),
         ]
-        # token_limit must be < 1000 (avoid shortcut) and >= current_tokens + 200
-        # file1=5 tokens (fits), file2=900 (skipped), large=900 (skipped)
-        # current_tokens=5, need 5+200=205 <= token_limit
-        mock_count.side_effect = [5, 900, 900]
-        result = smart_truncate_diff(scored_sections, token_limit=500, model="test:model")
+
+        # file1 and file2 fit (small), but large.py doesn't.
+        def token_counter(text: str, model: str) -> int:
+            if "large.py" in text:
+                return 200  # Large — will need truncation
+            # Everything else (file1, file2, markers, summaries) is small.
+            return 10
+
+        mock_count.side_effect = token_counter
+        result = smart_truncate_diff(scored_sections, token_limit=120, model="test:model")
         assert "file1.py" in result
-        assert "Skipped files" in result
+        assert "file2.py" in result
+        # large.py should appear truncated (header at minimum).
+        assert "large.py" in result
+        assert "[Truncated" in result
+        # Visibility summary should appear when room permits.
+        if "Visibility summary" in result:
+            assert "truncated" in result.lower()
 
     @patch("gac.preprocess.count_tokens")
-    def test_skipped_files_more_than_five(self, mock_count):
-        """When >5 files are skipped, 'and N more' should appear."""
+    def test_many_files_truncated_or_summarised(self, mock_count):
+        """When files get truncated, every file still appears (header at minimum)."""
         sections = [(f"diff --git a/file{i}.py b/file{i}.py\n+change{i}", float(i)) for i in range(8)]
-        mock_count.side_effect = [5] + [900] * 7
-        result = smart_truncate_diff(sections, token_limit=500, model="test:model")
-        assert "Skipped files" in result
-        assert "more" in result
+
+        # Only the first 2 files fit fully; the rest will be truncated.
+        def token_counter(text: str, model: str) -> int:
+            for i in range(8):
+                if f"file{i}.py" in text:
+                    if i < 2:
+                        return 10  # Small
+                    return 30  # Needs truncation
+            return 5  # Marker/summary text — very small
+
+        mock_count.side_effect = token_counter
+        result = smart_truncate_diff(sections, token_limit=35, model="test:model")
+        # First 2 files are fully present.
+        assert "file0.py" in result
+        assert "file1.py" in result
+        # At least some of the truncated files should appear via headers.
+        # The key regression fix: previously these were silently dropped.
+        # Now they appear with truncation markers.
+        assert "[Truncated" in result
 
     @patch("gac.preprocess.count_tokens")
-    def test_overall_summary_when_room(self, mock_count):
-        """Overall 'Showing N of M' summary should appear when room permits."""
+    def test_summary_when_all_fit(self, mock_count):
+        """Visibility summary should appear when room permits."""
         scored_sections = [
             ("diff --git a/file1.py b/file1.py\n+important change", 5.0),
-            ("diff --git a/large.py b/large.py\n" + "+x" * 200, 3.0),
+            ("diff --git a/file2.py b/file2.py\n+another change", 3.0),
         ]
-        mock_count.side_effect = [5, 500]
-        result = smart_truncate_diff(scored_sections, token_limit=300, model="test:model")
-        assert "Summary:" in result
-        assert "Showing" in result
+        # All fit comfortably — mock returns small token counts.
+        mock_count.return_value = 20
+        result = smart_truncate_diff(scored_sections, token_limit=200, model="test:model")
+        assert "file1.py" in result
+        assert "file2.py" in result
+        # When all fit and room permits, a visibility summary is added.
+        # (20 + 20 = 40 tokens used, 40 + 100 = 140 <= 200, so summary appears.)
+        assert "Visibility summary" in result

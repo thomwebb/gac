@@ -224,10 +224,10 @@ index 2345678..bcdef01 234567
         # Set a small token limit to only include first section
         result = smart_truncate_diff(scored_sections, 7, "test:model")
 
-        # Should include the first section and a summary
+        # Should include the first section; sections that don't fit are truncated
+        # rather than silently dropped.
         assert "main.py" in result
-        assert "utils.py" not in result
-        assert "README.md" not in result
+        assert "[Truncated due to token limits]" in result
 
         # Test 2: High token limit - include all sections
         # Reset the mock with the same side_effect
@@ -266,10 +266,21 @@ index 1234567..abcdef0 123456
     @patch("gac.preprocess.count_tokens")
     def test_preprocess_diff_large(self, mock_count_tokens):
         """Test preprocessing of large diffs that need truncation."""
-        # Mock token counting to simulate a large diff
-        # First return value is for the initial token count check
-        # Force it to be large to trigger the full processing path
-        mock_count_tokens.return_value = 8000  # Just use return_value for simplicity
+        # First call (initial check) must return > token_limit * 0.8 to
+        # trigger the full processing path.  Subsequent calls within
+        # smart_truncate_diff need realistic per-section values so that
+        # the sections actually fit and aren't all truncated.
+        call_count = [0]
+
+        def realistic_count(text: str, model: str) -> int:
+            call_count[0] += 1
+            # First call: initial diff size check — make it appear large
+            if call_count[0] == 1:
+                return 8000
+            # Subsequent calls: realistic per-section counts (~3.4 chars/token)
+            return max(1, round(len(text) / 3.4))
+
+        mock_count_tokens.side_effect = realistic_count
 
         diff = """diff --git a/main.py b/main.py
 +class Main:
