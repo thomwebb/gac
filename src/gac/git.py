@@ -279,6 +279,33 @@ def get_staged_status() -> str:
     return "\n".join(status_lines)
 
 
+def get_staged_diffs_per_file() -> list[tuple[str, str]]:
+    """Get the staged diff for each individual staged file.
+
+    Returns a list of (filename, diff_content) tuples, one per staged file.
+    Files with empty diffs (e.g. binary files that produce no textual diff)
+    are excluded.  The per-file diffs are guaranteed to contain exactly one
+    ``diff --git`` header each, so downstream splitting on the regex
+    ``(?=diff --git )`` is no longer needed — each tuple is already one
+    logical section.
+
+    Returns an empty list when no files are staged.
+
+    Raises:
+        GitError: If listing staged files fails.
+    """
+    files = get_staged_files()
+    if not files:
+        return []
+
+    per_file: list[tuple[str, str]] = []
+    for file in files:
+        result = run_git_command(["diff", "--staged", "--", file])
+        if result.success and result.output.strip():
+            per_file.append((file, result.output))
+    return per_file
+
+
 def get_diff(staged: bool = True, color: bool = True, commit1: str | None = None, commit2: str | None = None) -> str:
     """Get the diff between commits or working tree.
 
