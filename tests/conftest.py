@@ -210,6 +210,53 @@ def isolate_stats_file():
 
 
 @pytest.fixture(autouse=True, scope="session")
+def isolate_token_ratios_store():
+    """Redirect the learned token-ratios store so tests never touch ~/.gac/token_ratios.json.
+
+    The production path is derived from the home directory, so we patch the canonical
+    ``gac.ai_utils._TOKEN_RATIOS_PATH`` symbol to a temp file for the entire test session.
+    """
+    import tempfile
+    from pathlib import Path
+
+    import gac.ai_utils as _ai_utils
+
+    temp_dir = Path(tempfile.mkdtemp(prefix="gac_test_token_ratios_"))
+    temp_store = temp_dir / "token_ratios.json"
+
+    original_path = _ai_utils._TOKEN_RATIOS_PATH
+    original_loaded = _ai_utils._ratios_loaded
+    original_ratios = dict(_ai_utils._LEARNED_RATIOS)
+
+    _ai_utils._TOKEN_RATIOS_PATH = temp_store
+    _ai_utils._ratios_loaded = False
+    _ai_utils._LEARNED_RATIOS.clear()
+
+    yield temp_store
+
+    _ai_utils._TOKEN_RATIOS_PATH = original_path
+    _ai_utils._ratios_loaded = original_loaded
+    _ai_utils._LEARNED_RATIOS.clear()
+    _ai_utils._LEARNED_RATIOS.update(original_ratios)
+
+    import shutil
+
+    shutil.rmtree(temp_dir, ignore_errors=True)
+
+
+@pytest.fixture(autouse=True)
+def reset_token_ratios_cache():
+    """Reset ai_utils learned-ratio cache between tests to avoid cross-test contamination."""
+    import gac.ai_utils as _ai_utils
+
+    _ai_utils._ratios_loaded = False
+    _ai_utils._LEARNED_RATIOS.clear()
+    yield
+    _ai_utils._ratios_loaded = False
+    _ai_utils._LEARNED_RATIOS.clear()
+
+
+@pytest.fixture(autouse=True, scope="session")
 def silence_httpx_and_groq_loggers():
     """Silence httpx and groq loggers to suppress noisy shutdown errors."""
     for name in ("httpx", "httpcore", "groq"):
