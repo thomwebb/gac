@@ -42,38 +42,37 @@ class ClaudeCodeProvider(AnthropicCompatibleProvider):
         return headers
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build Anthropic-style request with fixed system message.
 
         IMPORTANT: Claude Code OAuth tokens require the system message to be EXACTLY
         "You are Claude Code, Anthropic's official CLI for Claude." with NO additional content.
         Any other instructions must be moved to the first user message.
+
+        Delegates to the parent class for standard Anthropic formatting, then overrides
+        just the system message. reasoning_effort is accepted for signature consistency
+        but not applied.
         """
-        # Extract and process messages
-        anthropic_messages = []
-        system_instructions = ""
+        # Let parent handle message conversion (reasoning_effort passed through but
+        # not applied by AnthropicCompatibleProvider)
+        body = super()._build_request_body(
+            messages, temperature, max_tokens, model, reasoning_effort=reasoning_effort, **kwargs
+        )
 
-        for msg in messages:
-            if msg["role"] == "system":
-                system_instructions = msg["content"]
-            else:
-                anthropic_messages.append({"role": msg["role"], "content": msg["content"]})
+        # Remove user-supplied system instructions (parent put them in body["system"])
+        # and move them to the first user message content.
+        user_system = body.pop("system", "")
+        if user_system and body["messages"]:
+            body["messages"][0]["content"] = f"{user_system}\n\n{body['messages'][0]['content']}"
 
-        # Move any system instructions into the first user message
-        if system_instructions and anthropic_messages:
-            first_user_msg = anthropic_messages[0]
-            first_user_msg["content"] = f"{system_instructions}\n\n{first_user_msg['content']}"
-
-        # Claude Code requires this exact system message
-        system_message = "You are Claude Code, Anthropic's official CLI for Claude."
-
-        body = {
-            "messages": anthropic_messages,
-            "temperature": temperature,
-            "max_tokens": max_tokens,
-            "system": system_message,
-            **kwargs,
-        }
+        # Set the exact system message required by Claude Code OAuth
+        body["system"] = "You are Claude Code, Anthropic's official CLI for Claude."
 
         return body

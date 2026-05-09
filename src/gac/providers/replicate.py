@@ -34,7 +34,13 @@ class ReplicateProvider(GenericHTTPProvider):
         return headers
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build Replicate prediction payload with message-to-prompt conversion."""
         # Convert messages to a single prompt for Replicate
@@ -76,6 +82,7 @@ class ReplicateProvider(GenericHTTPProvider):
         messages: list[dict[str, Any]],
         temperature: float = 0.7,
         max_tokens: int = 1024,
+        reasoning_effort: str | None = None,
         **kwargs: Any,
     ) -> tuple[str, int, int, int, int]:
         """Override generate to handle Replicate's async polling mechanism."""

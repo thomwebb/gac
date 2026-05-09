@@ -221,6 +221,27 @@ class TestClaudeCodeEdgeCases:
                 with pytest.raises(AIError):
                     call_claude_code_api("claude-haiku-4-5", [], 0.7, 1000)
 
+    def test_claude_code_reasoning_effort_not_in_body(self):
+        """Test that reasoning_effort does NOT add thinking to Claude Code request body."""
+        from gac.providers.claude_code import ClaudeCodeProvider
+
+        provider = ClaudeCodeProvider(ClaudeCodeProvider.config)
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "test"},
+        ]
+
+        body = provider._build_request_body(
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1000,
+            model="claude-sonnet-4-6",
+            reasoning_effort="high",
+        )
+        assert "thinking" not in body
+        assert body["system"] == "You are Claude Code, Anthropic's official CLI for Claude."
+        assert body["temperature"] == 0.7  # NOT overridden to 1.0
+
 
 @pytest.mark.integration
 class TestClaudeCodeIntegration:

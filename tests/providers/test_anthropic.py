@@ -181,6 +181,39 @@ class TestAnthropicEdgeCases:
                 assert len(payload["messages"]) == 1
                 assert result[0] == "test response"
 
+    def test_anthropic_reasoning_effort_not_in_body(self):
+        """Test that reasoning_effort is NOT added to Anthropic request body."""
+        from gac.providers.anthropic import AnthropicProvider
+
+        provider = AnthropicProvider(AnthropicProvider.config)
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "test"},
+        ]
+
+        # With reasoning_effort="high" — should NOT appear in body
+        body = provider._build_request_body(
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1000,
+            model="claude-sonnet-4-6",
+            reasoning_effort="high",
+        )
+        assert "thinking" not in body
+        assert "reasoning_effort" not in body
+        assert body["temperature"] == 0.7  # NOT overridden to 1.0
+        assert body["system"] == "You are a helpful assistant."
+
+        # Without reasoning_effort (None) — also no thinking
+        body = provider._build_request_body(
+            messages=messages,
+            temperature=0.7,
+            max_tokens=1000,
+            model="claude-sonnet-4-6",
+        )
+        assert "thinking" not in body
+        assert "reasoning_effort" not in body
+
 
 @pytest.mark.integration
 class TestAnthropicIntegration:
