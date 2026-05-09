@@ -383,6 +383,7 @@ You can customize gac's behavior with these optional environment variables:
 - `GAC_USE_50_72_RULE=true` - Always enforce the 50/72 rule for commit messages (subject ≤50 chars, body lines ≤72 chars)
 - `GAC_SIGNOFF=true` - Always add Signed-off-by line to commits (for DCO compliance)
 - `GAC_TEMPERATURE=0.7` - Control LLM creativity (0.0-1.0, lower = more focused)
+- `GAC_REASONING_EFFORT=medium` - Control reasoning/thinking depth for models that support extended thinking (low, medium, high). Leave unset to use each model's default. Only sent to compatible providers (OpenAI-style; not Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maximum tokens for generated messages (automatically scaled 2-5x when using `--group` based on file count; override to go higher or lower)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Warn when prompts exceed this token count
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Use a custom system prompt for commit message generation

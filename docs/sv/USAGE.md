@@ -336,6 +336,7 @@ Du kan anpassa gacs beteende med dessa valfria miljövariabler:
 - `GAC_USE_50_72_RULE=true` - Tillämpa alltid 50/72-regeln för commit-meddelanden (ämne ≤50 tecken, brödtextlinjer ≤72 tecken)
 - `GAC_SIGNOFF=true` - Lägg alltid till Signed-off-by-rad i commits (för DCO-efterlevnad)
 - `GAC_TEMPERATURE=0.7` - Kontrollera LLM:s kreativitet (0.0-1.0, lägre = mer fokuserad)
+- `GAC_REASONING_EFFORT=medium` - Kontrollera resonemangs-/tankedjup för modeller som stöder utökat tänkande (low, medium, high). Lämna oinställt för att använda varje modells standard. Skickas endast till kompatibla leverantörer (OpenAI-stil; inte Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maximalt antal tokens för genererade meddelanden (automatiskt skalat 2-5x vid användning av `--group` baserat på filantal; åsidosätt för att gå högre eller lägre)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Varna när prompter överskrider denna tokenräkning
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Använd en anpassad systemprompt för commit-meddelande generation

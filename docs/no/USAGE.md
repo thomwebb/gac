@@ -336,6 +336,7 @@ Du kan tilpasse gac sitt oppførsel med disse valgfrie miljøvariablene:
 - `GAC_USE_50_72_RULE=true` - Alltid anvende 50/72-regelen for commit-meldinger (emne ≤50 tegn, brødtekstlinjer ≤72 tegn)
 - `GAC_SIGNOFF=true` - Alltid legg til Signed-off-by-linje i commits (for DCO-samsvar)
 - `GAC_TEMPERATURE=0.7` - Kontroller LLM-kreativitet (0.0-1.0, lavere = mer fokusert)
+- `GAC_REASONING_EFFORT=medium` - Kontroller resonnerings-/tankedybde for modeller som støtter utvidet tenkning (low, medium, high). La være uinnstilt for å bruke hver modells standard. Sendes kun til kompatible leverandører (OpenAI-stil; ikke Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maksimum tokens for genererte meldinger (automatisk skalert 2-5x når du bruker `--group` basert på filantall; overstyr for å gå høyere eller lavere)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Varsel når prompter overstiger dette tokenantallet
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Bruk et egendefinert systemprompt for commit-meldingsgenerering

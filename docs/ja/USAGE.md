@@ -386,6 +386,7 @@ git config --global user.email "your.email@example.com"
 - `GAC_USE_50_72_RULE=true` - コミットメッセージに常に 50/72 ルールを適用（件名 ≤50 文字、本文行 ≤72 文字）
 - `GAC_SIGNOFF=true` - 常にコミットに Signed-off-by 行を追加（DCO 準拠用）
 - `GAC_TEMPERATURE=0.7` - LLM の創造性を制御（0.0-1.0、低いほど focused）
+- `GAC_REASONING_EFFORT=medium` - 拡張思考をサポートするモデルの推論/思考深度を制御（low、medium、high）。設定しない場合は各モデルのデフォルトを使用。互換性のあるプロバイダー（OpenAI スタイル、Anthropic 以外）にのみ送信されます。
 - `GAC_MAX_OUTPUT_TOKENS=4096` - 生成されたメッセージの最大トークン数（`--group` 使用時にファイル数に基づいて自動的に 2-5 倍にスケーリング；これ以上または以下にするには上書き）
 - `GAC_WARNING_LIMIT_TOKENS=4096` - プロンプトがこのトークン数を超えた場合に警告
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - コミットメッセージ生成にカスタムシステムプロンプトを使用

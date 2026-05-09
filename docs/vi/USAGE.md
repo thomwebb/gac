@@ -336,6 +336,7 @@ Bạn có thể tùy chỉnh hành vi của gac với các biến môi trường
 - `GAC_USE_50_72_RULE=true` - Luôn áp dụng quy tắc 50/72 cho thông điệp commit (chủ đề ≤50 ký tự, các dòng nội dung ≤72 ký tự)
 - `GAC_SIGNOFF=true` - Luôn thêm dòng Signed-off-by vào commit (để tuân thủ DCO)
 - `GAC_TEMPERATURE=0.7` - Kiểm soát sự sáng tạo của LLM (0.0-1.0, thấp hơn = tập trung hơn)
+- `GAC_REASONING_EFFORT=medium` - Kiểm soát độ sâu lập luận/suy nghĩ cho các mô hình hỗ trợ suy nghĩ mở rộng (low, medium, high). Để trống để sử dụng mặc định của từng mô hình. Chỉ gửi đến các nhà cung cấp tương thích (kiểu OpenAI; không phải Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Token tối đa cho thông điệp đã tạo (tự động scale 2-5x khi sử dụng `--group` dựa trên số lượng tệp; ghi đè để đi cao hơn hoặc thấp hơn)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Cảnh báo khi các gợi ý vượt quá số lượng token này
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Sử dụng gợi ý hệ thống tùy chỉnh để tạo thông điệp commit

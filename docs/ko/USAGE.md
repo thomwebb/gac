@@ -381,6 +381,7 @@ git config --global user.email "your.email@example.com"
 - `GAC_USE_50_72_RULE=true` - 커밋 메시지에 항상 50/72 규칙 적용 (제목 ≤50자, 본문 줄 ≤72자)
 - `GAC_SIGNOFF=true` - 항상 커밋에 Signed-off-by 라인 추가 (DCO 규정 준수용)
 - `GAC_TEMPERATURE=0.7` - LLM 창의성 제어 (0.0-1.0, 낮을수록 더 집중됨)
+- `GAC_REASONING_EFFORT=medium` - 확장된 사고를 지원하는 모델의 추론/사고 깊이 제어 (low, medium, high). 설정하지 않으면 각 모델의 기본값을 사용합니다. 호환되는 공급자(OpenAI 스타일, Anthropic 제외)에게만 전송됩니다.
 - `GAC_MAX_OUTPUT_TOKENS=4096` - 생성된 메시지용 최대 토큰 (`--group` 사용 시 파일 수에 따라 자동으로 2-5배 조정됨; 더 높거나 낮게 설정하려면 재정의)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - 프롬프트가 이 토큰 수를 초과하면 경고
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - 커밋 메시지 생성을 위해 커스텀 시스템 프롬프트 사용

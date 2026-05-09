@@ -387,6 +387,7 @@ git config --global user.email "your.email@example.com"
 - `GAC_USE_50_72_RULE=true` - 始终对提交信息应用 50/72 规则（主题 ≤50 字符，正文行 ≤72 字符）
 - `GAC_SIGNOFF=true` - 始终在提交中添加 Signed-off-by 行（用于 DCO 合规）
 - `GAC_TEMPERATURE=0.7` - 控制 LLM 创造力（0.0-1.0，较低 = 更专注）
+- `GAC_REASONING_EFFORT=medium` - 控制支持扩展思考模型的推理/思考深度（low、medium、high）。不设置则使用各模型默认值。仅发送至兼容的提供者（OpenAI 风格；非 Anthropic）。
 - `GAC_MAX_OUTPUT_TOKENS=4096` - 生成信息的最大令牌数（使用 `--group` 时根据文件数量自动缩放 2-5 倍；覆盖以提高或降低）
 - `GAC_WARNING_LIMIT_TOKENS=4096` - 当提示超过此令牌数时发出警告
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - 使用自定义系统提示进行提交信息生成

@@ -336,6 +336,7 @@ U kunt het gedrag van gac aanpassen met deze optionele omgevingsvariabelen:
 - `GAC_USE_50_72_RULE=true` - De 50/72-regel altijd toepassen voor commitberichten (onderwerp ≤50 tekens, body-regels ≤72 tekens)
 - `GAC_SIGNOFF=true` - Altijd Signed-off-by regel toevoegen aan commits (voor DCO-naleving)
 - `GAC_TEMPERATURE=0.7` - Controleer LLM creativiteit (0.0-1.0, lager = meer gefocust)
+- `GAC_REASONING_EFFORT=medium` - Controleer redeneer-/denkdiepte voor modellen die uitgebreid denken ondersteunen (low, medium, high). Laat leeg om de standaard van elk model te gebruiken. Wordt alleen naar compatibele providers gestuurd (OpenAI-stijl; niet Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maximale tokens voor gegenereerde berichten (automatisch geschaald 2-5x bij gebruik van `--group` op basis van bestandsaantal; overschrijf om hoger of lager te gaan)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Waarschuw wanneer prompts dit tokenaantal overschrijden
 - `GAC_SYSTEM_PROMPT_PATH=/pad/naar/custom_prompt.txt` - Gebruik een custom system prompt voor commitberichtgeneratie
