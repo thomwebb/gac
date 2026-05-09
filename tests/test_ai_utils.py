@@ -461,3 +461,85 @@ class TestEnsureOAuthToken:
             mock_store.return_value = mock_instance
             with pytest.raises(AIError, match="token not found"):
                 _ensure_oauth_token("chatgpt-oauth")
+
+
+class TestTokenRatioClamping:
+    """Test that learned token ratios are clamped to sane bounds."""
+
+    @staticmethod
+    def _reset_learned_store(monkeypatch, tmp_path):
+        """Helper: isolate the learned-ratios store to a temp file."""
+        temp_store = tmp_path / "test_ratios.json"
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        ai_utils._LEARNED_RATIOS.clear()
+        # Allow real _save_learned_ratios to write to the temp store.
+        monkeypatch.setattr(ai_utils, "_TOKEN_RATIOS_PATH", temp_store, raising=True)
+
+    def test_load_clamps_poison_value(self, monkeypatch, tmp_path):
+        """A poison ratio (95.0) in the JSON file is clamped to _MAX_RATIO on load."""
+        import json
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+        temp_store = ai_utils._TOKEN_RATIOS_PATH
+
+        # Write a JSON file with an absurd ratio for "test-model"
+        temp_store.write_text(json.dumps({"test-model": 95.0}))
+
+        # Force reload
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        loaded = ai_utils._load_learned_ratios()
+
+        assert "test-model" in loaded
+        # Should be clamped to _MAX_RATIO (6.0), not the poison 95.0
+        assert loaded["test-model"] == ai_utils._MAX_RATIO
+        assert loaded["test-model"] < 10.0  # Sanity
+
+    def test_load_clamps_below_minimum(self, monkeypatch, tmp_path):
+        """A ratio below _MIN_RATIO (e.g. 0.5) is clamped up."""
+        import json
+
+        self._reset_learned_store(monkeypatch, tmp_path)
+        temp_store = ai_utils._TOKEN_RATIOS_PATH
+
+        temp_store.write_text(json.dumps({"test-model": 0.5}))
+
+        monkeypatch.setattr(ai_utils, "_ratios_loaded", False, raising=True)
+        loaded = ai_utils._load_learned_ratios()
+
+        assert "test-model" in loaded
+        assert loaded["test-model"] == ai_utils._MIN_RATIO
+
+    def test_count_tokens_clamps_in_memory_value(self, monkeypatch, tmp_path):
+        """Even if a poison value somehow gets into _LEARNED_RATIOS, count_tokens clamps it."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        # Bypass normal loading and inject a poison ratio directly.
+        ai_utils._LEARNED_RATIOS["poison-model"] = 95.0
+        ai_utils._ratios_loaded = True
+
+        # 340 chars / 95.0 = 3.57 → rounds to 4 (uncapped: absurdly low)
+        # But with clamping: 340 / 6.0 = 56.67 → rounds to 57
+        text = "a" * 340
+        result = ai_utils.count_tokens(text, "openai:poison-model")
+
+        # The clamp forces ratio ≤ 6.0, so tokens ≥ ceil(340/6) = 57.
+        assert result >= 57
+        # Also ensure it's not the poison-collapsed value.
+        assert result > 10  # Poison would give ~4
+
+    def test_record_token_ratio_clamps_outlier(self, monkeypatch, tmp_path):
+        """_record_token_ratio clamps extreme observations to [_MIN_RATIO, _MAX_RATIO]."""
+        self._reset_learned_store(monkeypatch, tmp_path)
+
+        # Simulate an absurd observation: 100 chars, 1 token → ratio 100.0
+        ai_utils._record_token_ratio("openai:clamp-test", char_count=100, token_count=1)
+
+        # After recording, the stored ratio must be clamped.
+        loaded = ai_utils._load_learned_ratios()
+        assert "clamp-test" in loaded
+        assert loaded["clamp-test"] <= ai_utils._MAX_RATIO
+
+    def test_default_ratio_is_within_bounds(self):
+        """_DEFAULT_RATIO itself is within [_MIN_RATIO, _MAX_RATIO]."""
+        assert ai_utils._MIN_RATIO <= ai_utils._DEFAULT_RATIO <= ai_utils._MAX_RATIO
