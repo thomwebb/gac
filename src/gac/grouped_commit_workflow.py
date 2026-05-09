@@ -316,6 +316,7 @@ class GroupedCommitWorkflow:
         fifty_seventy_two: bool = False,
         signoff: bool = False,
         model: str | None = None,
+        context_lines: int = 3,
     ) -> int:
         """Execute the grouped commits.
 
@@ -330,6 +331,7 @@ class GroupedCommitWorkflow:
             fifty_seventy_two=fifty_seventy_two,
             signoff=signoff,
             model=model,
+            context_lines=context_lines,
         )
 
     # ── Top-level workflow ────────────────────────────────────────────
@@ -413,6 +415,7 @@ class GroupedCommitWorkflow:
                         fifty_seventy_two=ctx.flags.fifty_seventy_two,
                         signoff=ctx.flags.signoff,
                         model=ctx.model,
+                        context_lines=config.get("diff_context_lines", 3),
                     )
                 elif decision == "reject":
                     return 0
@@ -428,4 +431,5 @@ class GroupedCommitWorkflow:
                     fifty_seventy_two=ctx.flags.fifty_seventy_two,
                     signoff=ctx.flags.signoff,
                     model=ctx.model,
+                    context_lines=config.get("diff_context_lines", 3),
                 )

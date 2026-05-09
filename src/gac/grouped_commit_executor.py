@@ -44,6 +44,7 @@ def execute_grouped_commits(
     fifty_seventy_two: bool = False,
     signoff: bool = False,
     model: str | None = None,
+    context_lines: int = 3,
 ) -> int:
     """Execute the grouped commits by creating multiple individual commits.
 
@@ -64,7 +65,9 @@ def execute_grouped_commits(
             console.print(f"  Message: {commit['message'].strip()[:50]}...")
     else:
         original_staged_files = get_staged_files(existing_only=False)
-        original_staged_diff = run_git_command(["diff", "--cached", "--binary"], silent=True).require_success()
+        original_staged_diff = run_git_command(
+            ["diff", f"-U{context_lines}", "--cached", "--binary"], silent=True
+        ).require_success()
         run_git_command(["reset", "HEAD"]).require_success()
 
         try:
@@ -126,7 +129,9 @@ def execute_grouped_commits(
             console.print("[yellow]Restoring original staging area...[/yellow]")
             if original_staged_files is None or original_staged_diff is None:
                 original_staged_files = get_staged_files(existing_only=False)
-                original_staged_diff = run_git_command(["diff", "--cached", "--binary"]).require_success()
+                original_staged_diff = run_git_command(
+                    ["diff", f"-U{context_lines}", "--cached", "--binary"]
+                ).require_success()
             restore_staging(original_staged_files, original_staged_diff)
             console.print("[green]Original staging area restored.[/green]")
             return 1

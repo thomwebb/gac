@@ -38,5 +38,6 @@ class Utility:
 
     DEFAULT_DIFF_TOKEN_LIMIT: int = 192000  # Max tokens for combined diff
     PER_FILE_DIFF_TOKEN_LIMIT: int = 16000  # Max tokens per individual file diff
+    DIFF_CONTEXT_LINES: int = 3  # Lines of context around changed lines in git diffs (git default: 3)
     MAX_WORKERS: int = os.cpu_count() or 4  # Maximum number of parallel workers
     MAX_DISPLAYED_SECRET_LENGTH: int = 50  # Maximum length for displaying secrets

@@ -26,6 +26,7 @@ import sys
 
 import click
 
+from gac.config import _parse_diff_context_lines_env
 from gac.errors import GitError, with_error_handling
 from gac.git import get_diff, get_staged_files
 from gac.preprocess import (
@@ -60,7 +61,8 @@ def _diff_implementation(
             sys.exit(1)
 
     try:
-        diff_text = get_diff(staged=staged, color=color, commit1=commit1, commit2=commit2)
+        context_lines = _parse_diff_context_lines_env()
+        diff_text = get_diff(staged=staged, color=color, commit1=commit1, commit2=commit2, context_lines=context_lines)
         if not diff_text:
             print_message("No changes to display.", level="error")
             sys.exit(1)

@@ -279,7 +279,7 @@ def get_staged_status() -> str:
     return "\n".join(status_lines)
 
 
-def get_staged_diffs_per_file() -> list[tuple[str, str]]:
+def get_staged_diffs_per_file(context_lines: int = 3) -> list[tuple[str, str]]:
     """Get the staged diff for each individual staged file.
 
     Returns a list of (filename, diff_content) tuples, one per staged file.
@@ -291,6 +291,10 @@ def get_staged_diffs_per_file() -> list[tuple[str, str]]:
 
     Returns an empty list when no files are staged.
 
+    Args:
+        context_lines: Number of context lines above and below changed lines
+            (git -U flag). Defaults to 3 (git's default).
+
     Raises:
         GitError: If listing staged files fails.
     """
@@ -300,13 +304,19 @@ def get_staged_diffs_per_file() -> list[tuple[str, str]]:
 
     per_file: list[tuple[str, str]] = []
     for file in files:
-        result = run_git_command(["diff", "--staged", "--", file])
+        result = run_git_command(["diff", f"-U{context_lines}", "--staged", "--", file])
         if result.success and result.output.strip():
             per_file.append((file, result.output))
     return per_file
 
 
-def get_diff(staged: bool = True, color: bool = True, commit1: str | None = None, commit2: str | None = None) -> str:
+def get_diff(
+    staged: bool = True,
+    color: bool = True,
+    commit1: str | None = None,
+    commit2: str | None = None,
+    context_lines: int = 3,
+) -> str:
     """Get the diff between commits or working tree.
 
     Args:
@@ -316,6 +326,8 @@ def get_diff(staged: bool = True, color: bool = True, commit1: str | None = None
         commit1: First commit hash, branch name, or reference to compare from.
         commit2: Second commit hash, branch name, or reference to compare to.
             If only commit1 is provided, compares working tree to commit1.
+        context_lines: Number of context lines above and below changed lines
+            (git -U flag). Defaults to 3 (git's default).
 
     Returns:
         String containing the diff output
@@ -324,7 +336,7 @@ def get_diff(staged: bool = True, color: bool = True, commit1: str | None = None
         GitError: If the git command fails
     """
     try:
-        args = ["diff"]
+        args = ["diff", f"-U{context_lines}"]
 
         if color:
             args.append("--color")

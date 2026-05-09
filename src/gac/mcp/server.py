@@ -133,7 +133,10 @@ def gac_status(request: StatusRequest) -> StatusResult:
         diff_truncated = False
 
         if request.include_diff:
-            diff_args = ["diff"]
+            from gac.config import _parse_diff_context_lines_env
+
+            context_lines = _parse_diff_context_lines_env()
+            diff_args = ["diff", f"-U{context_lines}"]
             if request.staged_only:
                 diff_args.append("--cached")
             else:
@@ -436,6 +439,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
                     no_verify=request.no_verify,
                     hook_timeout=120,
                     model=model,
+                    context_lines=config.get("diff_context_lines", 3),
                 )
 
             if exit_code != 0:

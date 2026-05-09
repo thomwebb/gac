@@ -9,7 +9,7 @@ from typing import TypedDict, cast
 
 from dotenv import load_dotenv
 
-from gac.constants import EnvDefaults, Logging
+from gac.constants import EnvDefaults, Logging, Utility
 from gac.errors import ConfigError
 
 
@@ -37,6 +37,7 @@ class GACConfig(TypedDict, total=False):
     use_50_72_rule: bool
     signoff: bool
     reasoning_effort: str | None
+    diff_context_lines: int
 
 
 def _parse_bool_env(key: str, default: bool) -> bool:
@@ -56,6 +57,7 @@ _CONFIG_VALIDATORS: list[tuple[str, type | tuple[type, ...], float | int | None,
     ("max_retries", int, 1, 10),
     ("warning_limit_tokens", int, 1, None),
     ("hook_timeout", int, 1, None),
+    ("diff_context_lines", int, 0, 100),
 ]
 
 
@@ -78,6 +80,30 @@ def _parse_reasoning_effort_env() -> str | None:
     if lower in _VALID_REASONING_EFFORT_VALUES:
         return lower
     return value
+
+
+def _parse_diff_context_lines_env() -> int:
+    """Parse GAC_DIFF_CONTEXT_LINES from environment with range validation.
+
+    Returns the validated integer, or the default (Utility.DIFF_CONTEXT_LINES)
+    when the variable is unset or empty.
+
+    Raises:
+        ConfigError: If the value is not a valid integer or out of range (0-100).
+    """
+    raw = os.getenv("GAC_DIFF_CONTEXT_LINES")
+    if raw is None:
+        return Utility.DIFF_CONTEXT_LINES
+    value = raw.strip()
+    if value == "":
+        return Utility.DIFF_CONTEXT_LINES
+    try:
+        parsed = int(value)
+    except ValueError:
+        raise ConfigError(f"diff_context_lines must be an integer, got {value!r}") from None
+    if not (0 <= parsed <= 100):
+        raise ConfigError(f"diff_context_lines must be >= 0 and <= 100, got {parsed}")
+    return parsed
 
 
 def validate_config(config: GACConfig) -> None:
@@ -147,6 +173,7 @@ def load_config() -> GACConfig:
         "use_50_72_rule": _parse_bool_env("GAC_USE_50_72_RULE", EnvDefaults.USE_50_72_RULE),
         "signoff": _parse_bool_env("GAC_SIGNOFF", EnvDefaults.SIGNOFF),
         "reasoning_effort": _parse_reasoning_effort_env(),
+        "diff_context_lines": _parse_diff_context_lines_env(),
     }
 
     validate_config(config)
