@@ -7,8 +7,8 @@ from typing import Any, NamedTuple
 
 from gac.config import GACConfig
 from gac.errors import ConfigError, GitError, handle_error
-from gac.git import get_staged_files, get_staged_status, run_git_command
-from gac.preprocess import preprocess_diff
+from gac.git import get_staged_diffs_per_file, get_staged_files, get_staged_status, run_git_command
+from gac.preprocess import preprocess_per_file_diffs
 from gac.security import get_affected_files, scan_staged_diff
 from gac.utils import console
 from gac.workflow_utils import PromptFn
@@ -89,35 +89,37 @@ class GitStateValidator:
             )
             return None
 
-        # Get git status and diffs
+        # Get git status and diffs (per-file to avoid false-positive diff --git splits)
         status = get_staged_status()
-        diff_result = run_git_command(["diff", "--staged"])
-        if not diff_result.success:
-            raise GitError(diff_result.fail_message("Failed to get staged diff"))
-        diff = diff_result.output
+        per_file_diffs = get_staged_diffs_per_file()
         stat_result = run_git_command(["diff", "--stat", "--cached"])
         diff_stat = " " + (stat_result.output if stat_result.success else "")
+
+        # Build a combined diff for secret scanning (needs the raw unified diff)
+        combined_diff = "\n".join(diff for _, diff in per_file_diffs) if per_file_diffs else ""
 
         # Scan for secrets
         has_secrets = False
         secrets = []
         if not skip_secret_scan:
             logger.info("Scanning staged changes for potential secrets...")
-            secrets = scan_staged_diff(diff)
+            secrets = scan_staged_diff(combined_diff)
             has_secrets = bool(secrets)
 
-        # Process diff for AI consumption
-        logger.debug(f"Preprocessing diff ({len(diff)} characters)")
+        # Process diff for AI consumption using per-file diffs (avoids regex split issues)
+        logger.debug(f"Preprocessing {len(per_file_diffs)} per-file diffs")
         if model is None:
             raise ConfigError("Model must be specified via GAC_MODEL environment variable or --model flag")
-        processed_diff = preprocess_diff(diff, token_limit=Utility.DEFAULT_DIFF_TOKEN_LIMIT, model=model)
+        processed_diff = preprocess_per_file_diffs(
+            per_file_diffs, token_limit=Utility.DEFAULT_DIFF_TOKEN_LIMIT, model=model
+        )
         logger.debug(f"Processed diff ({len(processed_diff)} characters)")
 
         return GitState(
             repo_root=repo_root,
             staged_files=staged_files,
             status=status,
-            diff=diff,
+            diff=combined_diff,
             diff_stat=diff_stat,
             processed_diff=processed_diff,
             has_secrets=has_secrets,
