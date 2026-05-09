@@ -64,14 +64,14 @@ uv tool upgrade gac
 
 ## Основные функции
 
-### 🌐 **25+ Поддерживаемые провайдеры**
+### 🌐 **28+ Поддерживаемые провайдеры**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai**
 - **Claude Code (OAuth)** • **Crof.ai** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot**
 - **Groq** • **Kimi for Coding** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI**
-- **Ollama** • **OpenAI** • **OpenRouter** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
-- **Z.AI** • **Z.AI Coding** • **Custom Endpoints (Anthropic/OpenAI)**
+- **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
+- **Z.AI (API & Coding Plans)** • **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Умный анализ ИИ**
 
@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Многоязычная поддержка**
 
-- **25+ языков**: Генерируйте сообщения коммитов на английском, китайском, японском, корейском, испанском, французском, немецком и более 20 других языках
+- **28+ языков**: Генерируйте сообщения коммитов на английском, китайском, японском, корейском, испанском, французском, немецком и более 20 других языках
 - **Гибкий перевод**: Выберите сохранять префиксы conventional commit на английском для совместимости инструментов или полностью их переведите
 - **Множественные рабочие процессы**: Установите язык по умолчанию с `gac language` или используйте флаг `-l <language>` для разового изменения
 - **Поддержка родных скриптов**: Полная поддержка не-латинских скриптов, включая CJK, кириллицу, тайский и другие
@@ -240,7 +240,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Смотрите `.gac.env.example` для всех доступных опций.
 
-**Хотите сообщения коммитов на другом языке?** Запустите `gac language` для выбора из 25+ языков, включая Español, Français, 日本語 и другие.
+**Хотите сообщения коммитов на другом языке?** Запустите `gac language` для выбора из 28+ языков, включая Español, Français, 日本語 и другие.
 
 **Хотите настроить стиль сообщений коммитов?** См. [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/ru/CUSTOM_SYSTEM_PROMPTS.md) для руководства по написанию пользовательских системных промптов.
 
