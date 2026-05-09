@@ -212,7 +212,11 @@ class TestReportCLI:
 
     def test_report_token_only_activity(self, runner):
         """Test report shows token-only usage even with zero gacs/commits."""
-        with patch("gac.report_cli.load_stats") as mock_load:
+        from datetime import datetime
+
+        with patch("gac.report_cli.load_stats") as mock_load, patch("gac.report_cli.datetime") as mock_datetime:
+            # Pin "today" to 2026-05-02 so the token data on that date falls within the report window
+            mock_datetime.now.return_value = datetime(2026, 5, 2)
             mock_load.return_value = {
                 "daily_gacs": {},
                 "daily_commits": {},
