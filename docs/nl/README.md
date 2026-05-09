@@ -171,6 +171,9 @@ gac -v -s
 # Snelle one-liner voor kleine wijzigingen
 gac -o
 
+# Genereer commitbericht in een specifieke taal
+gac -l nl
+
 # Groepeer wijzigingen in logisch gerelateerde commits
 gac -ag
 

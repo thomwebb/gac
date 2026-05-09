@@ -171,6 +171,9 @@ gac -v -s
 # Thông điệp một dòng nhanh cho các thay đổi nhỏ
 gac -o
 
+# Tạo thông điệp commit bằng một ngôn ngữ cụ thể
+gac -l vi
+
 # Nhóm các thay đổi thành các commit logic liên quan
 gac -ag
 

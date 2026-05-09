@@ -171,6 +171,9 @@ gac -v -s
 # Quick one-liner for small changes
 gac -o
 
+# Generate commit message in a specific language
+gac -l ja
+
 # Group changes into logically related commits
 gac -ag
 

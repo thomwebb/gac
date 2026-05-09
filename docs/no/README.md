@@ -171,6 +171,9 @@ gac -v -s
 # Rask en-linjers for små endringer
 gac -o
 
+# Generer commit-melding på et spesifikt språk
+gac -l no
+
 # Grupper endringer i logisk relaterte commits
 gac -ag
 

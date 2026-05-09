@@ -171,6 +171,9 @@ gac -v -s
 # Schneller Einzeiler für kleine Änderungen
 gac -o
 
+# Commit-Nachricht in einer bestimmten Sprache generieren
+gac -l de
+
 # Änderungen in logisch zusammengehörige Commits gruppieren
 gac -ag
 

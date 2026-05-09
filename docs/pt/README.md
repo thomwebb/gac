@@ -171,6 +171,9 @@ gac -v -s
 # Mensagem rápida de uma linha para pequenas alterações
 gac -o
 
+# Gerar mensagem de commit em um idioma específico
+gac -l pt
+
 # Agrupe alterações em commits logicamente relacionados
 gac -ag
 

@@ -171,6 +171,9 @@ gac -v -s
 # Snabb en-rads för små ändringar
 gac -o
 
+# Generera commitmeddelande på ett specifikt språk
+gac -l sv
+
 # Gruppera ändringar i logiskt relaterade commits
 gac -ag
 
