@@ -81,11 +81,26 @@ def _ensure_ratios_loaded() -> None:
         _ratios_loaded = True
 
 
+# Bounds for chars-per-token ratios.  Real tokenizers produce roughly
+# 2–5 chars/token (GPT-4 ~3.5, Claude ~2.8, open-weight models ~3–5).
+# Values below 1.5 imply absurdly many tokens per character (a single
+# character = multiple tokens).  Values above 6.0 imply absurdly few
+# tokens per character (nearly one token per character), which is
+# impossible for real tokenizers.  We clamp to [1.5, 6.0] so that a
+# poison value (e.g. 95.0 from a corrupted file) cannot silently
+# collapse token estimates to near-zero.
+_MIN_RATIO = 1.5
+_MAX_RATIO = 6.0
+
+
 def _load_learned_ratios() -> dict[str, float]:
     """Load learned token ratios from the on-disk JSON file.
 
     Returns an empty dict when the file doesn't exist or is corrupt —
     callers fall back to ``_DEFAULT_RATIO``.
+
+    Each loaded value is clamped to ``[_MIN_RATIO, _MAX_RATIO]`` so that
+    poisoned or corrupted values cannot cause token-count collapse.
     """
     import json
 
@@ -93,7 +108,11 @@ def _load_learned_ratios() -> dict[str, float]:
         if _TOKEN_RATIOS_PATH.is_file():
             data = json.loads(_TOKEN_RATIOS_PATH.read_text(encoding="utf-8"))
             if isinstance(data, dict):
-                return {k: float(v) for k, v in data.items() if isinstance(v, (int, float)) and v > 0}
+                clamped: dict[str, float] = {}
+                for k, v in data.items():
+                    if isinstance(v, (int, float)) and v > 0:
+                        clamped[k] = max(_MIN_RATIO, min(_MAX_RATIO, float(v)))
+                return clamped
     except (OSError, json.JSONDecodeError, ValueError):
         pass
     return {}
@@ -142,8 +161,8 @@ def _record_token_ratio(model: str, char_count: int, token_count: int) -> None:
     _ensure_ratios_loaded()
 
     new_ratio = char_count / token_count
-    # Clamp to plausible bounds: no real tokenizer produces < 1 or > 10 chars/token.
-    new_ratio = max(1.0, min(10.0, new_ratio))
+    # Clamp to plausible bounds (see _MIN_RATIO / _MAX_RATIO above).
+    new_ratio = max(_MIN_RATIO, min(_MAX_RATIO, new_ratio))
 
     # Running average: weight the new observation at 30% so the estimate
     # adapts to the real tokenizer without swinging on every call.
@@ -183,7 +202,10 @@ def count_tokens(content: str | list[dict[str, str]] | dict[str, Any], model: st
 
     # Look up by bare model name (strip provider prefix if present).
     model_name = model.split(":", 1)[1] if ":" in model else model
-    ratio = _LEARNED_RATIOS.get(model_name, _DEFAULT_RATIO)
+    raw_ratio = _LEARNED_RATIOS.get(model_name, _DEFAULT_RATIO)
+    # Clamp the in-memory value too, so a poisoned entry that somehow
+    # bypassed _load_learned_ratios still cannot produce absurd results.
+    ratio = max(_MIN_RATIO, min(_MAX_RATIO, raw_ratio))
 
     result = round(len(text) / ratio)
     return result if result > 0 else 1
