@@ -561,6 +561,7 @@ class TestProviderRegistry:
             "moonshot",
             "ollama",
             "openai",
+            "opencode-go",
             "openrouter",
             "qwen",
             "qwen-api",

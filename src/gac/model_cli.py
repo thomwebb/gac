@@ -103,6 +103,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("Moonshot AI", "kimi-k2.6"),
         ("Ollama", "gemma3"),
         ("OpenAI", "gpt-5.4-mini"),
+        ("OpenCode Go", "deepseek-v4-flash"),
         ("OpenRouter", "openrouter/auto"),
         ("Qwen Cloud (CN API)", "qwen3.5-flash"),
         ("Qwen Cloud (INTL API)", "qwen3.5-flash"),

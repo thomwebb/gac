@@ -457,3 +457,27 @@ def test_configure_model_deepseek_success(tmp_path):
             assert result is True
             # Should have set_key calls for model and API key
             assert mock_set_key.call_count >= 2
+
+
+def test_configure_model_opencode_go_success(tmp_path):
+    """Test successful OpenCode Go provider configuration."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("questionary.password") as mpass,
+            patch("gac.model_cli.set_key") as mock_set_key,
+        ):
+            # Select OpenCode Go provider
+            mselect.return_value.ask.return_value = "OpenCode Go"
+            mtext.return_value.ask.return_value = "deepseek-v4-flash"
+            mpass.return_value.ask.return_value = "opencode-api-key"
+
+            result = _configure_model({})
+
+            assert result is True
+            # Should have set_key calls for model and OPENCODE_API_KEY
+            assert mock_set_key.call_count >= 2
