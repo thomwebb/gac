@@ -214,6 +214,7 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
         messages: list[dict[str, Any]],
         temperature: float = 0.7,
         max_tokens: int = 1024,
+        reasoning_effort: str | None = None,
         **kwargs: Any,
     ) -> tuple[str, int, int, int, int]:
         """Generate text using the AI provider.
@@ -227,6 +228,7 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
             messages: List of message dictionaries
             temperature: Temperature parameter (0.0-2.0)
             max_tokens: Maximum tokens in response
+            reasoning_effort: "low", "medium", "high", or None (use model default)
             **kwargs: Additional provider-specific parameters
 
         Returns:
@@ -239,7 +241,9 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
 
         url = self._get_api_url(model)
         headers = self._build_headers()
-        body = self._build_request_body(messages, temperature, max_tokens, model, **kwargs)
+        body = self._build_request_body(
+            messages, temperature, max_tokens, model, reasoning_effort=reasoning_effort, **kwargs
+        )
 
         if "model" not in body:
             body["model"] = model
@@ -272,14 +276,23 @@ class OpenAICompatibleProvider(BaseConfiguredProvider):
     """
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build OpenAI-style request body.
 
         Note: Subclasses should override this if they need max_completion_tokens
         instead of max_tokens (like OpenAI provider does).
         """
-        return {"messages": messages, "temperature": temperature, "max_tokens": max_tokens, **kwargs}
+        data = {"messages": messages, "temperature": temperature, "max_tokens": max_tokens, **kwargs}
+        if reasoning_effort:
+            data["reasoning_effort"] = reasoning_effort
+        return data
 
     def _build_headers(self) -> dict[str, str]:
         """Build headers with OpenAI-style authorization."""
@@ -373,9 +386,19 @@ class AnthropicCompatibleProvider(BaseConfiguredProvider):
         return f"{self.config.base_url}/messages"
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
-        """Build Anthropic-style request body."""
+        """Build Anthropic-style request body.
+
+        reasoning_effort is accepted for signature consistency but not applied —
+        Anthropic thinking support is not yet implemented.
+        """
         # Convert messages to Anthropic format
         anthropic_messages = []
         system_message = ""
@@ -386,7 +409,12 @@ class AnthropicCompatibleProvider(BaseConfiguredProvider):
             else:
                 anthropic_messages.append({"role": msg["role"], "content": msg["content"]})
 
-        body = {"messages": anthropic_messages, "temperature": temperature, "max_tokens": max_tokens, **kwargs}
+        body: dict[str, Any] = {
+            "messages": anthropic_messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            **kwargs,
+        }
 
         if system_message:
             body["system"] = system_message
@@ -451,10 +479,19 @@ class GenericHTTPProvider(BaseConfiguredProvider):
     """Base class for completely custom providers."""
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Default implementation - override this in subclasses."""
-        return {"messages": messages, "temperature": temperature, "max_tokens": max_tokens, **kwargs}
+        body: dict[str, Any] = {"messages": messages, "temperature": temperature, "max_tokens": max_tokens, **kwargs}
+        if reasoning_effort:
+            body["reasoning_effort"] = reasoning_effort
+        return body
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
         """Default implementation - override this in subclasses."""

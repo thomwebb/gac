@@ -31,15 +31,24 @@ class OllamaProvider(OpenAICompatibleProvider):
         return headers
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build Ollama request body with stream disabled."""
-        return {
+        body: dict[str, Any] = {
             "messages": messages,
             "temperature": temperature,
             "stream": False,
             **kwargs,
         }
+        if reasoning_effort:
+            body["reasoning_effort"] = reasoning_effort
+        return body
 
     def _get_api_url(self, model: str | None = None) -> str:
         """Get API URL with /api/chat endpoint."""

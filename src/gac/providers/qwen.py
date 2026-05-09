@@ -52,6 +52,7 @@ class QwenProvider(BaseConfiguredProvider):
         messages: list[dict[str, Any]],
         temperature: float = 0.7,
         max_tokens: int = 1024,
+        reasoning_effort: str | None = None,
         **kwargs: Any,
     ) -> tuple[str, int, int, int, int]:
         raise AIError.authentication_error(_QWEN_OAUTH_DEPRECATION_MESSAGE)

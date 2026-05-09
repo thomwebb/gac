@@ -47,7 +47,13 @@ class LMStudioProvider(OpenAICompatibleProvider):
         return f"{self.config.base_url}/chat/completions"
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build OpenAI-compatible request body with stream disabled."""
         body = super()._build_request_body(messages, temperature, max_tokens, model, **kwargs)

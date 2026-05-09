@@ -124,6 +124,32 @@ class TestOpenAIEdgeCases:
         assert request_body["response_format"] == {"type": "json_object"}
         assert request_body["stop"] == ["END"]
 
+    def test_openai_reasoning_effort_body(self):
+        """Test that reasoning_effort is included in the request body when set."""
+        from gac.providers.openai import OpenAIProvider
+
+        provider = OpenAIProvider(OpenAIProvider.config)
+        messages = [{"role": "user", "content": "test"}]
+
+        # With reasoning_effort="high"
+        body = provider._build_request_body(
+            messages=messages, temperature=0.7, max_tokens=1000, model="o3-mini", reasoning_effort="high"
+        )
+        assert "max_completion_tokens" in body
+        assert body["reasoning_effort"] == "high"
+
+        # Without reasoning_effort (None) — key should be absent
+        body = provider._build_request_body(
+            messages=messages, temperature=0.7, max_tokens=1000, model="gpt-4", reasoning_effort=None
+        )
+        assert "reasoning_effort" not in body
+
+        # With reasoning_effort="low"
+        body = provider._build_request_body(
+            messages=messages, temperature=0.7, max_tokens=1000, model="o3-mini", reasoning_effort="low"
+        )
+        assert body["reasoning_effort"] == "low"
+
         # Test without optional parameters (baseline)
         request_body = provider._build_request_body(messages=messages, temperature=0.7, max_tokens=1000, model="gpt-4")
 

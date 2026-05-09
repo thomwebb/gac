@@ -32,10 +32,20 @@ def create_provider_func(
 
     @handle_provider_errors(provider_name)
     def provider_func(
-        model: str, messages: list[dict[str, Any]], temperature: float, max_tokens: int
+        model: str,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        reasoning_effort: str | None = None,
     ) -> tuple[str, int, int, int, int]:
         provider = provider_class(provider_class.config)
-        return provider.generate(model=model, messages=messages, temperature=temperature, max_tokens=max_tokens)
+        return provider.generate(
+            model=model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            reasoning_effort=reasoning_effort,
+        )
 
     # Add metadata for introspection
     provider_func.__name__ = f"call_{provider_name.lower().replace(' ', '_').replace('.', '_')}_api"

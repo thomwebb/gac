@@ -26,7 +26,13 @@ class SyntheticProvider(OpenAICompatibleProvider):
         return api_key
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build request body with model name preprocessing and max_completion_tokens."""
         # Auto-add hf: prefix if not present

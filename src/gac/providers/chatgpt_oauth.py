@@ -269,6 +269,7 @@ class ChatGPTOAuthProvider(BaseConfiguredProvider):
         messages: list[dict[str, Any]],
         temperature: float = 0.7,
         max_tokens: int = 1024,
+        reasoning_effort: str | None = None,
         **kwargs: Any,
     ) -> tuple[str, int, int, int, int]:
         """Generate text using the ChatGPT OAuth Responses API."""
@@ -276,7 +277,9 @@ class ChatGPTOAuthProvider(BaseConfiguredProvider):
 
         url = self._get_api_url(model)
         headers = self._build_headers()
-        body = self._build_request_body(messages, temperature, max_tokens, model, **kwargs)
+        body = self._build_request_body(
+            messages, temperature, max_tokens, model, reasoning_effort=reasoning_effort, **kwargs
+        )
 
         if "model" not in body:
             body["model"] = model

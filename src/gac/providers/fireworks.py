@@ -20,7 +20,13 @@ class FireworksProvider(OpenAICompatibleProvider):
         return f"{self.config.base_url}/chat/completions"
 
     def _build_request_body(
-        self, messages: list[dict[str, Any]], temperature: float, max_tokens: int, model: str, **kwargs: Any
+        self,
+        messages: list[dict[str, Any]],
+        temperature: float,
+        max_tokens: int,
+        model: str,
+        reasoning_effort: str | None = None,
+        **kwargs: Any,
     ) -> dict[str, Any]:
         """Build OpenAI-style request body with Fireworks-specific requirements.
 
@@ -31,4 +37,6 @@ class FireworksProvider(OpenAICompatibleProvider):
         # Cap max_tokens at Fireworks' non-streaming limit
         capped_max_tokens = min(max_tokens, FIREWORKS_MAX_TOKENS_NON_STREAMING)
 
-        return super()._build_request_body(messages, temperature, capped_max_tokens, model, **kwargs)
+        return super()._build_request_body(
+            messages, temperature, capped_max_tokens, model, reasoning_effort=reasoning_effort, **kwargs
+        )
