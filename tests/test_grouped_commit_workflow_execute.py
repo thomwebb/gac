@@ -171,27 +171,24 @@ def test_push_success():
 
 
 def test_execute_workflow_show_prompt():
-    """Test that show_prompt displays the prompt panel."""
+    """Test that show_prompt flag is accepted without error.
+
+    The prompt is now displayed by main() before calling execute_workflow,
+    so the grouped workflow itself no longer prints it.
+    """
     config = GACConfig({"warning_limit_tokens": 4096})
     workflow = GroupedCommitWorkflow(config)
     ctx = _build_ctx(show_prompt=True)
 
     with mock.patch("gac.grouped_commit_executor.get_staged_files", return_value=["file1.py"]):
-        with mock.patch("gac.grouped_commit_executor.console.print") as mock_print:
-            with mock.patch.object(
-                workflow,
-                "generate_grouped_commits_with_retry",
-                return_value=WorkflowResult(success=True, exit_code=0),
-            ):
-                exit_code = workflow.execute_workflow(ctx, config)
+        with mock.patch.object(
+            workflow,
+            "generate_grouped_commits_with_retry",
+            return_value=WorkflowResult(success=True, exit_code=0),
+        ):
+            exit_code = workflow.execute_workflow(ctx, config)
 
     assert exit_code == 0
-    assert mock_print.call_count >= 1
-    first_call_arg = mock_print.call_args_list[0][0][0]
-    from rich.panel import Panel
-
-    assert isinstance(first_call_arg, Panel)
-    assert first_call_arg.title == "Prompt for LLM"
 
 
 def test_execute_workflow_interactive_mode():
