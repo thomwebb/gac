@@ -28,7 +28,6 @@ from gac.grouped_commit_executor import GroupedCommitResult, execute_grouped_com
 from gac.grouped_response_parser import parse_json_response, validate_file_coverage
 from gac.grouped_retry_loop import should_exit_or_retry
 from gac.model_identifier import ModelIdentifier
-from gac.prompt_builder import PromptBuilder
 from gac.stats import record_tokens, reset_gac_token_accumulator
 from gac.utils import console
 from gac.workflow_context import WorkflowContext
@@ -350,9 +349,6 @@ class GroupedCommitWorkflow:
             Exit code: 0 for success, non-zero for failure.
         """
         from gac.git import get_staged_files
-
-        if ctx.flags.show_prompt:
-            PromptBuilder.display_prompts(ctx.system_prompt, ctx.user_prompt)
 
         conversation_messages: list[dict[str, str]] = []
         if ctx.system_prompt:
