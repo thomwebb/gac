@@ -50,7 +50,7 @@ class TestDiffCLI:
                 color=False,
             )
 
-            mock_get_diff.assert_called_once_with(staged=True, color=False, commit1=None, commit2=None)
+            mock_get_diff.assert_called_once_with(staged=True, color=False, commit1=None, commit2=None, context_lines=3)
 
     @patch("gac.diff_cli.get_diff")
     def test_no_changes_to_display_exit_direct(self, mock_get_diff):
@@ -222,7 +222,9 @@ class TestDiffCLI:
 
             # Should not call get_staged_files when commits are provided
             mock_get_staged.assert_not_called()
-            mock_get_diff.assert_called_once_with(staged=True, color=False, commit1="commit1", commit2="commit2")
+            mock_get_diff.assert_called_once_with(
+                staged=True, color=False, commit1="commit1", commit2="commit2", context_lines=3
+            )
 
     def test_diff_function_max_tokens(self):
         """Test the diff function with max_tokens parameter."""

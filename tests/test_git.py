@@ -135,7 +135,7 @@ def test_get_diff_unstaged():
     with patch("gac.git.run_git_command") as mock_run:
         mock_run.return_value = GitCommandResult.ok("diff output")
         result = get_diff(staged=False)
-        mock_run.assert_called_once_with(["diff", "--color"])
+        mock_run.assert_called_once_with(["diff", "-U3", "--color"])
         assert result == "diff output"
 
 
