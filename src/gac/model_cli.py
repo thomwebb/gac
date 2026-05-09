@@ -495,4 +495,8 @@ def model() -> None:
     if not _configure_model(existing_env):
         return
 
+    from gac.reasoning_cli import configure_reasoning_effort_workflow
+
+    configure_reasoning_effort_workflow(GAC_ENV_PATH)
+
     click.echo(f"\nModel configuration complete. You can edit {GAC_ENV_PATH} to update values later.")

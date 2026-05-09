@@ -61,6 +61,7 @@ class InteractiveMode:
                 quiet=quiet,
                 skip_success_message=True,  # Don't show "Generated commit message" for questions
                 task_description="contextual questions",
+                reasoning_effort=None,  # Question generation doesn't need reasoning effort control
             )
 
             # Parse the response to extract individual questions

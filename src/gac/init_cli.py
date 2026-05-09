@@ -10,6 +10,7 @@ from dotenv import dotenv_values, set_key, unset_key
 from gac.editor_cli import configure_editor_init_workflow
 from gac.language_cli import configure_language_init_workflow
 from gac.model_cli import _configure_model
+from gac.reasoning_cli import configure_reasoning_effort_workflow
 
 GAC_ENV_PATH = Path.home() / ".gac.env"
 
@@ -42,13 +43,24 @@ def _configure_language(existing_env: dict[str, str]) -> None:
     """Run the language configuration flow using consolidated logic."""
     click.echo("\n")
 
-    # Use the consolidated language configuration from language_cli
     success = configure_language_init_workflow(GAC_ENV_PATH)
 
     if not success:
         click.echo("Language configuration cancelled or failed.")
     else:
         click.echo("Language configuration completed.")
+
+
+def _configure_reasoning_effort(existing_env: dict[str, str]) -> None:
+    """Run the reasoning effort configuration flow."""
+    click.echo("\n")
+
+    success = configure_reasoning_effort_workflow(GAC_ENV_PATH)
+
+    if not success:
+        click.echo("Reasoning effort configuration cancelled or failed.")
+    else:
+        click.echo("Reasoning effort configuration completed.")
 
 
 def _configure_editor(existing_env: dict[str, str]) -> None:
@@ -170,6 +182,8 @@ def init() -> None:
     if not _configure_model(existing_env):
         click.echo("Model configuration cancelled. Exiting.")
         return
+
+    _configure_reasoning_effort(existing_env)
 
     _configure_language(existing_env)
 

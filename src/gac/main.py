@@ -78,6 +78,7 @@ def _execute_single_commit_workflow(ctx: WorkflowContext, config: GACConfig) -> 
                 max_tokens=ctx.max_output_tokens,
                 max_retries=ctx.max_retries,
                 quiet=ctx.quiet or ctx.message_only,
+                reasoning_effort=ctx.reasoning_effort,
             )
         )
         commit_message = clean_commit_message(raw_commit_message, fifty_seventy_two=ctx.flags.fifty_seventy_two)
@@ -202,6 +203,8 @@ def main(opts: CLIOptions, config: GACConfig | None = None) -> int:
         raise ConfigError("max_retries configuration missing")
     max_retries = int(max_retries_val)
 
+    reasoning_effort = config.get("reasoning_effort")  # str | None
+
     # Handle interactive file staging if requested
     if opts.stage:
         from gac.staging_tui import run_staging_tui, stage_files
@@ -294,6 +297,7 @@ def main(opts: CLIOptions, config: GACConfig | None = None) -> int:
             temperature=temperature,
             max_output_tokens=max_output_tokens,
             max_retries=max_retries,
+            reasoning_effort=reasoning_effort,
         )
         flags = WorkflowFlags(
             require_confirmation=opts.require_confirmation,

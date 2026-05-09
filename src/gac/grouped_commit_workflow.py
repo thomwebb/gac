@@ -121,6 +121,7 @@ class GroupedCommitWorkflow:
         quiet: bool,
         staged_files_set: set[str],
         require_confirmation: bool = True,
+        reasoning_effort: str | None = None,
     ) -> WorkflowResult:
         """Generate grouped commits with validation and retry logic.
 
@@ -152,6 +153,7 @@ class GroupedCommitWorkflow:
                     max_retries=max_retries,
                     quiet=quiet,
                     skip_success_message=True,
+                    reasoning_effort=reasoning_effort,
                 )
             )
 
@@ -384,6 +386,7 @@ class GroupedCommitWorkflow:
                 quiet=ctx.quiet,
                 staged_files_set=staged_files_set,
                 require_confirmation=ctx.flags.require_confirmation,
+                reasoning_effort=ctx.reasoning_effort,
             )
 
             if not result.success:

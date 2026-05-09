@@ -123,8 +123,8 @@ def test_init_cli_complete_workflow_with_english_language(monkeypatch):
                 mock.patch("questionary.password") as mpass,
                 mock.patch("questionary.confirm") as mconfirm,
             ):
-                # Complete workflow: provider selection + language selection + stats confirm (first time)
-                mselect.return_value.ask.side_effect = ["OpenAI", "English"]
+                # Complete workflow: provider selection + reasoning effort + language selection + stats confirm (first time)
+                mselect.return_value.ask.side_effect = ["OpenAI", "Skip (use model default)", "English"]
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["openai-key"]
                 mconfirm.return_value.ask.side_effect = [True]  # enable stats
@@ -150,8 +150,8 @@ def test_init_cli_complete_workflow_simple(monkeypatch):
                 mock.patch("questionary.password") as mpass,
                 mock.patch("questionary.confirm") as mconfirm,
             ):
-                # Simple workflow: provider selection + English language + stats confirm
-                mselect.return_value.ask.side_effect = ["OpenAI", "English"]
+                # Simple workflow: provider selection + reasoning effort + English language + stats confirm
+                mselect.return_value.ask.side_effect = ["OpenAI", "Skip (use model default)", "English"]
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["openai-key"]
                 mconfirm.return_value.ask.side_effect = [True]  # enable stats
@@ -177,9 +177,10 @@ def test_init_cli_existing_language_keep(monkeypatch):
                 mock.patch("questionary.text") as mtext,
                 mock.patch("questionary.confirm") as mconfirm,
             ):
-                # Provider, API key action, language action, stats confirm (first time)
+                # Provider, reasoning effort, API key action, language action, stats confirm (first time)
                 mselect.return_value.ask.side_effect = [
                     "OpenAI",
+                    "Skip (use model default)",
                     "Keep existing key",
                     "Keep existing language",
                 ]
@@ -207,7 +208,12 @@ def test_init_cli_existing_configuration_workflow(monkeypatch):
                 mock.patch("questionary.password") as _mpass,
                 mock.patch("questionary.confirm") as mconfirm,
             ):
-                mselect.return_value.ask.side_effect = ["OpenAI", "Keep existing key", "English"]
+                mselect.return_value.ask.side_effect = [
+                    "OpenAI",
+                    "Skip (use model default)",
+                    "Keep existing key",
+                    "English",
+                ]
                 mtext.return_value.ask.side_effect = ["gpt-5"]
                 mconfirm.return_value.ask.side_effect = [True]  # enable stats
 
@@ -449,7 +455,11 @@ def test_init_cli_language_action_cancelled(monkeypatch):
                 mock.patch("questionary.password") as mpass,
                 mock.patch("questionary.confirm") as mconfirm,
             ):
-                mselect.return_value.ask.side_effect = ["OpenAI", None]  # Cancels at language step
+                mselect.return_value.ask.side_effect = [
+                    "OpenAI",
+                    "Skip (use model default)",
+                    None,
+                ]  # Cancels at language step
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["openai-key"]
                 mconfirm.return_value.ask.side_effect = [True]  # enable stats

@@ -36,6 +36,7 @@ class GACConfig(TypedDict, total=False):
     hook_timeout: int
     use_50_72_rule: bool
     signoff: bool
+    reasoning_effort: str | None
 
 
 def _parse_bool_env(key: str, default: bool) -> bool:
@@ -56,6 +57,27 @@ _CONFIG_VALIDATORS: list[tuple[str, type | tuple[type, ...], float | int | None,
     ("warning_limit_tokens", int, 1, None),
     ("hook_timeout", int, 1, None),
 ]
+
+
+_VALID_REASONING_EFFORT_VALUES = {"low", "medium", "high"}
+
+
+def _parse_reasoning_effort_env() -> str | None:
+    """Parse and normalize GAC_REASONING_EFFORT from the environment.
+
+    Accepts values case-insensitively (e.g. "HIGH") and normalizes them
+    to lowercase. Empty/whitespace-only values are treated as unset.
+    """
+    raw = os.getenv("GAC_REASONING_EFFORT")
+    if raw is None:
+        return None
+    value = raw.strip()
+    if value == "":
+        return None
+    lower = value.lower()
+    if lower in _VALID_REASONING_EFFORT_VALUES:
+        return lower
+    return value
 
 
 def validate_config(config: GACConfig) -> None:
@@ -85,6 +107,13 @@ def validate_config(config: GACConfig) -> None:
             raise ConfigError(f"{field} must be >= {min_val}, got {value}")
         if max_val is not None and numeric_value > max_val:
             raise ConfigError(f"{field} must be <= {max_val}, got {value}")
+
+    # Validate reasoning_effort (string enum)
+    re_val = config.get("reasoning_effort")
+    if re_val is not None and re_val not in _VALID_REASONING_EFFORT_VALUES:
+        raise ConfigError(
+            f"reasoning_effort must be one of {sorted(_VALID_REASONING_EFFORT_VALUES)!r} or unset, got {re_val!r}"
+        )
 
 
 def load_config() -> GACConfig:
@@ -117,6 +146,7 @@ def load_config() -> GACConfig:
         "hook_timeout": int(os.getenv("GAC_HOOK_TIMEOUT", EnvDefaults.HOOK_TIMEOUT)),
         "use_50_72_rule": _parse_bool_env("GAC_USE_50_72_RULE", EnvDefaults.USE_50_72_RULE),
         "signoff": _parse_bool_env("GAC_SIGNOFF", EnvDefaults.SIGNOFF),
+        "reasoning_effort": _parse_reasoning_effort_env(),
     }
 
     validate_config(config)

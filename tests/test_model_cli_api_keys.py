@@ -23,6 +23,7 @@ def test_configure_model_api_key_existing_keep(tmp_path):
             mselect.return_value.ask.side_effect = [
                 "OpenAI",  # Provider selection
                 "Keep existing key",  # API key action
+                # Reasoning effort
             ]
             mtext.return_value.ask.return_value = "gpt-5-mini"  # model
 
@@ -50,6 +51,7 @@ def test_configure_model_api_key_existing_enter_new(tmp_path):
             # Select OpenAI provider
             mselect.return_value.ask.side_effect = [
                 "OpenAI",  # Provider selection
+                # Reasoning effort
                 "Enter new key",  # API key action
             ]
             mtext.return_value.ask.return_value = "gpt-5-mini"  # model
@@ -80,6 +82,7 @@ def test_configure_model_api_key_existing_enter_empty(tmp_path):
             # Select OpenAI provider
             mselect.return_value.ask.side_effect = [
                 "OpenAI",  # Provider selection
+                # Reasoning effort
                 "Enter new key",  # API key action
             ]
             mtext.return_value.ask.return_value = "gpt-5-mini"  # model
@@ -90,7 +93,9 @@ def test_configure_model_api_key_existing_enter_empty(tmp_path):
             assert result is True
             # Should have set_key call for model only
             assert mock_set_key.call_count >= 1
-            mock_echo.assert_called_with("No key entered. Keeping existing OPENAI_API_KEY")
+            # Should have printed the "no key entered" message
+            echo_calls = [str(c) for c in mock_echo.call_args_list]
+            assert any("No key entered. Keeping existing OPENAI_API_KEY" in c for c in echo_calls)
 
 
 def test_configure_model_api_key_existing_cancel_action(tmp_path):
@@ -111,6 +116,7 @@ def test_configure_model_api_key_existing_cancel_action(tmp_path):
             # Select OpenAI provider
             mselect.return_value.ask.side_effect = [
                 "OpenAI",  # Provider selection
+                # Reasoning effort
                 None,  # Cancel API key action
             ]
             mtext.return_value.ask.return_value = "gpt-5-mini"  # model
@@ -120,7 +126,9 @@ def test_configure_model_api_key_existing_cancel_action(tmp_path):
             assert result is True
             # Should have set_key call for model only
             assert mock_set_key.call_count >= 1
-            mock_echo.assert_called_with("API key configuration cancelled. Keeping existing key.")
+            # Should have printed the cancellation message
+            echo_calls = [str(c) for c in mock_echo.call_args_list]
+            assert any("API key configuration cancelled. Keeping existing key." in c for c in echo_calls)
 
 
 def test_configure_model_api_key_new_enter(tmp_path):
@@ -161,7 +169,7 @@ def test_configure_model_api_key_new_skip(tmp_path):
             patch("gac.model_cli.click.echo") as mock_echo,
         ):
             # Select OpenAI provider
-            mselect.return_value.ask.return_value = "OpenAI"
+            mselect.return_value.ask.side_effect = ["OpenAI"]
             mtext.return_value.ask.return_value = "gpt-5-mini"  # model
             mpass.return_value.ask.return_value = ""  # Skip API key
 
@@ -170,7 +178,7 @@ def test_configure_model_api_key_new_skip(tmp_path):
             assert result is True
             # Should have set_key call for model only
             assert mock_set_key.call_count >= 1
-            mock_echo.assert_called_with("No API key entered. You can add one later by editing ~/.gac.env")
+            mock_echo.assert_any_call("No API key entered. You can add one later by editing ~/.gac.env")
 
 
 def test_configure_model_api_key_ollama_skip(tmp_path):
@@ -187,7 +195,7 @@ def test_configure_model_api_key_ollama_skip(tmp_path):
             patch("gac.model_cli.click.echo") as mock_echo,
         ):
             # Select Ollama provider
-            mselect.return_value.ask.return_value = "Ollama"
+            mselect.return_value.ask.side_effect = ["Ollama"]
             mtext.return_value.ask.return_value = "http://localhost:11434"  # URL
             mpass.return_value.ask.return_value = ""  # Skip API key
 
@@ -196,7 +204,7 @@ def test_configure_model_api_key_ollama_skip(tmp_path):
             assert result is True
             # Should have set_key calls for model and URL
             assert mock_set_key.call_count >= 2
-            mock_echo.assert_called_with("Skipping API key. You can add one later if needed.")
+            mock_echo.assert_any_call("Skipping API key. You can add one later if needed.")
 
 
 def test_configure_model_api_key_ollama_enter(tmp_path):
@@ -238,7 +246,7 @@ def test_configure_model_api_key_lmstudio_skip(tmp_path):
             patch("gac.model_cli.click.echo") as mock_echo,
         ):
             # Select LM Studio provider
-            mselect.return_value.ask.return_value = "LM Studio"
+            mselect.return_value.ask.side_effect = ["LM Studio"]
             mtext.return_value.ask.return_value = "http://localhost:1234"  # URL
             mpass.return_value.ask.return_value = ""  # Skip API key
 
@@ -247,7 +255,7 @@ def test_configure_model_api_key_lmstudio_skip(tmp_path):
             assert result is True
             # Should have set_key calls for model and URL
             assert mock_set_key.call_count >= 2
-            mock_echo.assert_called_with("Skipping API key. You can add one later if needed.")
+            mock_echo.assert_any_call("Skipping API key. You can add one later if needed.")
 
 
 def test_configure_model_api_key_lmstudio_existing_skip(tmp_path):
@@ -268,6 +276,7 @@ def test_configure_model_api_key_lmstudio_existing_skip(tmp_path):
             mselect.return_value.ask.side_effect = [
                 "LM Studio",  # Provider selection
                 "Keep existing key",  # API key action
+                # Reasoning effort
             ]
             mtext.return_value.ask.return_value = "http://localhost:1234"  # URL
 
@@ -342,6 +351,7 @@ def test_configure_model_zai_api_key_existing_keep(tmp_path):
             mselect.return_value.ask.side_effect = [
                 "Z.AI",  # Provider selection
                 "Keep existing key",  # API key action
+                # Reasoning effort
             ]
             mtext.return_value.ask.return_value = "glm-4.5-air"  # model
 

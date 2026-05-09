@@ -72,6 +72,7 @@ class GenerationConfig:
     temperature: float
     max_output_tokens: int
     max_retries: int
+    reasoning_effort: str | None = None
 
 
 @dataclass(frozen=True)
@@ -137,6 +138,10 @@ class WorkflowContext:
     @property
     def max_retries(self) -> int:
         return self.config.max_retries
+
+    @property
+    def reasoning_effort(self) -> str | None:
+        return self.config.reasoning_effort
 
     @property
     def quiet(self) -> bool:

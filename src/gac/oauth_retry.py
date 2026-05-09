@@ -126,6 +126,12 @@ def handle_oauth_retry(e: AIError, ctx: WorkflowContext, config: GACConfig) -> i
 
     if provider is None:
         console.print(f"[red]Failed to generate commit message: {e!s}[/red]")
+        error_str = str(e).lower()
+        if "reasoning_effort" in error_str:
+            console.print(
+                "[yellow]💡 Your model may not support reasoning_effort. "
+                "Run 'gac model' and select 'Skip' for reasoning effort to disable it.[/yellow]"
+            )
         return 1
 
     def retry_workflow() -> int:

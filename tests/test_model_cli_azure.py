@@ -52,6 +52,7 @@ def test_configure_model_azure_openai_keep_existing_endpoint_new_version(tmp_pat
             mselect.return_value.ask.side_effect = [
                 "Azure OpenAI",  # Provider selection
                 "Enter new version",  # Version action (since no existing version)
+                # Reasoning effort
             ]
             # Model, then new version
             mtext.return_value.ask.side_effect = [
@@ -89,6 +90,7 @@ def test_configure_model_azure_openai_keep_existing_endpoint_and_version(tmp_pat
                 "Azure OpenAI",  # Provider selection
                 "Keep existing endpoint",  # Endpoint action
                 "Keep existing version",  # Version action
+                # Reasoning effort
             ]
             mtext.return_value.ask.return_value = "gpt-5-mini"  # model only
             mpass.return_value.ask.return_value = "azure-test-key"
@@ -116,6 +118,7 @@ def test_configure_model_azure_openai_endpoint_cancellation(tmp_path):
             # Select Azure OpenAI provider
             mselect.return_value.ask.side_effect = [
                 "Azure OpenAI",  # Provider selection
+                # Reasoning effort
                 "Enter new endpoint",  # Endpoint action
             ]
             # Model, then cancel endpoint
@@ -208,6 +211,7 @@ def test_configure_model_azure_openai_keep_endpoint_new_version(tmp_path):
                 "Azure OpenAI",  # Provider selection
                 "Keep existing endpoint",  # Endpoint action
                 "Enter new version",  # Version action (no existing version)
+                # Reasoning effort
             ]
             # Model, then new API version
             mtext.return_value.ask.side_effect = [
@@ -242,6 +246,7 @@ def test_configure_model_azure_openai_new_endpoint_keep_version(tmp_path):
                 "Azure OpenAI",  # Provider selection
                 "Enter new endpoint",  # Endpoint action (no existing endpoint)
                 "Keep existing version",  # Version action (existing version exists)
+                # Reasoning effort
             ]
             # Model, then new endpoint
             mtext.return_value.ask.side_effect = [

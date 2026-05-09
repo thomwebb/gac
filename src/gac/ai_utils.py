@@ -299,6 +299,7 @@ def generate_with_retries(
     is_group: bool = False,
     skip_success_message: bool = False,
     task_description: str = "commit message",
+    reasoning_effort: str | None = None,
 ) -> tuple[str, int, int, int, int]:
     """Generate content with retry logic using direct API calls."""
     # Parse model string to determine provider and actual model
@@ -354,7 +355,13 @@ def generate_with_retries(
             if not provider_func:
                 raise AIError.model_error(f"Provider function not found for: {provider}")
 
-            result = provider_func(model=model_name, messages=messages, temperature=temperature, max_tokens=max_tokens)
+            result = provider_func(
+                model=model_name,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                reasoning_effort=reasoning_effort,
+            )
             content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
 
             # Learn the real chars/token ratio for this model when the API

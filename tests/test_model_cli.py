@@ -183,7 +183,7 @@ def test_model_cli_basic(tmp_path):
                 mock.patch("questionary.password") as mpass,
             ):
                 # Provider selection
-                mselect.return_value.ask.side_effect = ["OpenAI"]
+                mselect.return_value.ask.side_effect = ["OpenAI", "Skip (use model default)"]
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["sk-test-key"]
 
@@ -228,10 +228,7 @@ def test_configure_model_azure_api_version_enter_new(tmp_path):
                 "Enter new version",
                 "Keep existing key",
             ]
-            mtext.return_value.ask.side_effect = [
-                "gpt-5-mini",
-                "2025-03-01-preview",
-            ]
+            mtext.return_value.ask.side_effect = ["gpt-5-mini", "2025-03-01-preview"]
             mpass.return_value.ask.return_value = None
 
             result = _configure_model(
@@ -254,15 +251,8 @@ def test_configure_model_azure_api_version_enter_new_cancelled(tmp_path):
             mock.patch("questionary.text") as mtext,
             mock.patch("gac.model_cli.set_key"),
         ):
-            mselect.return_value.ask.side_effect = [
-                "Azure OpenAI",
-                "Keep existing endpoint",
-                "Enter new version",
-            ]
-            mtext.return_value.ask.side_effect = [
-                "gpt-5-mini",
-                None,
-            ]
+            mselect.return_value.ask.side_effect = ["Azure OpenAI", "Keep existing endpoint", "Enter new version"]
+            mtext.return_value.ask.side_effect = ["gpt-5-mini", None]
 
             result = _configure_model(
                 {

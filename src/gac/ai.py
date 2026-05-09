@@ -24,6 +24,7 @@ def generate_commit_message(
     is_group: bool = False,
     skip_success_message: bool = False,
     task_description: str = "commit message",
+    reasoning_effort: str | None = None,
 ) -> tuple[str, int, int, int, int]:
     """Generate a commit message using direct API calls to AI providers.
 
@@ -71,6 +72,7 @@ def generate_commit_message(
             is_group=is_group,
             skip_success_message=skip_success_message,
             task_description=task_description,
+            reasoning_effort=reasoning_effort,
         )
     except AIError:
         # Re-raise AIError exceptions as-is to preserve error classification
@@ -88,6 +90,7 @@ def generate_grouped_commits(
     max_retries: int,
     quiet: bool = False,
     skip_success_message: bool = False,
+    reasoning_effort: str | None = None,
 ) -> tuple[str, int, int, int, int]:
     """Generate grouped commits JSON response."""
     return generate_commit_message(
@@ -100,4 +103,5 @@ def generate_grouped_commits(
         is_group=True,
         skip_success_message=skip_success_message,
         task_description="commit message",
+        reasoning_effort=reasoning_effort,
     )

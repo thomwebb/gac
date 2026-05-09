@@ -258,6 +258,50 @@ class TestValidateConfig:
         with pytest.raises(ConfigError, match=r"hook_timeout must be an integer, got str"):
             validate_config(config)
 
+    # reasoning_effort validation tests
+    def test_reasoning_effort_valid_values(self):
+        """Test that valid reasoning_effort values pass validation."""
+        for value in ("low", "medium", "high", None):
+            validate_config({"reasoning_effort": value})
+
+    def test_reasoning_effort_none_is_allowed(self):
+        """Test that reasoning_effort=None (unset) is valid."""
+        validate_config({"reasoning_effort": None})
+        validate_config({})  # Key not present at all
+
+    def test_reasoning_effort_invalid_value(self):
+        """Test that invalid reasoning_effort raises ConfigError."""
+        config = {"reasoning_effort": "extreme"}
+        with pytest.raises(ConfigError, match=r"reasoning_effort must be one of"):
+            validate_config(config)
+
+    def test_reasoning_effort_empty_string_is_none(self, tmp_path, monkeypatch):
+        """Test that GAC_REASONING_EFFORT='' normalizes to None via load_config."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("GAC_REASONING_EFFORT", "")
+
+        with patch("gac.config.Path.home") as mock_home:
+            mock_home.return_value = tmp_path / "nonexistent_home"
+            config = load_config()
+            assert config["reasoning_effort"] is None
+
+    def test_reasoning_effort_case_insensitive(self, tmp_path, monkeypatch):
+        """Test that GAC_REASONING_EFFORT is parsed case-insensitively."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("GAC_REASONING_EFFORT", "HIGH")
+
+        with patch("gac.config.Path.home") as mock_home:
+            mock_home.return_value = tmp_path / "nonexistent_home"
+            config = load_config()
+            assert config["reasoning_effort"] == "high"
+
+        # Also test with whitespace
+        monkeypatch.setenv("GAC_REASONING_EFFORT", "  Medium  ")
+        with patch("gac.config.Path.home") as mock_home:
+            mock_home.return_value = tmp_path / "nonexistent_home"
+            config = load_config()
+            assert config["reasoning_effort"] == "medium"
+
     # Integration test with load_config
     def test_load_config_validates(self, tmp_path, monkeypatch):
         """Test that load_config() calls validate_config() and raises on invalid values."""

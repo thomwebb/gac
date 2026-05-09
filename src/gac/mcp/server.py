@@ -336,6 +336,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
         temperature = config.get("temperature", 0.7)
         max_tokens = config.get("max_output_tokens", 1000)
         max_retries = config.get("max_retries", 3)
+        reasoning_effort = config.get("reasoning_effort")  # str | None
 
         prompt_builder = PromptBuilder(config)
 
@@ -377,6 +378,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
                 quiet=True,
                 staged_files_set=set(staged_files),
                 require_confirmation=False,
+                reasoning_effort=reasoning_effort,
             )
 
             if not group_result.success:
@@ -482,6 +484,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
             max_tokens=max_tokens,
             max_retries=max_retries,
             quiet=True,
+            reasoning_effort=reasoning_effort,
         )
         record_tokens(prov_pt, prov_ot, model=model, duration_ms=duration_ms, reasoning_tokens=_reasoning_tokens)
         commit_message = clean_commit_message(raw_commit_message)
