@@ -99,10 +99,12 @@ class TestGitStateValidator:
             patch.object(validator, "stage_all_if_requested"),
             patch("gac.git_state_validator.get_staged_files", return_value=["file.py"]),
             patch("gac.git_state_validator.get_staged_status", return_value="M file.py"),
-            patch("gac.git_state_validator.run_git_command") as mock_ex,
-            patch("gac.git_state_validator.preprocess_diff", return_value="processed"),
+            patch("gac.git_state_validator.get_staged_diffs_per_file") as mock_diffs,
+            patch("gac.git_state_validator.run_git_command") as mock_run,
+            patch("gac.git_state_validator.preprocess_per_file_diffs", return_value="processed"),
         ):
-            mock_ex.return_value = GitCommandResult.ok("diff content")
+            mock_diffs.return_value = [("file.py", "diff content")]
+            mock_run.return_value = GitCommandResult.ok(" stat output")
             git_state = validator.get_git_state(model="openai:gpt-4o-mini")
 
             assert git_state.has_secrets is True

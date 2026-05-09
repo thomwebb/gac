@@ -244,9 +244,10 @@ class TestGitStateValidatorMissingCoverage:
         with patch.object(validator, "validate_repository", return_value="/repo"):
             with patch.object(validator, "stage_all_if_requested"):
                 with patch("gac.git_state_validator.get_staged_status", return_value="M file.py"):
-                    with patch("gac.git_state_validator.run_git_command", return_value=GitCommandResult.ok("diff")):
-                        with patch("gac.git_state_validator.preprocess_diff", return_value="processed"):
-                            git_state = validator.get_git_state(model="openai:gpt-4o-mini", skip_secret_scan=True)
+                    with patch("gac.git_state_validator.get_staged_diffs_per_file", return_value=[("file.py", "diff")]):
+                        with patch("gac.git_state_validator.run_git_command", return_value=GitCommandResult.ok("stat")):
+                            with patch("gac.git_state_validator.preprocess_per_file_diffs", return_value="processed"):
+                                git_state = validator.get_git_state(model="openai:gpt-4o-mini", skip_secret_scan=True)
 
                             assert git_state.has_secrets is False
                             assert git_state.secrets == []
