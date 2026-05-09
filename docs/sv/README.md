@@ -64,14 +64,14 @@ uv tool upgrade gac
 
 ## Nyckelfunktioner
 
-### 🌐 **25+ Stödda Leverantörer**
+### 🌐 **28+ Stödda Leverantörer**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai**
 - **Claude Code (OAuth)** • **Crof.ai** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot**
 - **Groq** • **Kimi for Coding** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI**
-- **Ollama** • **OpenAI** • **OpenRouter** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
-- **Z.AI** • **Z.AI Coding** • **Custom Endpoints (Anthropic/OpenAI)**
+- **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
+- **Z.AI (API & Coding Plans)** • **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Smart LLM-analys**
 
@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Flerspråkigt Stöd**
 
-- **25+ språk**: Generera commit-meddelanden på engelska, kinesiska, japanska, koreanska, spanska, franska, tyska och 20+ fler språk
+- **28+ språk**: Generera commit-meddelanden på engelska, kinesiska, japanska, koreanska, spanska, franska, tyska och 20+ fler språk
 - **Flexibel översättning**: Välj att behålla conventional commit-prefix på engelska för verktygskompatibilitet, eller översätt dem helt
 - **Flera arbetsflöden**: Ställ in ett standardspråk med `gac language`, eller använd `-l <språk>` flagget för engångsöverstyrning
 - **Stöd för originalskript**: Fullt stöd för icke-latinska skript inklusive CJK, kyrilliska, thai och mer
@@ -240,7 +240,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Se `.gac.env.example` för alla tillgängliga alternativ.
 
-**Vill du ha commit-meddelanden på ett annat språk?** Kör `gac language` för att välja från 25+ språk inklusive Español, Français, 日本語 och mer.
+**Vill du ha commit-meddelanden på ett annat språk?** Kör `gac language` för att välja från 28+ språk inklusive Español, Français, 日本語 och mer.
 
 **Vill du anpassa commit-meddelandestil?** Se [docs/CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) för vägledning om att skriva anpassade system-prompts.
 

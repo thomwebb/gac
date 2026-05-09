@@ -64,14 +64,14 @@ uv tool upgrade gac
 
 ## 核心特性
 
-### 🌐 **支持的 25+ 提供商**
+### 🌐 **支持的 28+ 提供商**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai**
 - **Claude Code (OAuth)** • **Crof.ai** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot**
 - **Groq** • **Kimi for Coding** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI**
-- **Ollama** • **OpenAI** • **OpenRouter** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
-- **Z.AI** • **Z.AI Coding** • **Custom Endpoints (Anthropic/OpenAI)**
+- **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
+- **Z.AI (API & Coding Plans)** • **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **智能 LLM 分析**
 
@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **多语言支持**
 
-- **25+ 种语言**：生成英语、中文、日语、韩语、西班牙语、法语、德语等 20 多种语言的提交信息
+- **28+ 种语言**：生成英语、中文、日语、韩语、西班牙语、法语、德语等 20 多种语言的提交信息
 - **灵活翻译**：选择保持常规提交前缀为英语以保持工具兼容性，或完全翻译它们
 - **多种工作流**：使用 `gac language` 设置默认语言，或使用 `-l <语言>` 标志进行一次性覆盖
 - **原生脚本支持**：完全支持非拉丁文字，包括中日韩、西里尔文、泰文等

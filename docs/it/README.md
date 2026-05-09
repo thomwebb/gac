@@ -64,14 +64,14 @@ uv tool upgrade gac
 
 ## Funzionalità Principali
 
-### 🌐 **25+ Provider Supportati**
+### 🌐 **28+ Provider Supportati**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai**
 - **Claude Code (OAuth)** • **Crof.ai** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot**
 - **Groq** • **Kimi for Coding** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI**
-- **Ollama** • **OpenAI** • **OpenRouter** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
-- **Z.AI** • **Z.AI Coding** • **Custom Endpoints (Anthropic/OpenAI)**
+- **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
+- **Z.AI (API & Coding Plans)** • **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Analisi Intelligente LLM**
 
@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Supporto multilingue**
 
-- **25+ lingue**: Genera messaggi di commit in inglese, cinese, giapponese, coreano, spagnolo, francese, tedesco, italiano e 20+ altre lingue
+- **28+ lingue**: Genera messaggi di commit in inglese, cinese, giapponese, coreano, spagnolo, francese, tedesco, italiano e 20+ altre lingue
 - **Traduzione flessibile**: Scegli di mantenere i prefissi dei commit convenzionali in inglese per la compatibilità degli strumenti, o tradurli completamente
 - **Workflow multipli**: Imposta una lingua predefinita con `gac language`, o usa il flag `-l <lingua>` per override una tantum
 - **Supporto script nativi**: Supporto completo per script non latini inclusi CJK, cirillico, thai e altri
@@ -240,7 +240,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Vedi `.gac.env.example` per tutte le opzioni disponibili.
 
-**Vuoi messaggi di commit in un'altra lingua?** Esegui `gac language` per selezionare tra 25+ lingue inclusi Español, Français, 日本語, e altre.
+**Vuoi messaggi di commit in un'altra lingua?** Esegui `gac language` per selezionare tra 28+ lingue inclusi Español, Français, 日本語, e altre.
 
 **Vuoi personalizzare lo stile dei messaggi di commit?** Vedi [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/it/CUSTOM_SYSTEM_PROMPTS.md) per guide sulla scrittura di prompt di sistema personalizzati.
 

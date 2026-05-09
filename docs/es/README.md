@@ -69,9 +69,9 @@ uv tool upgrade gac
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai**
 - **Claude Code (OAuth)** • **Crof.ai** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot**
 - **Groq** • **Kimi for Coding** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI**
-- **Ollama** • **OpenAI** • **OpenRouter** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
-- **Z.AI** • **Z.AI Coding** • **Custom Endpoints (Anthropic/OpenAI)**
+- **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
+- **Z.AI (API & Coding Plans)** • **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Análisis inteligente con LLM**
 
@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Soporte multilingüe**
 
-- **25+ idiomas**: Genera mensajes de commit en inglés, chino, japonés, coreano, español, francés, alemán y 20+ idiomas más
+- **28+ idiomas**: Genera mensajes de commit en inglés, chino, japonés, coreano, español, francés, alemán y 20+ idiomas más
 - **Traducción flexible**: Elige mantener prefijos de commit convencionales en inglés para compatibilidad de herramientas, o traducirlos completamente
 - **Múltiples flujos de trabajo**: Establece un idioma predeterminado con `gac language`, o usa la bandera `-l <idioma>` para anulaciones de una sola vez
 - **Soporte de escritura nativa**: Soporte completo para scripts no latinos incluyendo CJK, cirílico, tailandés y más
@@ -240,7 +240,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Consulta `.gac.env.example` para todas las opciones disponibles.
 
-**¿Quieres mensajes de commit en otro idioma?** Ejecuta `gac language` para seleccionar entre 25+ idiomas incluyendo Español, Français, 日本語 y más.
+**¿Quieres mensajes de commit en otro idioma?** Ejecuta `gac language` para seleccionar entre 28+ idiomas incluyendo Español, Français, 日本語 y más.
 
 **¿Quieres personalizar el estilo del mensaje de commit?** Consulta [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/es/CUSTOM_SYSTEM_PROMPTS.md) para orientación sobre cómo escribir prompts de sistema personalizados.
 
