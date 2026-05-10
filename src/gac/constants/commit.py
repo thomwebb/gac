@@ -47,6 +47,20 @@ class CommitMessageConstants:
         "</format>",
         "<conventions>",
         "</conventions>",
+        "<git-status>",
+        "</git-status>",
+        "<hint>",
+        "</hint>",
+        "<status>",
+        "</status>",
+        "<diff>",
+        "</diff>",
+        "<role>",
+        "</role>",
+        "<focus>",
+        "</focus>",
+        "<verbose>",
+        "</verbose>",
     ]
 
     # Indicators that mark the start of the actual commit message in AI responses

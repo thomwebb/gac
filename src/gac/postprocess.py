@@ -157,6 +157,10 @@ def _extract_commit_from_reasoning(message: str) -> str:
 def _remove_xml_tags(message: str) -> str:
     """Remove XML tags that might have leaked into the message.
 
+    Only removes known structural tags from our prompt templates — not
+    inline mentions of tag names in the commit body (e.g.
+    "remove <think> and </thinking> tags" must be preserved).
+
     Args:
         message: The message to clean
 
