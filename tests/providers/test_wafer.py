@@ -2,6 +2,7 @@
 
 import os
 from collections.abc import Callable
+from dataclasses import replace
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -69,6 +70,36 @@ class TestWaferProviderMocked(BaseProviderTest):
     @property
     def empty_content_response(self) -> dict[str, Any]:
         return {"choices": [{"message": {"content": ""}}]}
+
+
+class TestWaferBaseURL:
+    """Test Wafer base URL configuration."""
+
+    def test_default_base_url(self):
+        """Test that default base URL is used when WAFER_BASE_URL is not set."""
+        from gac.providers.wafer import WaferProvider
+
+        env = dict(os.environ)
+        env.pop("WAFER_BASE_URL", None)
+        with patch.dict("os.environ", env, clear=True):
+            provider = WaferProvider(replace(WaferProvider.config))
+            assert provider.config.base_url == "https://pass.Wafer.ai/v1"
+
+    def test_custom_base_url(self):
+        """Test that WAFER_BASE_URL env var overrides the default."""
+        from gac.providers.wafer import WaferProvider
+
+        with patch.dict("os.environ", {"WAFER_BASE_URL": "https://custom.wafer.example.com"}):
+            provider = WaferProvider(replace(WaferProvider.config))
+            assert provider.config.base_url == "https://custom.wafer.example.com/v1"
+
+    def test_custom_base_url_strips_trailing_slash(self):
+        """Test that trailing slash is stripped from WAFER_BASE_URL."""
+        from gac.providers.wafer import WaferProvider
+
+        with patch.dict("os.environ", {"WAFER_BASE_URL": "https://custom.wafer.example.com/"}):
+            provider = WaferProvider(replace(WaferProvider.config))
+            assert provider.config.base_url == "https://custom.wafer.example.com/v1"
 
 
 class TestWaferEdgeCases:
