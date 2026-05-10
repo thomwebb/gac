@@ -143,10 +143,10 @@ def validate_config(config: GACConfig) -> None:
 
 
 def load_config() -> GACConfig:
-    """Load configuration from $HOME/.gac.env, then ./.gac.env, then environment variables."""
+    """Load configuration from environment variables, then $HOME/.gac.env, then ./.gac.env (highest priority)."""
     user_config = Path.home() / ".gac.env"
     if user_config.exists():
-        load_dotenv(user_config)
+        load_dotenv(user_config, override=True)
 
     # Check for .gac.env in project directory
     project_gac_env = Path(".gac.env")
