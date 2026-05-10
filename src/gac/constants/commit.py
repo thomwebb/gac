@@ -33,14 +33,12 @@ class CommitMessageConstants:
 
     # XML tags that may leak from prompt templates into AI responses
     XML_TAGS_TO_REMOVE: list[str] = [
-        "<git-status>",
-        "</git-status>",
-        "<git_status>",
-        "</git_status>",
-        "<git-diff>",
-        "</git-diff>",
-        "<git_diff>",
-        "</git_diff>",
+        "<staged_changes>",
+        "</staged_changes>",
+        "<change_summary>",
+        "</change_summary>",
+        "<staged_files>",
+        "</staged_files>",
         "<repository_context>",
         "</repository_context>",
         "<instructions>",

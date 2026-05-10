@@ -435,17 +435,17 @@ def build_question_generation_prompt(
     system_prompt = _load_question_generation_template()
 
     # Build user prompt with git context
-    user_prompt = f"""<git_diff>
+    user_prompt = f"""<staged_changes>
 {processed_diff}
-</git_diff>
+</staged_changes>
 
-<git_diff_stat>
+<change_summary>
 {diff_stat}
-</git_diff_stat>
+</change_summary>
 
-<git_status>
+<staged_files>
 {status}
-</git_status>"""
+</staged_files>"""
 
     if hint:
         user_prompt = f"""<hint>
