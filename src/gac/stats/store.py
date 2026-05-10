@@ -53,7 +53,7 @@ class GACStats(TypedDict):
     weekly_output_tokens: dict[str, int]  # ISO week -> output token count (excludes reasoning)
     weekly_reasoning_tokens: dict[str, int]  # ISO week -> reasoning token count
     projects: dict[str, Any]  # project_name -> {gacs, commits, prompt_tokens, output_tokens, reasoning_tokens}
-    models: dict[str, Any]  # model_name -> {gacs, prompt_tokens, output_tokens, reasoning_tokens}
+    models: dict[str, Any]  # model_name -> {gacs, commits, prompt_tokens, output_tokens, reasoning_tokens}
     _version: int  # Schema version for migrations
 
 
@@ -69,6 +69,11 @@ def _normalize_models(models: dict[str, Any]) -> dict[str, Any]:
     for _name, data in models.items():
         for field, default in _DURATION_DEFAULTS.items():
             data.setdefault(field, default)
+        # Backfill: every recorded gac produced at least one commit, so
+        # for pre-existing entries without a commits key, gacs is the
+        # best conservative floor (better than 0 for models with 100+ gacs).
+        if "commits" not in data:
+            data["commits"] = data.get("gacs", 0)
     return models
 
 
@@ -463,24 +468,26 @@ def project_activity(project_data: tuple[str, Any]) -> tuple[int, int]:
     return (activity, total_tokens)
 
 
-def model_activity(model_data: tuple[str, Any]) -> tuple[int, int]:
-    """Sort key for models by gacs (workflow uses), then by total tokens.
+def model_activity(model_data: tuple[str, Any]) -> tuple[int, int, int]:
+    """Sort key for models by gacs, then commits, then by total tokens.
 
     Args:
         model_data: Tuple of (model_name, data) where data is a dict
-            with 'gacs', 'prompt_tokens', 'output_tokens', and 'reasoning_tokens' keys.
+            with 'gacs', 'commits', 'prompt_tokens', 'output_tokens', and
+            'reasoning_tokens' keys.
 
     Returns:
-        Tuple of (gacs, total_tokens) — higher sorts first when reverse=True.
+        Tuple of (gacs, commits, total_tokens) — higher sorts first when reverse=True.
 
     NOTE: In v3 stats schema, output_tokens excludes reasoning_tokens
-    (normalized at provider parse time), so total = prompt + output +
-    reasoning (three distinct additive components).
+        (normalized at provider parse time), so total = prompt + output +
+        reasoning (three distinct additive components).
     """
     data = model_data[1]
     gacs = int(data.get("gacs", 0))
+    commits = int(data.get("commits", 0))
     total_tokens = compute_total_tokens(data)
-    return (gacs, total_tokens)
+    return (gacs, commits, total_tokens)
 
 
 def reset_stats() -> None:

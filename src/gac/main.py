@@ -132,7 +132,7 @@ def _execute_single_commit_workflow(ctx: WorkflowContext, config: GACConfig) -> 
 
     # Record successful commit and gac (only when commit actually happened)
     if not ctx.flags.dry_run:
-        record_commit()
+        record_commit(model=ctx.model)
         record_gac(model=ctx.model)
 
     # Push if requested

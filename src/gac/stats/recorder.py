@@ -119,6 +119,7 @@ def record_gac(project_name: str | None = None, model: str | None = None) -> Non
         if model not in stats["models"]:
             stats["models"][model] = {
                 "gacs": 0,
+                "commits": 0,
                 "prompt_tokens": 0,
                 "output_tokens": 0,
                 "total_duration_ms": 0,
@@ -142,11 +143,12 @@ def record_gac(project_name: str | None = None, model: str | None = None) -> Non
     logger.debug(f"Recorded gac. Total gacs: {stats['total_gacs']}")
 
 
-def record_commit(project_name: str | None = None) -> None:
+def record_commit(project_name: str | None = None, model: str | None = None) -> None:
     """Record a successful commit in the statistics.
 
     Args:
         project_name: Name of the project. Auto-detected from git if not provided.
+        model: Name of the AI model used for this commit (e.g. 'anthropic:claude-haiku-4-5').
 
     This should be called after a commit is successfully created.
 
@@ -190,6 +192,23 @@ def record_commit(project_name: str | None = None) -> None:
                 "output_tokens": 0,
             }
         stats["projects"][project_name]["commits"] += 1
+
+    # Update model commit stats
+    if model:
+        if model not in stats["models"]:
+            stats["models"][model] = {
+                "gacs": 0,
+                "commits": 0,
+                "prompt_tokens": 0,
+                "output_tokens": 0,
+                "total_duration_ms": 0,
+                "duration_count": 0,
+                "timed_output_tokens": 0,
+                "timed_reasoning_tokens": 0,
+                "min_duration_ms": 0,
+                "max_duration_ms": 0,
+            }
+        stats["models"][model]["commits"] = stats["models"][model].get("commits", 0) + 1
 
     store.save_stats(stats)
     logger.debug(f"Recorded commit. Total commits: {stats['total_commits']}")
@@ -265,6 +284,7 @@ def record_tokens(
         if model not in stats["models"]:
             stats["models"][model] = {
                 "gacs": 0,
+                "commits": 0,
                 "prompt_tokens": 0,
                 "output_tokens": 0,
                 "reasoning_tokens": 0,

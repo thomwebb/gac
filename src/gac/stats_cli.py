@@ -208,6 +208,7 @@ def show() -> None:
         models_table = Table(show_header=True, box=None)
         models_table.add_column("Model", style="bold magenta")
         models_table.add_column("Gacs", style="bold cyan", justify="right")
+        models_table.add_column("Commits", style="bold cyan", justify="right")
         models_table.add_column("Speed", style="bold cyan", justify="right")
         models_table.add_column("Latency", style="bold cyan", justify="right")
         models_table.add_column("Prompt", style="bold cyan", justify="right")
@@ -217,6 +218,7 @@ def show() -> None:
 
         for model_name, data in top_models[:5]:
             gacs = data.get("gacs", 0)
+            commits = data.get("commits", 0)
             prompt_t = int(data.get("prompt_tokens", 0))
             output_t = int(data.get("output_tokens", 0))
             reasoning_t = int(data.get("reasoning_tokens", 0))
@@ -229,6 +231,7 @@ def show() -> None:
             models_table.add_row(
                 model_name,
                 str(gacs),
+                str(commits),
                 speed_str,
                 latency_str,
                 format_tokens(prompt_t),
@@ -409,6 +412,7 @@ def models() -> None:
     table = Table(show_header=True, box=None)
     table.add_column("Model", style="bold magenta")
     table.add_column("Gacs", style="bold cyan", justify="right")
+    table.add_column("Commits", style="bold cyan", justify="right")
     table.add_column("Speed", style="bold cyan", justify="right")
     table.add_column("Latency", style="bold cyan", justify="right")
     table.add_column("Prompt", style="bold cyan", justify="right")
@@ -418,6 +422,7 @@ def models() -> None:
 
     for model_name, data in enriched:
         gacs = data.get("gacs", 0)
+        commits = data.get("commits", 0)
         prompt_t = int(data.get("prompt_tokens", 0))
         output_t = int(data.get("output_tokens", 0))
         reasoning_t = int(data.get("reasoning_tokens", 0))
@@ -430,6 +435,7 @@ def models() -> None:
         table.add_row(
             model_name,
             str(gacs),
+            str(commits),
             speed_str,
             latency_str,
             format_tokens(prompt_t),

@@ -87,7 +87,7 @@ def execute_grouped_commits(
                         fifty_seventy_two=fifty_seventy_two,
                     )
                     execute_commit(cleaned_message, no_verify, hook_timeout, signoff)
-                    record_commit()
+                    record_commit(model=model)
                     console.print(f"[green]✓ Commit {idx}/{num_commits} created[/green]")
                 except (AIError, ConfigError, GitError, subprocess.SubprocessError, OSError) as e:
                     restore_needed = True

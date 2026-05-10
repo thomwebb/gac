@@ -539,7 +539,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
         # Record stats (create_commit no longer tracks stats internally)
         from gac.stats import record_commit, record_gac
 
-        record_commit()
+        record_commit(model=model)
         record_gac(model=model)
 
         # Get commit hash

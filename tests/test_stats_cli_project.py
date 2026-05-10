@@ -206,6 +206,7 @@ class TestTopModelsAndProjects:
                         "openai:gpt-4",
                         {
                             "gacs": 5,
+                            "commits": 4,
                             "prompt_tokens": 3000,
                             "output_tokens": 1000,
                             "reasoning_tokens": 500,
@@ -233,6 +234,7 @@ class TestTopModelsAndProjects:
                         "anthropic:claude-3",
                         {
                             "gacs": 2,
+                            "commits": 1,
                             "prompt_tokens": 1000,
                             "output_tokens": 500,
                             "reasoning_tokens": 0,

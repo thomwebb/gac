@@ -195,6 +195,81 @@ class TestRecordCommit:
             assert stats["weekly_commits"][week_key] == 2
             assert stats["weekly_gacs"][week_key] == 1
 
+    def test_record_commit_with_model(self, tmp_path):
+        """Test that record_commit tracks commits per model."""
+        stats_file = tmp_path / "stats.json"
+
+        with patch("gac.stats.store.STATS_FILE", stats_file):
+            record_commit(model="anthropic:claude-sonnet-4")
+            record_commit(model="anthropic:claude-sonnet-4")
+            record_commit(model="openai:gpt-4o")
+
+            stats = load_stats()
+            assert stats["total_commits"] == 3
+            assert stats["models"]["anthropic:claude-sonnet-4"]["commits"] == 2
+            assert stats["models"]["openai:gpt-4o"]["commits"] == 1
+
+    def test_record_commit_no_model(self, tmp_path):
+        """Test that record_commit without model doesn't create model entry."""
+        stats_file = tmp_path / "stats.json"
+
+        with patch("gac.stats.store.STATS_FILE", stats_file):
+            record_commit()
+
+            stats = load_stats()
+            assert stats["total_commits"] == 1
+            assert stats["models"] == {}
+
+    def test_record_commit_model_initializes_new_model(self, tmp_path):
+        """Test that record_commit creates model entry if not present."""
+        stats_file = tmp_path / "stats.json"
+
+        with patch("gac.stats.store.STATS_FILE", stats_file):
+            record_commit(model="google:gemini-2.5-pro")
+
+            stats = load_stats()
+            assert "google:gemini-2.5-pro" in stats["models"]
+            assert stats["models"]["google:gemini-2.5-pro"]["commits"] == 1
+            # Should have other default fields too
+            assert stats["models"]["google:gemini-2.5-pro"]["gacs"] == 0
+
+    def test_normalize_models_backfills_commits_from_gacs(self, tmp_path):
+        """Test that _normalize_models backfills commits=gacs for legacy entries."""
+        import json
+
+        from gac.stats.store import _empty_stats
+
+        stats: GACStats = _empty_stats()
+        # Simulate legacy data: model has gacs but no commits key
+        stats["models"] = {
+            "old-model": {"gacs": 42, "prompt_tokens": 100, "output_tokens": 50},
+        }
+        stats_file = tmp_path / "stats.json"
+        stats_file.write_text(json.dumps(stats))
+
+        with patch("gac.stats.store.STATS_FILE", stats_file):
+            loaded = load_stats()
+            # commits should be backfilled from gacs, not defaulted to 0
+            assert loaded["models"]["old-model"]["commits"] == 42
+
+    def test_normalize_models_preserves_existing_commits(self, tmp_path):
+        """Test that _normalize_models doesn't overwrite commits if already present."""
+        import json
+
+        from gac.stats.store import _empty_stats
+
+        stats: GACStats = _empty_stats()
+        stats["models"] = {
+            "new-model": {"gacs": 10, "commits": 15, "prompt_tokens": 100, "output_tokens": 50},
+        }
+        stats_file = tmp_path / "stats.json"
+        stats_file.write_text(json.dumps(stats))
+
+        with patch("gac.stats.store.STATS_FILE", stats_file):
+            loaded = load_stats()
+            # existing commits=15 should NOT be overwritten by gacs=10
+            assert loaded["models"]["new-model"]["commits"] == 15
+
 
 class TestGetStatsSummary:
     """Tests for get_stats_summary function."""

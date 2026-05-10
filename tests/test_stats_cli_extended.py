@@ -149,3 +149,28 @@ class TestEdgeCases:
             assert "high score" not in result.output.lower()
             assert "Don't break that streak" not in result.output
             assert "New longest streak" not in result.output
+
+    def test_models_command_shows_commits_column(self, runner):
+        """Test that gac stats models shows a Commits column."""
+        with (
+            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch(
+                "gac.stats_cli.model_activity", side_effect=lambda x: (x[1].get("gacs", 0), x[1].get("commits", 0), 0)
+            ),
+        ):
+            mock_load.return_value = {
+                "models": {
+                    "openai:gpt-4o": {
+                        "gacs": 10,
+                        "commits": 8,
+                        "prompt_tokens": 5000,
+                        "output_tokens": 2000,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "models"])
+            assert result.exit_code == 0
+            assert "Commits" in result.output
+            assert "8" in result.output
