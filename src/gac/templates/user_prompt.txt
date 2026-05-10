@@ -2,17 +2,19 @@
 Additional context provided by the user: <hint_text></hint_text>
 </hint>
 
-<git_diff>
+<staged_changes>
+Below are the code changes in unified diff format, wrapped per file in <file path="..."> tags.
+Lines with MINUS (-) prefix were removed; lines with PLUS (+) prefix were added; space-prefixed lines are unchanged context.
 <diff></diff>
-</git_diff>
+</staged_changes>
 
-<git_diff_stat>
+<change_summary>
 <diff_stat></diff_stat>
-</git_diff_stat>
+</change_summary>
 
-<git_status>
+<staged_files>
 <status></status>
-</git_status>
+</staged_files>
 
 <language_instructions>
 IMPORTANT: You MUST write the entire commit message in <language_name></language_name>.
