@@ -53,16 +53,16 @@ TEST_USER_TEMPLATE = """<hint>
 Additional context provided by the user: <hint_text></hint_text>
 </hint>
 
-<git_status>
+<staged_files>
 <status></status>
-</git_status>
+</staged_files>
 
-<git_diff_stat>
-</git_diff_stat>
+<change_summary>
+</change_summary>
 
-<git_diff>
+<staged_changes>
 <diff></diff>
-</git_diff>
+</staged_changes>
 
 <instructions>
 IMMEDIATELY AFTER ANALYZING THE CHANGES, RESPOND WITH ONLY THE COMMIT MESSAGE.
@@ -236,8 +236,8 @@ class TestPrompts:
         result = clean_commit_message(message)
         assert result == "refactor: Clean up code\n\nMore details"
 
-        # Test with XML tags in content
-        message = "<git-diff>feat: Update authentication flow</git-diff>"
+        # Test with XML tags from current prompt templates in content
+        message = "<staged_changes>feat: Update authentication flow</staged_changes>"
         result = clean_commit_message(message)
         assert result == "feat: Update authentication flow"
 
@@ -448,3 +448,44 @@ class TestBuildGroupPrompt:
         # Should work without error
         assert isinstance(system, str)
         assert isinstance(user, str)
+
+
+class TestTemplateSmokeTests:
+    """Smoke tests that verify actual template files load correctly and contain expected tags."""
+
+    def test_user_template_contains_new_tags(self) -> None:
+        """Verify user prompt template uses the renamed structural tags."""
+        from gac.prompt import load_user_template
+
+        template = load_user_template()
+        # New structural tags must be present
+        assert "<staged_changes>" in template
+        assert "</staged_changes>" in template
+        assert "<change_summary>" in template
+        assert "</change_summary>" in template
+        assert "<staged_files>" in template
+        assert "</staged_files>" in template
+        # Inner placeholders must still exist
+        assert "<diff></diff>" in template
+        # Old tags must NOT be present
+        assert "<git_diff>" not in template
+        assert "</git_diff>" not in template
+        assert "<git_diff_stat>" not in template
+        assert "</git_diff_stat>" not in template
+        assert "<git_status>" not in template
+        assert "</git_status>" not in template
+
+    def test_system_template_has_reading_diffs_section(self) -> None:
+        """Verify system prompt template has the diff-reading guide."""
+        from gac.prompt import load_system_template
+
+        template = load_system_template()
+        assert "<reading_diffs>" in template
+        assert "</reading_diffs>" in template
+
+    def test_reading_diffs_survives_build_prompt(self) -> None:
+        """Verify <reading_diffs> section is not accidentally stripped by build_prompt."""
+        system, _ = build_prompt("status", "diff", one_liner=True)
+        assert "<reading_diffs>" in system
+        assert "MINUS sign (-)" in system
+        assert "PLUS sign (+)" in system

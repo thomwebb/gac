@@ -79,9 +79,9 @@ class TestScopeFlag:
         # Mock split templates for testing
         mock_system_template = """<conventions_no_scope>no scope</conventions_no_scope>
 <conventions_with_scope>inferred scope</conventions_with_scope>"""
-        mock_user_template = """<git_status><status></status></git_status>
-<git_diff_stat></git_diff_stat>
-<git_diff><diff></diff></git_diff>"""
+        mock_user_template = """<staged_files><status></status></staged_files>
+<change_summary></change_summary>
+<staged_changes><diff></diff></staged_changes>"""
         # Mock the template loading functions to return our templates
         monkeypatch.setattr("gac.prompt.load_system_template", lambda custom_path=None: mock_system_template)
         monkeypatch.setattr("gac.prompt.load_user_template", lambda: mock_user_template)
