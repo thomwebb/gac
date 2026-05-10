@@ -44,7 +44,7 @@ def execute_grouped_commits(
     fifty_seventy_two: bool = False,
     signoff: bool = False,
     model: str | None = None,
-    context_lines: int = 3,
+    context_lines: int = 5,
 ) -> int:
     """Execute the grouped commits by creating multiple individual commits.
 

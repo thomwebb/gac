@@ -439,7 +439,7 @@ def gac_commit(request: CommitRequest) -> CommitResult:
                     no_verify=request.no_verify,
                     hook_timeout=120,
                     model=model,
-                    context_lines=config.get("diff_context_lines", 3),
+                    context_lines=config.get("diff_context_lines", 5),
                 )
 
             if exit_code != 0:

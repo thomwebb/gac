@@ -91,7 +91,7 @@ class GitStateValidator:
 
         # Get git status and diffs (per-file to avoid false-positive diff --git splits)
         status = get_staged_status()
-        diff_context = self.config.get("diff_context_lines", 3)
+        diff_context = self.config.get("diff_context_lines", 5)
         per_file_diffs = get_staged_diffs_per_file(context_lines=diff_context)
         stat_result = run_git_command(["diff", "--stat", "--cached"])
         diff_stat = " " + (stat_result.output if stat_result.success else "")

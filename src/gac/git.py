@@ -279,7 +279,7 @@ def get_staged_status() -> str:
     return "\n".join(status_lines)
 
 
-def get_staged_diffs_per_file(context_lines: int = 3) -> list[tuple[str, str]]:
+def get_staged_diffs_per_file(context_lines: int = 5) -> list[tuple[str, str]]:
     """Get the staged diff for each individual staged file.
 
     Returns a list of (filename, diff_content) tuples, one per staged file.
@@ -293,7 +293,7 @@ def get_staged_diffs_per_file(context_lines: int = 3) -> list[tuple[str, str]]:
 
     Args:
         context_lines: Number of context lines above and below changed lines
-            (git -U flag). Defaults to 3 (git's default).
+            (git -U flag). Defaults to 5.
 
     Raises:
         GitError: If listing staged files fails.
@@ -315,7 +315,7 @@ def get_diff(
     color: bool = True,
     commit1: str | None = None,
     commit2: str | None = None,
-    context_lines: int = 3,
+    context_lines: int = 5,
 ) -> str:
     """Get the diff between commits or working tree.
 
@@ -327,7 +327,7 @@ def get_diff(
         commit2: Second commit hash, branch name, or reference to compare to.
             If only commit1 is provided, compares working tree to commit1.
         context_lines: Number of context lines above and below changed lines
-            (git -U flag). Defaults to 3 (git's default).
+            (git -U flag). Defaults to 5.
 
     Returns:
         String containing the diff output
