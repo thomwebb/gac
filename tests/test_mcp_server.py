@@ -137,7 +137,7 @@ class TestGacStatus:
         mock_git_cmd.return_value = GitCommandResult.ok("+staged change")
         result = gac_status(StatusRequest(include_diff=True, staged_only=True, include_stats=False))
 
-        mock_git_cmd.assert_called_with(["diff", "-U3", "--cached"])
+        mock_git_cmd.assert_called_with(["diff", "-U5", "--cached"])
         assert result.diff == "+staged change"
 
     @patch("gac.git.run_git_command")
@@ -151,7 +151,7 @@ class TestGacStatus:
         mock_git_cmd.return_value = GitCommandResult.ok("+change")
         gac_status(StatusRequest(include_diff=True, staged_only=False, include_stats=False))
 
-        mock_git_cmd.assert_called_with(["diff", "-U3", "HEAD"])
+        mock_git_cmd.assert_called_with(["diff", "-U5", "HEAD"])
 
     @patch(
         "gac.mcp.server._get_file_status",
