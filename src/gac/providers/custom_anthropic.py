@@ -10,7 +10,12 @@ import os
 from typing import Any
 
 from gac.errors import AIError
-from gac.providers.base import AnthropicCompatibleProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
+from gac.providers.base import (
+    AnthropicCompatibleProvider,
+    ParsedResponse,
+    ProviderConfig,
+    resolve_reasoning_tokens,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -66,8 +71,6 @@ class CustomAnthropicProvider(AnthropicCompatibleProvider):
         - Standard Anthropic format: content[0].text
         - Extended format: first item with type="text"
         """
-        from gac.ai_utils import normalize_reasoning_tokens
-
         try:
             usage = response.get("usage")
             prompt_tokens = -1
@@ -111,12 +114,20 @@ class CustomAnthropicProvider(AnthropicCompatibleProvider):
                 for block in content_list
                 if isinstance(block, dict) and block.get("type") == "thinking"
             )
-            reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, thinking_text)
+            reasoning_chars = len(thinking_text)
+            output_chars = len(content)
+
+            reasoning_tokens, output_tokens = resolve_reasoning_tokens(
+                completion_tokens,
+                reasoning_tokens,
+                reasoning_chars,
+                output_chars,
+            )
 
             return ParsedResponse(
                 content=content,
                 prompt_tokens=prompt_tokens,
-                output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
+                output_tokens=output_tokens,
                 reasoning_tokens=reasoning_tokens,
             )
         except AIError:

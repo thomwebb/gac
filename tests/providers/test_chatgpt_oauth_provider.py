@@ -282,8 +282,11 @@ class TestChatGPTOAuthProviderSSEParsing:
         result = ChatGPTOAuthProvider._parse_sse_stream_from_lines(lines)
         assert result.content == "Final answer"
         # reasoning.done text (340 chars) should override delta ("partial thinking")
-        assert result.reasoning_tokens == 100  # 340 / 3.4 = 100
-        assert result.output_tokens == 50  # 150 - 100
+        # Proportional allocation: output_tokens=150, reasoning_chars=340, output_chars=12.
+        # 150 * (340 / 352) = 144.9 → 145 reasoning, 5 output. Sum = 150 ✓
+        assert result.reasoning_tokens == 145
+        assert result.output_tokens == 5
+        assert result.reasoning_tokens + result.output_tokens == 150
 
     def test_parse_sse_reasoning_delta_but_explicit_tokens_win(self):
         """When API reports reasoning_tokens explicitly, that wins over estimation."""

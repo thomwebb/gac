@@ -19,11 +19,14 @@ from gac.oauth.token_store import TokenStore
 from gac.utils import console
 
 __all__ = [
+    "allocate_reasoning_tokens",
     "generate_with_retries",
     "count_tokens",
     "estimate_reasoning_tokens",
-    "normalize_reasoning_tokens",
     "extract_text_content",
+    "normalize_output_tokens",
+    "normalize_reasoning_tokens",
+    "resolve_reasoning_tokens",
 ]
 
 logger = logging.getLogger(__name__)
@@ -222,6 +225,88 @@ def estimate_reasoning_tokens(reasoning_text: str) -> int:
         return 0
     result = round(len(reasoning_text) / _DEFAULT_RATIO)
     return result if result > 0 else 1
+
+
+def allocate_reasoning_tokens(
+    completion_tokens: int,
+    reasoning_chars: int,
+    output_chars: int,
+) -> int:
+    """Allocate reasoning tokens from completion tokens by character proportion.
+
+    When the API reports ``completion_tokens`` but doesn't break out
+    reasoning vs output separately, we split proportionally:
+    ``reasoning_tokens = completion_tokens * reasoning_chars / total_chars``.
+
+    This is more accurate than independent estimation (``chars / 3.4``)
+    because it uses the real token count from the API, and it's
+    self-consistent: ``reasoning_tokens + output_tokens == completion_tokens``.
+
+    Args:
+        completion_tokens: Total completion tokens from the API (includes
+            both reasoning and output).  Pass ``-1`` if unknown.
+        reasoning_chars: Character count of the reasoning/thinking text.
+        output_chars: Character count of the output text (excluding reasoning).
+
+    Returns:
+        Estimated reasoning token count (0 when no reasoning text).
+    """
+    if reasoning_chars <= 0:
+        return 0
+    total_chars = reasoning_chars + output_chars
+    if total_chars <= 0:
+        return 0
+    if completion_tokens >= 0:
+        share = reasoning_chars / total_chars
+        result = round(completion_tokens * share)
+        return result if result > 0 else 1
+    # No API token count -- fall back to char-based estimation.
+    return estimate_reasoning_tokens("A" * reasoning_chars)
+
+
+def normalize_output_tokens(completion_tokens: int, reasoning_tokens: int) -> int:
+    """Subtract reasoning tokens from completion when the API includes them.
+
+    Some providers use the OpenAI convention where completion_tokens includes
+    reasoning; others already exclude it.  When ``completion_tokens <
+    reasoning_tokens``, subtraction would produce a negative number, so we
+    skip subtraction to avoid a false-zero count.
+    """
+    if completion_tokens < 0:
+        return completion_tokens
+    if reasoning_tokens <= 0:
+        return completion_tokens
+    if completion_tokens >= reasoning_tokens:
+        return completion_tokens - reasoning_tokens
+    return completion_tokens
+
+
+def resolve_reasoning_tokens(
+    completion_tokens: int,
+    api_reasoning_tokens: int | None,
+    reasoning_chars: int,
+    output_chars: int,
+) -> tuple[int, int]:
+    """Resolve reasoning and output token counts from API data and char proportions.
+
+    Three-tier resolution:
+    1. API reported ``api_reasoning_tokens`` (not None) -> trust it.
+    2. No API value but reasoning text exists -> proportional allocation.
+    3. No reasoning at all -> (0, completion_tokens).
+
+    Returns:
+        (reasoning_tokens, output_tokens) tuple.
+    """
+    if api_reasoning_tokens is not None:
+        final_reasoning = api_reasoning_tokens
+        final_output = normalize_output_tokens(completion_tokens, final_reasoning)
+    elif reasoning_chars > 0:
+        final_reasoning = allocate_reasoning_tokens(completion_tokens, reasoning_chars, output_chars)
+        final_output = normalize_output_tokens(completion_tokens, final_reasoning)
+    else:
+        final_reasoning = 0
+        final_output = completion_tokens
+    return final_reasoning, final_output
 
 
 def normalize_reasoning_tokens(explicit_tokens: int | None, reasoning_text: str) -> int:

@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
+from gac.ai_utils import count_tokens
 from gac.errors import AIError
 from gac.providers import PROVIDER_REGISTRY
 from tests.provider_test_utils import assert_missing_api_key_error, temporarily_remove_env_var
@@ -469,6 +470,42 @@ class TestReplicateErrorHandling:
                     )
 
                 assert "Network failure" in str(exc_info.value)
+
+    def test_replicate_think_tags_detect_reasoning(self):
+        """Replicate output with think tags should detect and report reasoning tokens."""
+        with patch.dict("os.environ", {"REPLICATE_API_TOKEN": "test-token"}):
+            thinking = "Let me analyze the diff carefully" * 10  # ~340 chars
+            full_content = "<thinking>" + thinking + "</thinking>\nfeat: add feature"
+
+            mock_create_response = MagicMock()
+            mock_create_response.json.return_value = {"id": "test-prediction-id"}
+            mock_create_response.raise_for_status = MagicMock()
+
+            mock_status_response = MagicMock()
+            mock_status_response.json.return_value = {
+                "id": "test-prediction-id",
+                "status": "succeeded",
+                "output": full_content,
+            }
+            mock_status_response.raise_for_status = MagicMock()
+
+            with patch("httpx.post") as mock_post, patch("httpx.get") as mock_get, patch("time.sleep") as _mock_sleep:
+                mock_post.return_value = mock_create_response
+                mock_get.return_value = mock_status_response
+
+                result = call_replicate_api(
+                    model="openai/gpt-oss-20b",
+                    messages=[{"role": "user", "content": "test"}],
+                    temperature=0.7,
+                    max_tokens=1000,
+                )
+
+                content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
+                assert reasoning_tokens > 0, "Reasoning tokens should be estimated from think tags"
+                raw_tokens = count_tokens(full_content, "openai/gpt-oss-20b")
+                assert output_tokens < raw_tokens, (
+                    f"output_tokens ({output_tokens}) should be < raw content tokens ({raw_tokens})"
+                )
 
 
 class TestReplicateMessageFormatting:

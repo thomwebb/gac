@@ -22,7 +22,12 @@ from gac.oauth.chatgpt import (
     load_stored_tokens,
     refresh_token_if_expired,
 )
-from gac.providers.base import BaseConfiguredProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
+from gac.providers.base import (
+    BaseConfiguredProvider,
+    ParsedResponse,
+    ProviderConfig,
+    resolve_reasoning_tokens,
+)
 from gac.utils import get_ssl_verify
 
 logger = logging.getLogger(__name__)
@@ -148,8 +153,6 @@ class ChatGPTOAuthProvider(BaseConfiguredProvider):
         Separated from _parse_sse_stream for testability — accepts any
         iterable of strings (httpx iter_lines or test fixture list).
         """
-        from gac.ai_utils import normalize_reasoning_tokens
-
         text_parts: list[str] = []
         reasoning_parts: list[str] = []
         prompt_tokens = -1
@@ -217,12 +220,20 @@ class ChatGPTOAuthProvider(BaseConfiguredProvider):
         # Estimate reasoning tokens from accumulated reasoning text when
         # the API doesn't report them explicitly.
         reasoning_text = "".join(reasoning_parts)
-        reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, reasoning_text)
+        reasoning_chars = len(reasoning_text)
+        output_chars = len(content)
+
+        reasoning_tokens, output_tokens = resolve_reasoning_tokens(
+            completion_tokens,
+            reasoning_tokens,
+            reasoning_chars,
+            output_chars,
+        )
 
         return ParsedResponse(
             content=content,
             prompt_tokens=prompt_tokens,
-            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
+            output_tokens=output_tokens,
             reasoning_tokens=reasoning_tokens,
         )
 

@@ -7,7 +7,7 @@ import httpx
 
 from gac.ai_utils import count_tokens
 from gac.errors import AIError
-from gac.providers.base import GenericHTTPProvider, ProviderConfig
+from gac.providers.base import GenericHTTPProvider, ProviderConfig, resolve_reasoning_tokens
 from gac.utils import get_ssl_verify
 
 
@@ -142,8 +142,20 @@ class ReplicateProvider(GenericHTTPProvider):
                     if not content:
                         raise AIError.model_error("Replicate API returned empty content")
                     prompt_tokens = count_tokens(messages, model)
-                    output_tokens = count_tokens(content, model)
-                    return (content, prompt_tokens, output_tokens, duration_ms, 0)
+                    # Extract reasoning from think tags so we can report
+                    # reasoning_tokens and avoid inflating output_tokens.
+                    from gac.postprocess import extract_think_tag_text
+
+                    think_tag_text = extract_think_tag_text(content)
+                    reasoning_chars = len(think_tag_text)
+                    output_chars = len(content) - reasoning_chars
+                    # No API token count for Replicate -- pass -1 so
+                    # resolve_reasoning_tokens falls back to char estimation.
+                    reasoning_tokens, _ = resolve_reasoning_tokens(-1, None, reasoning_chars, output_chars)
+                    # Estimate total output tokens excluding reasoning.
+                    raw_tokens = count_tokens(content, model)
+                    output_tokens = max(raw_tokens - reasoning_tokens, 0) if reasoning_tokens > 0 else raw_tokens
+                    return (content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens)
                 elif status_data["status"] == "failed":
                     raise AIError.model_error(
                         f"Replicate prediction failed: {status_data.get('error', 'Unknown error')}"

@@ -24,7 +24,7 @@ from gac.providers.base import (
     OpenAICompatibleProvider,
     ParsedResponse,
     ProviderConfig,
-    _normalize_output_tokens,
+    normalize_output_tokens,
 )
 
 # ── Concrete test providers ──────────────────────────────────────────
@@ -409,44 +409,44 @@ class TestGenericHTTPExtended:
         assert parsed.output_tokens == 35
 
 
-# ── _normalize_output_tokens helper ─────────────────────────────────
+# ── normalize_output_tokens helper ─────────────────────────────────
 
 
 class TestNormalizeOutputTokens:
-    """Test the _normalize_output_tokens helper that fixes the Crof.ai
+    """Test the normalize_output_tokens helper that fixes the Crof.ai
     GLM bug where output_tokens already excludes reasoning."""
 
     def test_openai_convention_subtracts_reasoning(self):
         """When completion >= reasoning (OpenAI convention), subtract reasoning."""
-        assert _normalize_output_tokens(100, 30) == 70
+        assert normalize_output_tokens(100, 30) == 70
 
     def test_openai_convention_exact_equal(self):
         """When completion == reasoning, result is 0 (all output was reasoning)."""
-        assert _normalize_output_tokens(30, 30) == 0
+        assert normalize_output_tokens(30, 30) == 0
 
     def test_crof_glm_convention_no_subtract(self):
         """When completion < reasoning, API already excluded reasoning — don't subtract."""
-        assert _normalize_output_tokens(81, 559) == 81
+        assert normalize_output_tokens(81, 559) == 81
 
     def test_zero_reasoning_no_subtract(self):
         """When reasoning_tokens is 0, no subtraction needed."""
-        assert _normalize_output_tokens(100, 0) == 100
+        assert normalize_output_tokens(100, 0) == 100
 
     def test_negative_reasoning_no_subtract(self):
         """When reasoning_tokens is negative (shouldn't happen), no subtraction."""
-        assert _normalize_output_tokens(100, -1) == 100
+        assert normalize_output_tokens(100, -1) == 100
 
     def test_negative_completion_passthrough(self):
         """When completion_tokens is -1 (unknown), pass through as-is."""
-        assert _normalize_output_tokens(-1, 30) == -1
+        assert normalize_output_tokens(-1, 30) == -1
 
     def test_zero_completion_with_reasoning(self):
         """When completion is 0 and reasoning > 0, keep 0 (API already excluded)."""
-        assert _normalize_output_tokens(0, 559) == 0
+        assert normalize_output_tokens(0, 559) == 0
 
     def test_zero_completion_zero_reasoning(self):
         """Both zero: keep 0."""
-        assert _normalize_output_tokens(0, 0) == 0
+        assert normalize_output_tokens(0, 0) == 0
 
 
 # ── Lines 214-217: generate() with model not in body ────────────────

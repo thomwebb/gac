@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
+from gac.ai_utils import count_tokens
 from gac.errors import AIError
 from gac.providers import PROVIDER_REGISTRY
 from tests.provider_test_utils import assert_import_success
@@ -154,6 +155,38 @@ class TestOllamaEdgeCases:
 
             error_msg = str(exc_info.value).lower()
             assert "network error" in error_msg or "connection" in error_msg
+
+    def test_ollama_think_tags_missing_eval_count_no_double_count(self):
+        """Think-tag content with missing eval_count should not double-count reasoning tokens.
+
+        When Ollama returns a thinking model response without eval_count,
+        output_tokens should be estimated from content minus reasoning tokens
+        (not the raw full content count which includes think tags).
+        """
+        thinking = "Let me analyze the diff carefully" * 10  # ~340 chars
+        full_content = "<thinking>" + thinking + "</thinking>\nfeat: add feature"
+
+        with patch("gac.providers.base.httpx.post") as mock_post:
+            mock_response = MagicMock()
+            mock_response.json.return_value = {
+                "message": {"content": full_content},
+                # No eval_count or prompt_eval_count -> output_tokens falls back to -1
+            }
+            mock_response.raise_for_status = MagicMock()
+            mock_post.return_value = mock_response
+
+            result = call_ollama_api("qwq", [{"role": "user", "content": "hi"}], 0.7, 1000)
+            content, prompt_tokens, output_tokens, duration_ms, reasoning_tokens = result
+
+            assert reasoning_tokens > 0, "Reasoning tokens should be estimated from think tags"
+            raw_tokens = count_tokens(full_content, "qwq")
+            assert output_tokens < raw_tokens, (
+                f"output_tokens ({output_tokens}) should be < raw content tokens ({raw_tokens})"
+            )
+            total = output_tokens + reasoning_tokens
+            assert abs(total - raw_tokens) <= raw_tokens * 0.3, (
+                f"output+reasoning ({total}) should be within 30% of raw ({raw_tokens})"
+            )
 
 
 @pytest.mark.integration

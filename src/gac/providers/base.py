@@ -10,7 +10,7 @@ from typing import Any
 
 import httpx
 
-from gac.ai_utils import count_tokens
+from gac.ai_utils import count_tokens, normalize_output_tokens, resolve_reasoning_tokens
 from gac.constants import ProviderDefaults
 from gac.errors import AIError
 from gac.providers.protocol import ProviderProtocol
@@ -21,12 +21,10 @@ from gac.utils import get_ssl_verify
 class ParsedResponse:
     """Structured result from parsing an API response.
 
-    ``output_tokens`` excludes reasoning tokens. Provider APIs vary:
-    some (OpenAI/OpenRouter convention) return "completion/output" token
-    counts inclusive of reasoning; others already exclude reasoning.
-    The ``_normalize_output_tokens`` helper detects the convention and
-    subtracts reasoning only when appropriate so downstream code always
-    gets two distinct, non-overlapping numbers.
+    ``output_tokens`` excludes reasoning tokens.  The
+    ``normalize_output_tokens`` helper detects the provider's convention
+    and subtracts reasoning only when appropriate so downstream code
+    always gets two distinct, non-overlapping numbers.
     """
 
     content: str
@@ -36,32 +34,6 @@ class ParsedResponse:
 
 
 logger = logging.getLogger(__name__)
-
-
-def _normalize_output_tokens(output_tokens: int, reasoning_tokens: int) -> int:
-    """Subtract reasoning tokens from output tokens when the API includes
-    reasoning in its "output/completion" token count (OpenAI convention).
-
-    Some providers (e.g. Crof.ai with GLM models) already report
-    output tokens *exclusive* of reasoning. When ``output_tokens <
-    reasoning_tokens``, subtraction would produce a
-    negative number, which is impossible if reasoning is a subset of
-    completion — so we detect this case and skip subtraction to avoid a
-    false-zero completion count.
-
-    Note: If a provider reports output tokens exclusive of reasoning
-    *and* ``output_tokens >= reasoning_tokens``, this heuristic can't
-    disambiguate and will assume the OpenAI convention (subtract).
-    """
-    if output_tokens < 0:
-        return output_tokens  # -1 means "unknown", pass through
-    if reasoning_tokens <= 0:
-        return output_tokens  # nothing to subtract
-    if output_tokens >= reasoning_tokens:
-        # Standard (OpenAI) convention: output/completion tokens include reasoning
-        return output_tokens - reasoning_tokens
-    # output_tokens < reasoning_tokens → API already excluded reasoning
-    return output_tokens
 
 
 @dataclass
@@ -264,16 +236,22 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
 
         parsed = self._parse_response(response_data)
         prompt_tokens = parsed.prompt_tokens if parsed.prompt_tokens >= 0 else count_tokens(messages, model)
-        output_tokens = parsed.output_tokens if parsed.output_tokens >= 0 else count_tokens(parsed.content, model)
+        if parsed.output_tokens >= 0:
+            output_tokens = parsed.output_tokens
+        else:
+            # Fallback: estimate from content. Subtract reasoning tokens to avoid
+            # double-counting (reasoning_tokens were already computed from think
+            # tags embedded in the content; raw count_tokens would count them twice).
+            raw_estimated = count_tokens(parsed.content, model)
+            output_tokens = (
+                max(raw_estimated - parsed.reasoning_tokens, 0) if parsed.reasoning_tokens > 0 else raw_estimated
+            )
 
         return (parsed.content, prompt_tokens, output_tokens, duration_ms, parsed.reasoning_tokens)
 
 
 class OpenAICompatibleProvider(BaseConfiguredProvider):
-    """Base class for OpenAI-compatible providers.
-
-    Handles standard OpenAI API format with minimal customization needed.
-    """
+    """Base class for OpenAI-compatible providers with minimal customization."""
 
     def _build_request_body(
         self,
@@ -303,7 +281,6 @@ class OpenAICompatibleProvider(BaseConfiguredProvider):
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
         """Parse OpenAI-style response."""
-        from gac.ai_utils import normalize_reasoning_tokens
         from gac.postprocess import extract_think_tag_text
 
         choices = response.get("choices")
@@ -340,29 +317,31 @@ class OpenAICompatibleProvider(BaseConfiguredProvider):
         if not isinstance(reasoning_field, str):
             reasoning_field = ""
         think_tag_text = extract_think_tag_text(content)
-        thinking_text = f"{reasoning_field}\n{think_tag_text}".strip() if reasoning_field else think_tag_text
+        reasoning_chars = len(reasoning_field) + len(think_tag_text)
 
         # Some passthrough providers (e.g. wafer.ai deepseek-v4-pro) populate
         # `reasoning_content` with the actual reasoning trace but always report
-        # `reasoning_tokens: 0` in usage, regardless of how much reasoning the
-        # model actually did.  When that lie contradicts the presence of
-        # reasoning text, fall back to char-based estimation rather than display
-        # a false zero to users.
-        if reasoning_tokens == 0 and thinking_text:
+        # `reasoning_tokens: 0` in usage.  When that lie contradicts the
+        # presence of reasoning text, fall back to proportional allocation.
+        if reasoning_tokens == 0 and reasoning_chars > 0:
             reasoning_tokens = None
 
-        reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, thinking_text)
+        # reasoning_field is separate from content; think_tag_text is
+        # extracted from content.  Output chars = content minus the
+        # think-tag inner text (tag markers are noise we ignore).
+        output_chars = len(content) - len(think_tag_text)
+        final_reasoning_tokens, output_tokens = resolve_reasoning_tokens(
+            completion_tokens,
+            reasoning_tokens,
+            reasoning_chars,
+            output_chars,
+        )
 
         return ParsedResponse(
             content=content,
             prompt_tokens=prompt_tokens,
-            # Normalize: when the API includes reasoning in
-            # completion_tokens (OpenAI convention), subtract it so
-            # downstream gets two distinct, non-overlapping numbers.
-            # When the API already excludes reasoning (e.g. Crof.ai
-            # GLM models), skip subtraction to avoid a false zero.
-            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
-            reasoning_tokens=reasoning_tokens,
+            output_tokens=output_tokens,
+            reasoning_tokens=final_reasoning_tokens,
         )
 
 
@@ -423,7 +402,6 @@ class AnthropicCompatibleProvider(BaseConfiguredProvider):
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
         """Parse Anthropic-style response with thinking/reasoning support."""
-        from gac.ai_utils import normalize_reasoning_tokens
 
         content = response.get("content")
         if not content or not isinstance(content, list):
@@ -462,16 +440,21 @@ class AnthropicCompatibleProvider(BaseConfiguredProvider):
         thinking_text = "\n".join(
             b.get("thinking", "") for b in content if isinstance(b, dict) and b.get("type") == "thinking"
         )
-        reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, thinking_text)
+        reasoning_chars = len(thinking_text)
+        output_chars = len(text_content)
+
+        final_reasoning_tokens, output_tokens = resolve_reasoning_tokens(
+            completion_tokens,
+            reasoning_tokens,
+            reasoning_chars,
+            output_chars,
+        )
 
         return ParsedResponse(
             content=text_content,
             prompt_tokens=prompt_tokens,
-            # Normalize: when the API includes reasoning in
-            # output_tokens (Anthropic convention), subtract it.
-            # When the API already excludes reasoning, skip subtraction.
-            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
-            reasoning_tokens=reasoning_tokens,
+            output_tokens=output_tokens,
+            reasoning_tokens=final_reasoning_tokens,
         )
 
 
@@ -495,7 +478,6 @@ class GenericHTTPProvider(BaseConfiguredProvider):
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
         """Default implementation - override this in subclasses."""
-        from gac.ai_utils import normalize_reasoning_tokens
         from gac.postprocess import extract_think_tag_text
 
         usage = response.get("usage")
@@ -546,17 +528,41 @@ class GenericHTTPProvider(BaseConfiguredProvider):
                     break
 
         if extracted_content is not None:
-            thinking_text = extract_think_tag_text(extracted_content)
-            reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, thinking_text)
-            # Normalize: when the API includes reasoning in
-            # completion_tokens, subtract it.  When the API already
-            # excludes reasoning, skip subtraction.
-            norm_output = _normalize_output_tokens(completion_tokens, reasoning_tokens)
+            # Check reasoning_content/reasoning fields (DeepSeek/OpenRouter style).
+            reasoning_field = ""
+            if choices and isinstance(choices, list) and isinstance(choices[0], dict):
+                msg = choices[0].get("message", {})
+                if isinstance(msg, dict):
+                    rf = msg.get("reasoning_content") or msg.get("reasoning") or ""
+                    if isinstance(rf, str):
+                        reasoning_field = rf
+            if not reasoning_field:
+                msg = response.get("message", {})
+                if isinstance(msg, dict):
+                    rf = msg.get("reasoning_content") or msg.get("reasoning") or ""
+                    if isinstance(rf, str):
+                        reasoning_field = rf
+
+            think_tag_text = extract_think_tag_text(extracted_content)
+            reasoning_chars = len(reasoning_field) + len(think_tag_text)
+
+            # Anti-lie guard: passthrough providers report reasoning_tokens: 0
+            # but include reasoning text.  Override to None to force proportional allocation.
+            if reasoning_tokens == 0 and reasoning_chars > 0:
+                reasoning_tokens = None
+
+            output_chars = len(extracted_content) - len(think_tag_text)
+            final_reasoning_tokens, norm_output = resolve_reasoning_tokens(
+                completion_tokens,
+                reasoning_tokens,
+                reasoning_chars,
+                output_chars,
+            )
             return ParsedResponse(
                 content=extracted_content,
                 prompt_tokens=prompt_tokens,
                 output_tokens=norm_output,
-                reasoning_tokens=reasoning_tokens,
+                reasoning_tokens=final_reasoning_tokens,
             )
 
         raise AIError.model_error("Could not extract content from response")
@@ -569,5 +575,6 @@ __all__ = [
     "OpenAICompatibleProvider",
     "ParsedResponse",
     "ProviderConfig",
-    "_normalize_output_tokens",
+    "normalize_output_tokens",
+    "resolve_reasoning_tokens",
 ]

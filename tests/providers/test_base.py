@@ -336,9 +336,12 @@ class TestAnthropicCompatibleProvider:
             provider._parse_response(response)
 
     def test_anthropic_multiple_thinking_blocks(self):
-        """Multiple thinking blocks are joined for token estimation."""
+        """Multiple thinking blocks are joined for proportional token allocation."""
         provider = SimpleAnthropicProvider(SimpleAnthropicProvider.config)
-        # Two thinking blocks of 17 chars each → 34 total → 10 tokens
+        # Two thinking blocks of 17 chars each + newline joiner = 35 chars total.
+        # Output text = 10 chars.  Total = 45 chars.
+        # Proportional allocation: reasoning_share = 35/45, output_share = 10/45.
+        # With output_tokens=50: reasoning = round(50 * 35/45) = 39, output = 50 - 39 = 11.
         response = {
             "content": [
                 {"type": "thinking", "thinking": "A" * 17},
@@ -349,9 +352,10 @@ class TestAnthropicCompatibleProvider:
         }
         parsed = provider._parse_response(response)
         assert parsed.content == "The answer"
-        # 17 + 1 (newline) + 17 = 35 chars → round(35/3.4) = 10
-        assert parsed.reasoning_tokens == 10
-        assert parsed.output_tokens == 40  # 50 - 10
+        # Proportional: 50 * (35 / 45) = 38.9 → 39
+        assert parsed.reasoning_tokens == 39
+        assert parsed.output_tokens == 11  # 50 - 39
+        assert parsed.reasoning_tokens + parsed.output_tokens == 50  # sums to total
 
     def test_anthropic_prefers_type_text_block(self):
         """When multiple blocks have .text, prefer type='text' over others."""

@@ -3,7 +3,12 @@
 import os
 from typing import Any
 
-from gac.providers.base import OpenAICompatibleProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
+from gac.providers.base import (
+    OpenAICompatibleProvider,
+    ParsedResponse,
+    ProviderConfig,
+    resolve_reasoning_tokens,
+)
 
 
 class OllamaProvider(OpenAICompatibleProvider):
@@ -63,7 +68,6 @@ class OllamaProvider(OpenAICompatibleProvider):
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
         """Parse Ollama response with flexible format support."""
-        from gac.ai_utils import normalize_reasoning_tokens
         from gac.errors import AIError
         from gac.postprocess import extract_think_tag_text
 
@@ -86,12 +90,17 @@ class OllamaProvider(OpenAICompatibleProvider):
         if content == "":
             raise AIError.model_error("Ollama API returned empty content")
 
-        # Estimate reasoning tokens from ``<think>``...``</think>`` tags when the API
+        # Estimate reasoning tokens from think tags when the API
         # does not report them (common for local thinking models).
-        thinking_text = extract_think_tag_text(content)
-        reasoning_tokens = normalize_reasoning_tokens(None, thinking_text)
-
-        output_tokens = _normalize_output_tokens(completion_tokens, reasoning_tokens)
+        think_tag_text = extract_think_tag_text(content)
+        reasoning_chars = len(think_tag_text)
+        output_chars = len(content) - reasoning_chars
+        reasoning_tokens, output_tokens = resolve_reasoning_tokens(
+            completion_tokens,
+            None,
+            reasoning_chars,
+            output_chars,
+        )
 
         return ParsedResponse(
             content=content,

@@ -3,7 +3,12 @@
 import os
 from typing import Any
 
-from gac.providers.base import OpenAICompatibleProvider, ParsedResponse, ProviderConfig, _normalize_output_tokens
+from gac.providers.base import (
+    OpenAICompatibleProvider,
+    ParsedResponse,
+    ProviderConfig,
+    resolve_reasoning_tokens,
+)
 
 
 class LMStudioProvider(OpenAICompatibleProvider):
@@ -62,7 +67,6 @@ class LMStudioProvider(OpenAICompatibleProvider):
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
         """Parse OpenAI-compatible response with text field fallback."""
-        from gac.ai_utils import normalize_reasoning_tokens
         from gac.errors import AIError
         from gac.postprocess import extract_think_tag_text
 
@@ -96,12 +100,19 @@ class LMStudioProvider(OpenAICompatibleProvider):
 
         # Estimate reasoning tokens from <tool_call>...</think> tags when the API
         # doesn't report them explicitly (e.g. local thinking models).
-        thinking_text = extract_think_tag_text(content)
-        reasoning_tokens = normalize_reasoning_tokens(reasoning_tokens, thinking_text)
+        think_tag_text = extract_think_tag_text(content)
+        reasoning_chars = len(think_tag_text)
+        output_chars = len(content) - reasoning_chars
+        reasoning_tokens, output_tokens = resolve_reasoning_tokens(
+            completion_tokens,
+            reasoning_tokens,
+            reasoning_chars,
+            output_chars,
+        )
 
         return ParsedResponse(
             content=content,
             prompt_tokens=prompt_tokens,
-            output_tokens=_normalize_output_tokens(completion_tokens, reasoning_tokens),
+            output_tokens=output_tokens,
             reasoning_tokens=reasoning_tokens,
         )

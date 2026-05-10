@@ -368,6 +368,63 @@ class TestNormalizeReasoningTokens:
         assert estimate_reasoning_tokens("  ") == 0
 
 
+class TestAllocateReasoningTokens:
+    """Test allocate_reasoning_tokens — proportional token allocation."""
+
+    def test_proportional_split_with_api_tokens(self):
+        """When API reports completion_tokens, split proportionally by chars."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        # 1000 total tokens, 2000 reasoning chars, 500 output chars.
+        # share = 2000/2500 = 0.8, reasoning = round(1000 * 0.8) = 800
+        result = allocate_reasoning_tokens(1000, 2000, 500)
+        assert result == 800
+
+    def test_proportional_split_sums_to_total(self):
+        """reasoning + output should always equal completion_tokens."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        completion = 500
+        reasoning = allocate_reasoning_tokens(completion, 3000, 1200)
+        # 500 * (3000/4200) = 357.14 → 357
+        assert reasoning == 357
+        assert reasoning + (completion - reasoning) == completion
+
+    def test_no_reasoning_returns_zero(self):
+        """Zero reasoning chars → 0 reasoning tokens."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        assert allocate_reasoning_tokens(100, 0, 200) == 0
+
+    def test_all_reasoning_gets_all_tokens(self):
+        """When all text is reasoning, all tokens go to reasoning."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        assert allocate_reasoning_tokens(100, 2000, 0) == 100
+
+    def test_unknown_completion_falls_back_to_estimation(self):
+        """When completion_tokens is -1, fall back to char-based estimation."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        # With -1: estimate_reasoning_tokens("A" * 340) = 100
+        result = allocate_reasoning_tokens(-1, 340, 100)
+        assert result == 100  # 340 / 3.4 = 100
+
+    def test_zero_total_chars_returns_zero(self):
+        """Both reasoning and output at zero → 0 reasoning tokens."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        assert allocate_reasoning_tokens(100, 0, 0) == 0
+
+    def test_minimum_one_token_when_reasoning_exists(self):
+        """Very small reasoning share still returns at least 1 token."""
+        from gac.ai_utils import allocate_reasoning_tokens
+
+        # 10 tokens, 1 reasoning char, 9999 output chars → tiny share, but >= 1
+        result = allocate_reasoning_tokens(10, 1, 9999)
+        assert result >= 1
+
+
 class TestEnsureOAuthToken:
     """Tests for ensure_oauth_token covering chatgpt-oauth and copilot branches."""
 
