@@ -322,9 +322,9 @@ git config --global user.email "your.email@example.com"
 - **GitHub Copilot का उपयोग कर रहे हैं?** Device Flow प्रमाणीकरण निर्देशों के लिए [GitHub Copilot सेटअप गाइड](GITHUB_COPILOT.md) देखें।
 - gac निम्नलिखित प्राथमिकता के क्रम में कॉन्फ़िगरेशन लोड करता है:
   1. CLI फ्लैग
-  2. पर्यावरण चर
-  3. प्रोजेक्ट-स्तर `.gac.env`
-  4. यूज़र-स्तर `~/.gac.env`
+  2. प्रोजेक्ट-स्तर `.gac.env`
+  3. यूज़र-स्तर `~/.gac.env`
+  4. पर्यावरण चर
 
 ### एडवांस्ड कॉन्फ़िगरेशन विकल्प
 

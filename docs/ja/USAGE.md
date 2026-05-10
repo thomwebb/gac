@@ -372,9 +372,9 @@ git config --global user.email "your.email@example.com"
 - **GitHub Copilot を使用していますか？** Device Flow 認証の手順については[GitHub Copilot 設定ガイド](GITHUB_COPILOT.md)を参照してください。
 - gac は以下の優先度順で設定を読み込みます：
   1. CLI フラグ
-  2. 環境変数
-  3. プロジェクトレベル `.gac.env`
-  4. ユーザーレベル `~/.gac.env`
+  2. プロジェクトレベル `.gac.env`
+  3. ユーザーレベル `~/.gac.env`
+  4. 環境変数
 
 ### 高度な設定オプション
 

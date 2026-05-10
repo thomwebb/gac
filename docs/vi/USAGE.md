@@ -322,9 +322,9 @@ git config --global user.email "your.email@example.com"
 - **Đang sử dụng GitHub Copilot?** Xem [hướng dẫn thiết lập GitHub Copilot](GITHUB_COPILOT.md) để biết hướng dẫn xác thực Device Flow.
 - gac tải cấu hình theo thứ tự ưu tiên sau:
   1. Các flag CLI
-  2. Các biến môi trường
-  3. Cấp dự án `.gac.env`
-  4. Cấp người dùng `~/.gac.env`
+  2. Cấp dự án `.gac.env`
+  3. Cấp người dùng `~/.gac.env`
+  4. Các biến môi trường
 
 ### Tùy Chọn Cấu Hình Nâng Cao
 

@@ -371,9 +371,9 @@ git config --global user.email "tu.email@ejemplo.com"
 - **¿Usas GitHub Copilot?** Consulta la [guía de configuración de GitHub Copilot](GITHUB_COPILOT.md) para instrucciones de autenticación Device Flow.
 - gac carga configuración en el siguiente orden de precedencia:
   1. Banderas CLI
-  2. Variables de entorno
-  3. Nivel de proyecto `.gac.env`
-  4. Nivel de usuario `~/.gac.env`
+  2. Nivel de proyecto `.gac.env`
+  3. Nivel de usuario `~/.gac.env`
+  4. Variables de entorno
 
 ### Opciones de Configuración Avanzadas
 
