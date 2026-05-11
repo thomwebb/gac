@@ -88,7 +88,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("ChatGPT (OAuth)", "gpt-5.4-mini"),
         ("Chutes", "zai-org/GLM-5-TEE"),
         ("Claude Code (OAuth)", "claude-sonnet-4-6"),
-        ("Crof.ai", "glm-4.7-flash"),
+        ("Crof.ai", "kimi-k2.5-lightning"),
         ("Custom (Anthropic)", ""),
         ("Custom (OpenAI)", ""),
         ("DeepSeek", "deepseek-chat"),
