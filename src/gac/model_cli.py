@@ -36,7 +36,7 @@ def _show_rtl_warning_for_init(language_name: str) -> bool:
     """
 
     terminal_width = 80  # Use default width
-    title = "⚠️  RTL Language Detected".center(terminal_width)
+    title = "RTL Language Detected".center(terminal_width)
 
     click.echo()
     click.echo(click.style(title, fg="yellow", bold=True))
@@ -118,7 +118,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
     provider_names = [p[0] for p in providers]
     click.echo()
     click.echo(
-        "💡 Tip: Commit messages are short, so smaller models (e.g. Claude Haiku, GPT mini,\n"
+        "Tip: Commit messages are short, so smaller models (e.g. Claude Haiku, GPT mini,\n"
         "Gemini Flash) are typically more than capable — and significantly cheaper. The\n"
         "defaults below favor these. Stick with them unless you have a reason not to."
     )
@@ -309,7 +309,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         token_store = TokenStore()
         existing_copilot_token = token_store.get_token("copilot")
         if existing_copilot_token:
-            click.echo("\n✓ Copilot access token already configured.")
+            click.echo("\nCopilot access token already configured.")
             action = questionary.select(
                 "What would you like to do?",
                 choices=[
@@ -328,16 +328,16 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
                     click.echo("Keeping existing Copilot token")
                 return True
             else:
-                click.echo("\n🔐 Starting Copilot Device Flow authentication...")
+                click.echo("\nStarting Copilot Device Flow authentication...")
                 if not copilot_authenticate(quiet=False):
-                    click.echo("❌ Copilot authentication failed. Keeping existing token.")
+                    click.echo("Copilot authentication failed. Keeping existing token.")
                     return False
                 return True
         else:
-            click.echo("\n🔐 Starting Copilot Device Flow authentication...")
+            click.echo("\nStarting Copilot Device Flow authentication...")
             click.echo("   (A code will be shown to enter at github.com/login/device)\n")
             if not copilot_authenticate(quiet=False):
-                click.echo("\n❌ Copilot authentication failed. Exiting.")
+                click.echo("\nCopilot authentication failed. Exiting.")
                 return False
             return True
 
@@ -349,7 +349,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         token_store = TokenStore()
         existing_chatgpt_token = token_store.get_token("chatgpt-oauth")
         if existing_chatgpt_token:
-            click.echo("\n✓ ChatGPT access token already configured.")
+            click.echo("\nChatGPT access token already configured.")
             action = questionary.select(
                 "What would you like to do?",
                 choices=[
@@ -368,16 +368,16 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
                     click.echo("Keeping existing ChatGPT token")
                 return True
             else:
-                click.echo("\n🔐 Starting ChatGPT OAuth authentication...")
+                click.echo("\nStarting ChatGPT OAuth authentication...")
                 if not chatgpt_authenticate(quiet=False):
-                    click.echo("❌ ChatGPT authentication failed. Keeping existing token.")
+                    click.echo("ChatGPT authentication failed. Keeping existing token.")
                     return False
                 return True
         else:
-            click.echo("\n🔐 Starting ChatGPT OAuth authentication...")
+            click.echo("\nStarting ChatGPT OAuth authentication...")
             click.echo("   (Your browser will open automatically)\n")
             if not chatgpt_authenticate(quiet=False):
-                click.echo("\n❌ ChatGPT authentication failed. Exiting.")
+                click.echo("\nChatGPT authentication failed. Exiting.")
                 return False
             return True
 
@@ -387,7 +387,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         from gac.oauth.token_store import TokenStore
 
         click.echo(
-            "\n⚠️  Note: Anthropic has been cracking down on third-party tools using Claude Code "
+            "\nNote: Anthropic has been cracking down on third-party tools using Claude Code "
             "OAuth tokens; this use of gac is unsanctioned and could stop working at any time. "
             "For reliable use, prefer a direct API provider (anthropic, openai, etc.). "
             "See https://support.claude.com/en/articles/11145838-using-claude-code-with-your-claude-subscription"
@@ -396,7 +396,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         token_store = TokenStore()
         existing_token_data = token_store.get_token("claude-code")
         if existing_token_data:
-            click.echo("\n✓ Claude Code access token already configured.")
+            click.echo("\nClaude Code access token already configured.")
             action = questionary.select(
                 "What would you like to do?",
                 choices=[
@@ -415,16 +415,16 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
                     click.echo("Keeping existing Claude Code token")
                 return True
             else:
-                click.echo("\n🔐 Starting Claude Code OAuth authentication...")
+                click.echo("\nStarting Claude Code OAuth authentication...")
                 if not authenticate_and_save(quiet=False):
-                    click.echo("❌ Claude Code authentication failed. Keeping existing token.")
+                    click.echo("Claude Code authentication failed. Keeping existing token.")
                     return False
                 return True
         else:
-            click.echo("\n🔐 Starting Claude Code OAuth authentication...")
+            click.echo("\nStarting Claude Code OAuth authentication...")
             click.echo("   (Your browser will open automatically)\n")
             if not authenticate_and_save(quiet=False):
-                click.echo("\n❌ Claude Code authentication failed. Exiting.")
+                click.echo("\nClaude Code authentication failed. Exiting.")
                 return False
             return True
 

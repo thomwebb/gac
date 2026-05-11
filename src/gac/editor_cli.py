@@ -120,7 +120,7 @@ def _run_editor_selection_flow(env_path: Path) -> str | None:
         # In-place TUI — unset GAC_EDITOR
         unset_key(str(env_path), "GAC_EDITOR")
         os.environ.pop("GAC_EDITOR", None)
-        click.echo("✓ Set editor to In-place TUI")
+        click.echo("Set editor to In-place TUI")
         click.echo("  GAC_EDITOR=(unset — in-place TUI is the default)")
         return "TUI"
 
@@ -130,14 +130,14 @@ def _run_editor_selection_flow(env_path: Path) -> str | None:
             return None
         set_key(str(env_path), "GAC_EDITOR", custom_value)
         os.environ["GAC_EDITOR"] = custom_value
-        click.echo("✓ Set editor to Custom")
+        click.echo("Set editor to Custom")
         click.echo(f"  GAC_EDITOR={custom_value}")
         return custom_value
 
     # Named editor choice
     set_key(str(env_path), "GAC_EDITOR", env_value)
     os.environ["GAC_EDITOR"] = env_value
-    click.echo(f"✓ Set editor to {display_name}")
+    click.echo(f"Set editor to {display_name}")
     click.echo(f"  GAC_EDITOR={env_value}")
     return env_value
 

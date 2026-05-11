@@ -123,7 +123,7 @@ def _run_language_selection_flow(env_path: Path) -> str | None:
     # Check if language is RTL and handle warning
     if is_rtl_text(language_value):
         if not should_show_rtl_warning():
-            click.echo(f"\nℹ️  Using RTL language {language_value} (RTL warning previously confirmed)")
+            click.echo(f"\nUsing RTL language {language_value} (RTL warning previously confirmed)")
         else:
             if not show_rtl_warning(language_value, env_path):
                 return None  # User cancelled
@@ -317,7 +317,7 @@ def show_rtl_warning(language_name: str, env_path: Path | None = None) -> bool:
     terminal_width = get_terminal_width()
 
     # Center just the title
-    title = center_text("⚠️  RTL Language Detected", terminal_width)
+    title = center_text("RTL Language Detected", terminal_width)
 
     click.echo()
     click.echo(click.style(title, fg="yellow", bold=True))
@@ -330,7 +330,7 @@ def show_rtl_warning(language_name: str, env_path: Path | None = None) -> bool:
     if proceed:
         # Remember that user has confirmed RTL acceptance
         set_key(str(env_path), "GAC_RTL_CONFIRMED", "true")
-        click.echo("✓ RTL preference saved - you won't see this warning again")
+        click.echo("RTL preference saved - you won't see this warning again")
     return proceed if proceed is not None else False
 
 
@@ -360,9 +360,9 @@ def language() -> None:
     if display_name == language_value and is_rtl_text(language_value):
         # This is a custom RTL language that was handled in _run_language_selection_flow
         if not should_show_rtl_warning():
-            click.echo(f"\nℹ️  Using RTL language {language_value} (RTL warning previously confirmed)")
+            click.echo(f"\nUsing RTL language {language_value} (RTL warning previously confirmed)")
 
-    click.echo(f"\n✓ Set language to {display_name}")
+    click.echo(f"\nSet language to {display_name}")
     click.echo(f"  GAC_LANGUAGE={language_value}")
 
     # Check prefix translation setting

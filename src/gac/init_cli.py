@@ -65,7 +65,7 @@ def _configure_reasoning_effort(existing_env: dict[str, str]) -> None:
 
 def _configure_editor(existing_env: dict[str, str]) -> None:
     """Run the editor configuration flow using consolidated logic."""
-    click.echo("\n📝 Commit Message Editor")
+    click.echo("\nCommit Message Editor")
     click.echo(
         "When you press 'e' at the confirmation prompt, gac opens an editor\n"
         "so you can revise the commit message before committing."
@@ -113,7 +113,7 @@ def _configure_stats(existing_env: dict[str, str], env_path: Path = GAC_ENV_PATH
     Sets or removes GAC_DISABLE_STATS in the env file. Truthy values disable
     stats; falsy values or absence mean enabled.
     """
-    click.echo("\n📊 GAC Stats")
+    click.echo("\nGAC Stats")
     click.echo(
         "GAC can track local usage statistics — total gacs, commits, tokens, streaks,\n"
         "and per-project / per-model breakdowns. View them anytime with `gac stats`."
@@ -191,8 +191,9 @@ def init() -> None:
 
     _configure_stats(existing_env)
 
-    click.echo("\ngac environment setup complete 🎉")
+    click.echo("\ngac environment setup complete.")
     click.echo("Configuration saved to:")
     click.echo(f"  {GAC_ENV_PATH}")
     click.echo("\nYou can now run 'gac' or 'uvx gac' in any Git repository to generate commit messages.")
     click.echo("Run 'gac --help' to see available options.")
+    click.echo("Run 'gac init' again at any time to change your settings.")

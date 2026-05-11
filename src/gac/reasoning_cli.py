@@ -39,9 +39,9 @@ def configure_reasoning_effort_workflow(env_path: Path | str) -> bool:
 
     if existing_re:
         if existing_valid:
-            click.echo(f"🧠 Reasoning Effort — currently: {existing_re_norm}")
+            click.echo(f"Reasoning Effort — currently: {existing_re_norm}")
         else:
-            click.echo(f"🧠 Reasoning Effort — currently: {existing_re} [invalid]")
+            click.echo(f"Reasoning Effort — currently: {existing_re} [invalid]")
             click.echo("This must be one of: low, medium, high — or unset to use the model default.")
 
         re_action = questionary.select(
@@ -68,7 +68,7 @@ def configure_reasoning_effort_workflow(env_path: Path | str) -> bool:
         # "Select new value" — fall through to the full choice list
     else:
         click.echo(
-            "🧠 Reasoning Effort\n"
+            "Reasoning Effort\n"
             "Controls how much internal reasoning a model performs before responding.\n"
             "If your model doesn't support `reasoning_effort` or you're not sure, choose Skip."
         )
