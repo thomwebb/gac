@@ -105,10 +105,17 @@ uv tool upgrade gac
 
 ### 📊 **Gebruiksstatistieken**
 
+```bash
+gac stats               # Overzicht: totale gacs, streaks, dagelijkse/wekelijkse pieken, topprojecten & -modellen
+gac stats models        # Per model: gacs, tokens, latentie, snelheid
+gac stats projects      # Per project: gacs, commits, tokens over alle repo's
+gac stats reset         # Alle statistieken resetten (vraagt om bevestiging)
+gac stats reset model <model-id>  # Alleen statistieken van een specifiek model resetten
+```
+
 - **Volg uw gacs**: Zie hoeveel commits u met gac heeft gedaan, uw huidige streak, piekdagelijkse/wekelijkse activiteit en topprojecten
 - **Token-tracking**: Totaal aan prompt-, output- en reasoning-tokens per dag, week, project en model — met highscore-trofeeën voor tokengebruik
 - **Topmodellen**: Zie welke modellen u het meest gebruikt en hoeveel tokens elk model verbruikt
-- **Projectstatistieken**: Bekijk statistieken voor alle repo's met `gac stats projects`
 - **Highscore-vieringen**: 🏆 trofeeën wanneer u nieuwe dagelijkse, wekelijkse, token- of streak-records vestigt; 🥈 voor het evenaren ervan
 - **Opt-in tijdens setup**: `gac init` vraagt of u statistieken wilt inschakelen en legt uit wat er wordt opgeslagen
 - **Altijd opt-out**: Stel `GAC_DISABLE_STATS=true` (of `1`/`yes`/`on`) in om uit te schakelen. Instellen op `false`/`0`/`no` (of verwijderen) houdt statistieken ingeschakeld

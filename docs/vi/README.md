@@ -105,10 +105,17 @@ uv tool upgrade gac
 
 ### 📊 **Thống Kê Sử Dụng**
 
+```bash
+gac stats               # Tổng quan: tổng gac, chuỗi, đỉnh hàng ngày/hàng tuần, dự án và mô hình hàng đầu
+gac stats models        # Chi tiết theo mô hình: gac, token, độ trễ, tốc độ
+gac stats projects      # Chi tiết theo dự án: gac, commit, token trên tất cả repo
+gac stats reset         # Đặt lại tất cả thống kê (yêu cầu xác nhận)
+gac stats reset model <model-id>  # Chỉ đặt lại thống kê cho một mô hình cụ thể
+```
+
 - **Theo dõi các gac của bạn**: Xem bạn đã thực hiện bao nhiêu commit với gac, chuỗi hiện tại, hoạt động đỉnh hàng ngày/hàng tuần, và các dự án hàng đầu
 - **Theo dõi token**: Tổng token prompt, output và suy luận theo ngày, tuần, dự án và mô hình — với cúp kỷ lục cho việc sử dụng token
 - **Mô hình hàng đầu**: Xem mô hình nào bạn sử dụng nhiều nhất và mỗi mô hình tiêu thụ bao nhiêu token
-- **Thống kê theo dự án**: Xem thống kê cho tất cả repo với `gac stats projects`
 - **Ăn mừng điểm cao**: 🏆 cúp khi bạn thiết lập kỷ lục hàng ngày, hàng tuần, token, hoặc chuỗi mới; 🥈 khi ngang bằng
 - **Chọn tham gia khi cài đặt**: `gac init` hỏi bạn có muốn bật thống kê và giải thích chính xác những gì được lưu trữ
 - **Từ chối bất cứ lúc nào**: Đặt `GAC_DISABLE_STATS=true` (hoặc `1`/`yes`/`on`) để vô hiệu hóa. Đặt thành `false`/`0`/`no` (hoặc bỏ đặt) giữ thống kê được bật

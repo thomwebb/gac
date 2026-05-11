@@ -105,10 +105,17 @@ uv tool upgrade gac
 
 ### 📊 **Usage Statistics**
 
+```bash
+gac stats               # Overview: total gacs, streaks, daily/weekly peaks, top projects & models
+gac stats models        # Per-model breakdown: gacs, tokens, latency, speed
+gac stats projects      # Per-project breakdown: gacs, commits, tokens across all repos
+gac stats reset         # Reset all stats (prompts for confirmation)
+gac stats reset model <model-id>  # Reset stats for a specific model only
+```
+
 - **Track your gacs**: See how many commits you've made with gac, your current streak, peak daily/weekly activity, and top projects
 - **Token tracking**: Total prompt + completion tokens by day, week, project, and model — with high-score trophies for token usage too
 - **Top models**: See which models you use most and how many tokens each one consumes
-- **Per-project stats**: View stats for all your repos with `gac stats projects`
 - **High score celebrations**: 🏆 trophies when you set new daily, weekly, token, or streak records; 🥈 for tying them
 - **Opt-in during setup**: `gac init` asks whether to enable stats and explains exactly what's stored
 - **Opt-out anytime**: Set `GAC_DISABLE_STATS=true` (or `1`/`yes`/`on`) to disable. Setting it to `false`/`0`/`no` (or unsetting) keeps stats enabled

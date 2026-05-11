@@ -105,10 +105,17 @@ uv tool upgrade gac
 
 ### 📊 **Bruksstatistikk**
 
+```bash
+gac stats               # Oversikt: totale gacs, streaks, daglige/ukentlige topper, topprosjekter & -modeller
+gac stats models        # Modelloppdelning: gacs, tokens, latens, hastighet
+gac stats projects      # Prosjektoppdelning: gacs, commits, tokens over alle repoer
+gac stats reset         # Tilbakestill all statistikk (ber om bekreftelse)
+gac stats reset model <model-id>  # Tilbakestill statistikk kun for en spesifikk modell
+```
+
 - **Spor dine gacs**: Se hvor mange committer du har gjort med gac, din nåværende streak, topp daglige/ukentlige aktivitet og topprosjekter
 - **Token-sporing**: Totalt antall prompt-, output- og reasoning-tokens per dag, uke, prosjekt og modell — med highscore-trofeer for tokenbruk også
 - **Toppmodeller**: Se hvilke modeller du bruker mest og hvor mange tokens hver av dem forbruker
-- **Prosjektstatistikk**: Vis statistikk for alle repoer med `gac stats projects`
 - **Highscore-feiringer**: 🏆 trofeer når du setter nye daglige, ukentlige, token- eller streak-rekorder; 🥈 for å tangere dem
 - **Opt-in under oppsett**: `gac init` spør om du vil aktivere statistikk og forklarer nøyaktig hva som lagres
 - **Opt-out når som helst**: Sett `GAC_DISABLE_STATS=true` (eller `1`/`yes`/`on`) for å deaktivere. Å sette den til `false`/`0`/`no` (eller fjerne den) holder statistikk aktivert
