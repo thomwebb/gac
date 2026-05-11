@@ -24,7 +24,7 @@ def test_language_select_predefined_with_prefix_translation(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to Español" in result.output
+                assert "Set language to Español" in result.output
                 assert "GAC_LANGUAGE=Spanish" in result.output
                 assert "GAC_TRANSLATE_PREFIXES=true" in result.output
                 assert "Prefixes will be translated" in result.output
@@ -50,7 +50,7 @@ def test_language_select_predefined_without_prefix_translation(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to 日本語" in result.output
+                assert "Set language to 日本語" in result.output
                 assert "GAC_LANGUAGE=Japanese" in result.output
                 assert "GAC_TRANSLATE_PREFIXES=false" in result.output
                 assert "Prefixes will remain in English" in result.output
@@ -77,7 +77,7 @@ def test_language_select_english_sets_explicitly(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to English" in result.output
+                assert "Set language to English" in result.output
                 assert "GAC_LANGUAGE=English" in result.output
                 assert "GAC_TRANSLATE_PREFIXES=false" in result.output
 
@@ -100,7 +100,7 @@ def test_language_select_english_file_not_exists(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to English" in result.output
+                assert "Set language to English" in result.output
                 assert "GAC_LANGUAGE=English" in result.output
                 assert "GAC_TRANSLATE_PREFIXES=false" in result.output
                 # File should be created and contain English setting
@@ -126,7 +126,7 @@ def test_language_select_custom_language(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to Esperanto" in result.output
+                assert "Set language to Esperanto" in result.output
                 assert "GAC_LANGUAGE=Esperanto" in result.output
                 assert fake_path.exists()
 
@@ -289,7 +289,7 @@ def test_language_all_predefined_languages(clean_env_state):
                     result = runner.invoke(language)
 
                     assert result.exit_code == 0
-                    assert f"✓ Set language to {display_name}" in result.output
+                    assert f"Set language to {display_name}" in result.output
                     assert f"GAC_LANGUAGE={english_name}" in result.output
 
                     content = fake_path.read_text()
@@ -329,7 +329,7 @@ def test_language_existing_file_is_updated(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to Français" in result.output
+                assert "Set language to Français" in result.output
 
                 content = fake_path.read_text()
                 # Should update language but preserve other settings
@@ -408,7 +408,7 @@ def test_language_select_rtl_predefined_arabic(clean_env_state):
                 args, kwargs = mock_rtl_warning.call_args
                 assert args[0] == "Arabic"
                 assert isinstance(args[1], Path)
-                assert "✓ Set language to العربية" in result.output
+                assert "Set language to العربية" in result.output
                 assert "GAC_LANGUAGE=Arabic" in result.output
 
 
@@ -468,7 +468,7 @@ def test_language_select_custom_rtl_proceed(clean_env_state):
                 args, kwargs = mock_rtl_warning.call_args
                 assert args[0] == "Persian"
                 assert isinstance(args[1], Path)
-                assert "✓ Set language to Persian" in result.output
+                assert "Set language to Persian" in result.output
                 assert "GAC_LANGUAGE=Persian" in result.output
 
 
@@ -520,7 +520,7 @@ def test_language_select_non_rtl_no_warning(clean_env_state):
             assert result.exit_code == 0
             # RTL warning should not be called for non-RTL languages
             mock_rtl_warning.assert_not_called()
-            assert "✓ Set language to Español" in result.output
+            assert "Set language to Español" in result.output
             assert "GAC_LANGUAGE=Spanish" in result.output
 
 
@@ -541,7 +541,7 @@ def test_language_with_existing_env_file(clean_env_state):
                 result = runner.invoke(language)
 
                 assert result.exit_code == 0
-                assert "✓ Set language to Français" in result.output
+                assert "Set language to Français" in result.output
                 assert "GAC_LANGUAGE=French" in result.output
                 assert fake_path.exists()
 

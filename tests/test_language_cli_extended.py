@@ -217,7 +217,7 @@ def test_show_rtl_warning_proceed_true():
         with (
             patch("gac.language_cli.GAC_ENV_PATH", fake_path),
             patch("gac.language_cli.get_terminal_width", return_value=80),
-            patch("gac.language_cli.center_text", return_value="  ⚠️  RTL Language Detected  "),
+            patch("gac.language_cli.center_text", return_value="  RTL Language Detected  "),
             patch("questionary.confirm") as mock_confirm,
         ):
             mock_confirm.return_value.ask.return_value = True
@@ -238,7 +238,7 @@ def test_show_rtl_warning_proceed_false():
         with (
             patch("gac.language_cli.GAC_ENV_PATH", fake_path),
             patch("gac.language_cli.get_terminal_width", return_value=80),
-            patch("gac.language_cli.center_text", return_value="  ⚠️  RTL Language Detected  "),
+            patch("gac.language_cli.center_text", return_value="  RTL Language Detected  "),
             patch("questionary.confirm") as mock_confirm,
         ):
             mock_confirm.return_value.ask.return_value = False
@@ -256,7 +256,7 @@ def test_show_rtl_warning_proceed_none():
         with (
             patch("gac.language_cli.GAC_ENV_PATH", fake_path),
             patch("gac.language_cli.get_terminal_width", return_value=80),
-            patch("gac.language_cli.center_text", return_value="  ⚠️  RTL Language Detected  "),
+            patch("gac.language_cli.center_text", return_value="  RTL Language Detected  "),
             patch("questionary.confirm") as mock_confirm,
         ):
             mock_confirm.return_value.ask.return_value = None
