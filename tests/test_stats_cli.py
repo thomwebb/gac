@@ -52,7 +52,10 @@ class TestStatsCLI:
 
     def test_stats_show_with_commits(self, runner):
         """Test stats show with commit history."""
-        with patch("gac.stats_cli.get_stats_summary") as mock_summary:
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
             mock_summary.return_value = {
                 "total_gacs": 15,
                 "total_commits": 42,
@@ -97,7 +100,10 @@ class TestStatsCLI:
 
     def test_stats_default_shows_stats(self, runner):
         """Test that running 'gac stats' without subcommand shows stats."""
-        with patch("gac.stats_cli.get_stats_summary") as mock_summary:
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
             mock_summary.return_value = {
                 "total_gacs": 5,
                 "total_commits": 10,
@@ -166,7 +172,11 @@ class TestStatsCLI:
         """Test stats show renders activity even when only tokens were recorded
         (e.g. dry-run or message-only sessions where no commit/gac was created).
         """
-        with patch("gac.stats_cli.get_stats_summary") as mock_summary, patch("gac.stats_cli.load_stats") as mock_load:
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
             mock_summary.return_value = {
                 "total_gacs": 0,
                 "total_commits": 0,
@@ -232,7 +242,11 @@ class TestStatsCLI:
 
     def test_stats_show_biggest_gac(self, runner):
         """Test stats show displays biggest gac when it exists."""
-        with patch("gac.stats_cli.get_stats_summary") as mock_summary, patch("gac.stats_cli.load_stats") as mock_load:
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
             mock_summary.return_value = {
                 "total_gacs": 10,
                 "total_commits": 15,
@@ -282,7 +296,11 @@ class TestStatsCLI:
         from datetime import datetime
 
         today_str = datetime.now().strftime("%Y-%m-%d")
-        with patch("gac.stats_cli.get_stats_summary") as mock_summary, patch("gac.stats_cli.load_stats") as mock_load:
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
             mock_summary.return_value = {
                 "total_gacs": 5,
                 "total_commits": 8,
@@ -332,7 +350,11 @@ class TestStatsCLI:
         This can happen when a persisted stats file has malformed first_used/
         last_used values that get_stats_summary() couldn't parse.
         """
-        with patch("gac.stats_cli.get_stats_summary") as mock_summary, patch("gac.stats_cli.load_stats") as mock_load:
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
             mock_summary.return_value = {
                 "total_gacs": 5,
                 "total_commits": 8,
@@ -376,6 +398,227 @@ class TestStatsCLI:
             # Should not crash on .split("-") with the "<invalid>" fallback
             assert "You've gac'd" in result.output
 
+    def test_stats_show_marks_current_model_in_top_models(self, runner):
+        """Test that the current model gets a * marker in the Top Models table."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": "openai:gpt-4"}),
+        ):
+            mock_summary.return_value = {
+                "total_gacs": 15,
+                "total_commits": 42,
+                "biggest_gac_tokens": 5000,
+                "biggest_gac_date": "2024-06-15",
+                "first_used": "2024-01-01",
+                "last_used": "2024-06-15",
+                "today_gacs": 2,
+                "today_commits": 5,
+                "today_tokens": 1000,
+                "week_gacs": 10,
+                "week_commits": 25,
+                "week_tokens": 3000,
+                "streak": 7,
+                "longest_streak": 12,
+                "peak_daily_gacs": 5,
+                "peak_daily_commits": 10,
+                "peak_daily_tokens": 2000,
+                "peak_weekly_gacs": 15,
+                "peak_weekly_commits": 30,
+                "peak_weekly_tokens": 4000,
+                "daily_gacs": {"2024-06-15": 2},
+                "daily_commits": {"2024-06-15": 5},
+                "daily_total_tokens": {"2024-06-15": 1000},
+                "weekly_gacs": {},
+                "weekly_commits": {},
+                "weekly_total_tokens": {},
+                "daily_prompt_tokens": {},
+                "daily_output_tokens": {},
+                "daily_reasoning_tokens": {},
+                "weekly_prompt_tokens": {},
+                "weekly_output_tokens": {},
+                "weekly_reasoning_tokens": {},
+                "top_projects": [],
+                "top_models": [
+                    (
+                        "openai:gpt-4",
+                        {"gacs": 5, "commits": 10, "prompt_tokens": 2000, "output_tokens": 500, "reasoning_tokens": 0},
+                    ),
+                    (
+                        "anthropic:claude-3",
+                        {"gacs": 3, "commits": 5, "prompt_tokens": 1000, "output_tokens": 300, "reasoning_tokens": 0},
+                    ),
+                ],
+            }
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "* openai:gpt-4" in result.output
+            # Non-matching model should NOT have the marker
+            assert "* anthropic:claude-3" not in result.output
+
+    def test_stats_show_current_model_footnote(self, runner):
+        """Test that the * currently selected model footnote appears when a model is configured."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": "openai:gpt-4"}),
+        ):
+            mock_summary.return_value = {
+                "total_gacs": 15,
+                "total_commits": 42,
+                "biggest_gac_tokens": 5000,
+                "biggest_gac_date": "2024-06-15",
+                "first_used": "2024-01-01",
+                "last_used": "2024-06-15",
+                "today_gacs": 2,
+                "today_commits": 5,
+                "today_tokens": 1000,
+                "week_gacs": 10,
+                "week_commits": 25,
+                "week_tokens": 3000,
+                "streak": 7,
+                "longest_streak": 12,
+                "peak_daily_gacs": 5,
+                "peak_daily_commits": 10,
+                "peak_daily_tokens": 2000,
+                "peak_weekly_gacs": 15,
+                "peak_weekly_commits": 30,
+                "peak_weekly_tokens": 4000,
+                "daily_gacs": {"2024-06-15": 2},
+                "daily_commits": {"2024-06-15": 5},
+                "daily_total_tokens": {"2024-06-15": 1000},
+                "weekly_gacs": {},
+                "weekly_commits": {},
+                "weekly_total_tokens": {},
+                "daily_prompt_tokens": {},
+                "daily_output_tokens": {},
+                "daily_reasoning_tokens": {},
+                "weekly_prompt_tokens": {},
+                "weekly_output_tokens": {},
+                "weekly_reasoning_tokens": {},
+                "top_projects": [],
+                "top_models": [
+                    (
+                        "openai:gpt-4",
+                        {"gacs": 5, "commits": 10, "prompt_tokens": 2000, "output_tokens": 500, "reasoning_tokens": 0},
+                    ),
+                ],
+            }
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "* currently selected model" in result.output
+
+    def test_stats_show_no_footnote_without_current_model(self, runner):
+        """Test that the footnote is absent when no current model is configured."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
+            mock_summary.return_value = {
+                "total_gacs": 15,
+                "total_commits": 42,
+                "biggest_gac_tokens": 5000,
+                "biggest_gac_date": "2024-06-15",
+                "first_used": "2024-01-01",
+                "last_used": "2024-06-15",
+                "today_gacs": 2,
+                "today_commits": 5,
+                "today_tokens": 1000,
+                "week_gacs": 10,
+                "week_commits": 25,
+                "week_tokens": 3000,
+                "streak": 7,
+                "longest_streak": 12,
+                "peak_daily_gacs": 5,
+                "peak_daily_commits": 10,
+                "peak_daily_tokens": 2000,
+                "peak_weekly_gacs": 15,
+                "peak_weekly_commits": 30,
+                "peak_weekly_tokens": 4000,
+                "daily_gacs": {"2024-06-15": 2},
+                "daily_commits": {"2024-06-15": 5},
+                "daily_total_tokens": {"2024-06-15": 1000},
+                "weekly_gacs": {},
+                "weekly_commits": {},
+                "weekly_total_tokens": {},
+                "daily_prompt_tokens": {},
+                "daily_output_tokens": {},
+                "daily_reasoning_tokens": {},
+                "weekly_prompt_tokens": {},
+                "weekly_output_tokens": {},
+                "weekly_reasoning_tokens": {},
+                "top_projects": [],
+                "top_models": [],
+            }
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "* currently selected model" not in result.output
+
+    def test_stats_show_model_in_config_not_in_stats(self, runner):
+        """Test UX when GAC_MODEL is set but doesn't match any stats model.
+
+        The footnote still appears (current_model is truthy), but no model row
+        gets a * marker since the configured model has no stats entry.
+        """
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats_cli.load_config", return_value={"model": "anthropic:claude-4"}),
+        ):
+            mock_summary.return_value = {
+                "total_gacs": 15,
+                "total_commits": 42,
+                "biggest_gac_tokens": 5000,
+                "biggest_gac_date": "2024-06-15",
+                "first_used": "2024-01-01",
+                "last_used": "2024-06-15",
+                "today_gacs": 2,
+                "today_commits": 5,
+                "today_tokens": 1000,
+                "week_gacs": 10,
+                "week_commits": 25,
+                "week_tokens": 3000,
+                "streak": 7,
+                "longest_streak": 12,
+                "peak_daily_gacs": 5,
+                "peak_daily_commits": 10,
+                "peak_daily_tokens": 2000,
+                "peak_weekly_gacs": 15,
+                "peak_weekly_commits": 30,
+                "peak_weekly_tokens": 4000,
+                "daily_gacs": {"2024-06-15": 2},
+                "daily_commits": {"2024-06-15": 5},
+                "daily_total_tokens": {"2024-06-15": 1000},
+                "weekly_gacs": {},
+                "weekly_commits": {},
+                "weekly_total_tokens": {},
+                "daily_prompt_tokens": {},
+                "daily_output_tokens": {},
+                "daily_reasoning_tokens": {},
+                "weekly_prompt_tokens": {},
+                "weekly_output_tokens": {},
+                "weekly_reasoning_tokens": {},
+                "top_projects": [],
+                "top_models": [
+                    (
+                        "openai:gpt-4",
+                        {"gacs": 5, "commits": 10, "prompt_tokens": 2000, "output_tokens": 500, "reasoning_tokens": 0},
+                    ),
+                ],
+            }
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            # Footnote does NOT appear because the configured model isn't in stats
+            assert "* currently selected model" not in result.output
+            # No row has the * marker since the configured model isn't in stats
+            assert "* openai:gpt-4" not in result.output
+            assert "* anthropic:claude-4" not in result.output
+
 
 class TestStatsModelsCommand:
     """Tests for the 'gac stats models' subcommand."""
@@ -407,11 +650,65 @@ class TestStatsModelsCommand:
             ),
             patch("gac.stats_cli.stats_enabled", return_value=True),
             patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x: x),
+            patch("gac.stats_cli.load_config", return_value={"model": "openai:gpt-4"}),
         ):
             result = runner.invoke(cli, ["stats", "models"])
             assert result.exit_code == 0
             assert "All Models" in result.output
+            assert "* openai:gpt-4" in result.output
+            assert "* currently selected model" in result.output
+
+    def test_models_no_current_model(self, runner) -> None:
+        """When no current model is configured, no * marker should appear."""
+        with (
+            patch(
+                "gac.stats_cli.load_stats",
+                return_value={
+                    "models": {
+                        "openai:gpt-4": {
+                            "gacs": 10,
+                            "prompt_tokens": 5000,
+                            "output_tokens": 1000,
+                            "reasoning_tokens": 200,
+                        },
+                    }
+                },
+            ),
+            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x: x),
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
+        ):
+            result = runner.invoke(cli, ["stats", "models"])
+            assert result.exit_code == 0
             assert "openai:gpt-4" in result.output
+            assert "* openai:gpt-4" not in result.output
+            assert "* currently selected model" not in result.output
+
+    def test_models_config_model_not_in_stats(self, runner) -> None:
+        """When the configured model has no stats entry, no * marker or footnote appears."""
+        with (
+            patch(
+                "gac.stats_cli.load_stats",
+                return_value={
+                    "models": {
+                        "openai:gpt-4": {
+                            "gacs": 10,
+                            "prompt_tokens": 5000,
+                            "output_tokens": 1000,
+                            "reasoning_tokens": 200,
+                        },
+                    }
+                },
+            ),
+            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x: x),
+            patch("gac.stats_cli.load_config", return_value={"model": "anthropic:claude-4"}),
+        ):
+            result = runner.invoke(cli, ["stats", "models"])
+            assert result.exit_code == 0
+            assert "openai:gpt-4" in result.output
+            assert "* openai:gpt-4" not in result.output
+            assert "* currently selected model" not in result.output
 
     def test_models_disabled(self, runner) -> None:
         with patch("gac.stats_cli.stats_enabled", return_value=False):
@@ -445,6 +742,7 @@ class TestStatsModelsCommand:
             ),
             patch("gac.stats_cli.stats_enabled", return_value=True),
             patch("gac.stats.store._enrich_models_with_speed", side_effect=enrich),
+            patch("gac.stats_cli.load_config", return_value={"model": None}),
         ):
             result = runner.invoke(cli, ["stats", "models"])
             assert result.exit_code == 0
@@ -524,6 +822,30 @@ class TestFormatLatency:
         assert _format_latency(1000) == "1.0s"
 
 
+class TestMarkCurrentModel:
+    """Tests for the _mark_current_model helper."""
+
+    def test_marks_matching_model(self) -> None:
+        from gac.stats_cli import _mark_current_model
+
+        assert _mark_current_model("openai:gpt-4", "openai:gpt-4") == "* openai:gpt-4"
+
+    def test_case_insensitive_match(self) -> None:
+        from gac.stats_cli import _mark_current_model
+
+        assert _mark_current_model("OpenAI:GPT-4", "openai:gpt-4") == "* OpenAI:GPT-4"
+
+    def test_no_match(self) -> None:
+        from gac.stats_cli import _mark_current_model
+
+        assert _mark_current_model("openai:gpt-4", "anthropic:claude-3") == "openai:gpt-4"
+
+    def test_none_current_model(self) -> None:
+        from gac.stats_cli import _mark_current_model
+
+        assert _mark_current_model("openai:gpt-4", None) == "openai:gpt-4"
+
+
 class TestBuildBarChart:
     """Tests for the _build_bar_chart helper."""
 
@@ -534,6 +856,20 @@ class TestBuildBarChart:
         table = _build_bar_chart(models_data, value_key="avg_tps", max_value=50, label_fmt=lambda v: f"{v} tps")
         # Table should have rows
         assert table.row_count == 2
+
+    def test_chart_marks_current_model(self) -> None:
+        from gac.stats_cli import _build_bar_chart
+
+        models_data = [("model-a", {"avg_tps": 50}), ("model-b", {"avg_tps": 25})]
+        table = _build_bar_chart(
+            models_data, value_key="avg_tps", max_value=50, label_fmt=lambda v: f"{v} tps", current_model="model-a"
+        )
+        # First row should have the * marker
+        first_row_model = table.columns[0]._cells[0]  # type: ignore[attr-defined]
+        assert "* model-a" == first_row_model
+        # Second row should not
+        second_row_model = table.columns[0]._cells[1]  # type: ignore[attr-defined]
+        assert "model-b" == second_row_model
 
     def test_empty_data(self) -> None:
         from gac.stats_cli import _build_bar_chart

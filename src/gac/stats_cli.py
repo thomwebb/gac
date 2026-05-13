@@ -8,6 +8,7 @@ import click
 from rich.panel import Panel
 from rich.table import Table
 
+from gac.config import load_config
 from gac.stats import (
     compute_total_tokens,
     find_model_key,
@@ -21,6 +22,17 @@ from gac.stats import (
     stats_enabled,
 )
 from gac.utils import console
+
+
+def _mark_current_model(model_name: str, current_model: str | None) -> str:
+    """Append a * indicator if the model matches the currently configured model.
+
+    Uses case-insensitive comparison via lower(), consistent with
+    find_model_key() in gac.stats.store — keep both in sync.
+    """
+    if current_model and model_name.lower() == current_model.lower():
+        return f"* {model_name}"
+    return model_name
 
 
 @click.group(invoke_without_command=True)
@@ -203,10 +215,12 @@ def show() -> None:
 
     # Top models (from summary which includes computed avg_tps)
     top_models = summary.get("top_models", [])
+    current_model = load_config().get("model") if top_models else None
+    current_model_matched = False
     if top_models:
         console.print("[bold]Top Models:[/bold]")
         models_table = Table(show_header=True, box=None)
-        models_table.add_column("Model", style="bold magenta")
+        models_table.add_column("Model", style="bold magenta", no_wrap=True)
         models_table.add_column("Gacs", style="bold cyan", justify="right")
         models_table.add_column("Commits", style="bold cyan", justify="right")
         models_table.add_column("Speed", style="bold cyan", justify="right")
@@ -228,8 +242,11 @@ def show() -> None:
             speed_str = f"{avg_tps} tps" if avg_tps is not None else "\u2014"
             latency_str = _format_latency(avg_latency_ms) if avg_latency_ms is not None else "\u2014"
             reasoning_str = format_tokens(reasoning_t) if reasoning_t > 0 else "\u2014"
+            marked = _mark_current_model(model_name, current_model)
+            if marked != model_name:
+                current_model_matched = True
             models_table.add_row(
-                model_name,
+                marked,
                 str(gacs),
                 str(commits),
                 speed_str,
@@ -305,6 +322,9 @@ def show() -> None:
     elif streak > 0:
         console.print("[yellow]💪 Don't break that streak! Time for a gac![/yellow]")
 
+    if current_model_matched:
+        console.print()
+        console.print("[dim]* currently selected model[/dim]")
     console.print()
 
 
@@ -325,6 +345,7 @@ def _build_bar_chart(
     label_fmt: Callable[[int], str],
     higher_is_better: bool = True,
     max_bar_width: int = 30,
+    current_model: str | None = None,
 ) -> Table:
     """Build a horizontal bar chart table for model metrics.
 
@@ -336,12 +357,13 @@ def _build_bar_chart(
         higher_is_better: If True, high values get bright colors (speed). If False, low values
             get bright colors (latency — lower is faster).
         max_bar_width: Maximum bar width in characters.
+        current_model: The currently configured model (to mark with *).
 
     Returns:
         A Rich Table with Model, Bar, and Value columns.
     """
     table = Table(show_header=False, box=None, padding=(0, 0))
-    table.add_column("Model", style="bold magenta", min_width=16)
+    table.add_column("Model", style="bold magenta", min_width=16, no_wrap=True)
     table.add_column("Bar", ratio=1)
     table.add_column("Value", style="bold cyan", justify="right", min_width=8)
 
@@ -383,7 +405,7 @@ def _build_bar_chart(
             else:
                 color = "dim red"  # slow
 
-        table.add_row(model_name, f"[{color}]{bar_str}[/]", label_fmt(value))
+        table.add_row(_mark_current_model(model_name, current_model), f"[{color}]{bar_str}[/]", label_fmt(value))
 
     return table
 
@@ -407,10 +429,13 @@ def models() -> None:
 
     enriched = _enrich_models_with_speed(sorted_models)
 
+    current_model = load_config().get("model")
+    current_model_matched = False
+
     console.print()
     console.print("[bold]All Models:[/bold]")
     table = Table(show_header=True, box=None)
-    table.add_column("Model", style="bold magenta")
+    table.add_column("Model", style="bold magenta", no_wrap=True)
     table.add_column("Gacs", style="bold cyan", justify="right")
     table.add_column("Commits", style="bold cyan", justify="right")
     table.add_column("Speed", style="bold cyan", justify="right")
@@ -432,8 +457,11 @@ def models() -> None:
         speed_str = f"{avg_tps} tps" if avg_tps is not None else "\u2014"
         latency_str = _format_latency(avg_latency_ms) if avg_latency_ms is not None else "\u2014"
         reasoning_str = format_tokens(reasoning_t) if reasoning_t > 0 else "\u2014"
+        marked = _mark_current_model(model_name, current_model)
+        if marked != model_name:
+            current_model_matched = True
         table.add_row(
-            model_name,
+            marked,
             str(gacs),
             str(commits),
             speed_str,
@@ -460,6 +488,7 @@ def models() -> None:
             max_value=max_tps,
             label_fmt=lambda v: f"{v:.0f} tps",
             higher_is_better=True,
+            current_model=current_model,
         )
         console.print(speed_table)
 
@@ -477,8 +506,12 @@ def models() -> None:
             max_value=max_latency,
             label_fmt=_format_latency,
             higher_is_better=False,
+            current_model=current_model,
         )
         console.print(latency_table)
+    if current_model_matched:
+        console.print()
+        console.print("[dim]* currently selected model[/dim]")
     console.print()
 
 
