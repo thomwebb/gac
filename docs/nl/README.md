@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Meertalige Ondersteuning**
 
-- **28+ talen**: Genereer commitberichten in Engels, Chinees, Japans, Koreaans, Spaans, Frans, Duits en 20+ andere talen
+- **25+ talen**: Genereer commitberichten in Engels, Chinees, Japans, Koreaans, Spaans, Frans, Duits en 18+ andere talen
 - **Flexibele vertaling**: Kies ervoor om conventionele commit-prefixen in het Engels te houden voor tool-compatibiliteit, of vertaal ze volledig
 - **Meerdere workflows**: Stel een standaardtaal in met `gac language`, of gebruik de `-l <taal>` vlag voor eenmalige overschrijvingen
 - **Ondersteuning voor native scripts**: Volledige ondersteuning voor niet-Latijnse scripts inclusief CJK, Cyrillisch, Thai en meer
@@ -247,7 +247,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Zie `.gac.env.example` voor alle beschikbare opties.
 
-**Wilt u commitberichten in een andere taal?** Voer `gac language` uit om te kiezen uit 28+ talen inclusief Español, Français, 日本語 en meer.
+**Wilt u commitberichten in een andere taal?** Voer `gac language` uit om te kiezen uit 25+ talen inclusief Español, Français, 日本語 en meer.
 
 **Wilt u de stijl van commitberichten aanpassen?** Zie [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/nl/CUSTOM_SYSTEM_PROMPTS.md) voor begeleiding bij het schrijven van aangepaste systeemprompts.
 

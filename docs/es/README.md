@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Soporte multilingüe**
 
-- **28+ idiomas**: Genera mensajes de commit en inglés, chino, japonés, coreano, español, francés, alemán y 20+ idiomas más
+- **25+ idiomas**: Genera mensajes de commit en inglés, chino, japonés, coreano, español, francés, alemán y 18+ idiomas más
 - **Traducción flexible**: Elige mantener prefijos de commit convencionales en inglés para compatibilidad de herramientas, o traducirlos completamente
 - **Múltiples flujos de trabajo**: Establece un idioma predeterminado con `gac language`, o usa la bandera `-l <idioma>` para anulaciones de una sola vez
 - **Soporte de escritura nativa**: Soporte completo para scripts no latinos incluyendo CJK, cirílico, tailandés y más
@@ -247,7 +247,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Consulta `.gac.env.example` para todas las opciones disponibles.
 
-**¿Quieres mensajes de commit en otro idioma?** Ejecuta `gac language` para seleccionar entre 28+ idiomas incluyendo Español, Français, 日本語 y más.
+**¿Quieres mensajes de commit en otro idioma?** Ejecuta `gac language` para seleccionar entre 25+ idiomas incluyendo Español, Français, 日本語 y más.
 
 **¿Quieres personalizar el estilo del mensaje de commit?** Consulta [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/es/CUSTOM_SYSTEM_PROMPTS.md) para orientación sobre cómo escribir prompts de sistema personalizados.
 

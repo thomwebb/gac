@@ -90,7 +90,7 @@ uv tool upgrade gac
 
 ### 🌍 **Hỗ Trợ Đa Ngôn Ngữ**
 
-- **28+ ngôn ngữ**: Tạo thông điệp commit bằng tiếng Anh, tiếng Trung, tiếng Nhật, tiếng Hàn, tiếng Tây Ban Nha, tiếng Pháp, tiếng Đức và 20+ ngôn ngữ khác
+- **25+ ngôn ngữ**: Tạo thông điệp commit bằng tiếng Anh, tiếng Trung, tiếng Nhật, tiếng Hàn, tiếng Tây Ban Nha, tiếng Pháp, tiếng Đức và 18+ ngôn ngữ khác
 - **Dịch linh hoạt**: Chọn giữ tiền tố commit tiêu chuẩn bằng tiếng Anh để tương thích công cụ, hoặc dịch hoàn toàn chúng
 - **Nhiều quy trình làm việc**: Đặt ngôn ngữ mặc định với `gac language`, hoặc sử dụng flag `-l <language>` để ghi đè một lần
 - **Hỗ trợ chữ viết gốc**: Hỗ trợ đầy đủ cho các chữ viết không phải Latin bao gồm CJK, Cyrillic, Thai và nhiều hơn nữa
@@ -247,7 +247,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Xem `.gac.env.example` cho tất cả các tùy chọn có sẵn.
 
-**Muốn thông điệp commit bằng ngôn ngữ khác?** Chạy `gac language` để chọn từ 28+ ngôn ngữ bao gồm Español, Français, 日本語 và nhiều hơn nữa.
+**Muốn thông điệp commit bằng ngôn ngữ khác?** Chạy `gac language` để chọn từ 25+ ngôn ngữ bao gồm Español, Français, 日本語 và nhiều hơn nữa.
 
 **Muốn tùy chỉnh kiểu thông điệp commit?** Xem [docs/CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) để được hướng dẫn viết các gợi ý hệ thống tùy chỉnh.
 
