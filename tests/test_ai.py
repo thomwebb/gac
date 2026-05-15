@@ -559,6 +559,7 @@ class TestProviderRegistry:
             "minimax",
             "mistral",
             "moonshot",
+            "neuralwatt",
             "ollama",
             "openai",
             "opencode-go",

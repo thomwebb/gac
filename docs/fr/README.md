@@ -64,12 +64,12 @@ uv tool upgrade gac
 
 ## Fonctionnalités principales
 
-### 🌐 **Plus de 25 Fournisseurs pris en charge**
+### 🌐 **29+ Fournisseurs pris en charge**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai**
 - **Claude Code (OAuth)** • **Crof.ai** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot**
 - **Groq** • **Kimi for Coding** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI**
-- **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
+- **Neuralwatt** • **Ollama** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)**
 - **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai**
 - **Z.AI (API & Coding Plans)** • **Custom Endpoints (Anthropic/OpenAI)**
 

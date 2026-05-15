@@ -31,6 +31,7 @@ from .lmstudio import LMStudioProvider
 from .minimax import MinimaxProvider
 from .mistral import MistralProvider
 from .moonshot import MoonshotProvider
+from .neuralwatt import NeuralwattProvider
 from .ollama import OllamaProvider
 from .openai import OpenAIProvider
 from .opencode_go import OpenCodeGoProvider
@@ -67,6 +68,7 @@ register_provider("lm-studio", LMStudioProvider)
 register_provider("minimax", MinimaxProvider)
 register_provider("mistral", MistralProvider)
 register_provider("moonshot", MoonshotProvider)
+register_provider("neuralwatt", NeuralwattProvider)
 register_provider("ollama", OllamaProvider)
 register_provider("openai", OpenAIProvider)
 register_provider("opencode-go", OpenCodeGoProvider)

@@ -101,6 +101,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("MiniMax.io", "MiniMax-M2.7"),
         ("Mistral", "devstral-2512"),
         ("Moonshot AI", "kimi-k2.6"),
+        ("Neuralwatt", "qwen3.6-35b-fast"),
         ("Ollama", "gemma3"),
         ("OpenAI", "gpt-5.4-mini"),
         ("OpenCode Go", "deepseek-v4-flash"),

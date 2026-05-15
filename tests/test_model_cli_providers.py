@@ -173,6 +173,30 @@ def test_configure_model_moonshot_success(tmp_path):
             assert mock_set_key.call_count >= 2
 
 
+def test_configure_model_neuralwatt_success(tmp_path):
+    """Test successful Neuralwatt provider configuration."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("questionary.password") as mpass,
+            patch("gac.model_cli.set_key") as mock_set_key,
+        ):
+            # Select Neuralwatt provider
+            mselect.return_value.ask.return_value = "Neuralwatt"
+            mtext.return_value.ask.return_value = "qwen3.6-35b-fast"
+            mpass.return_value.ask.return_value = "neuralwatt-key"
+
+            result = _configure_model({})
+
+            assert result is True
+            # Should have set_key calls for model and API key
+            assert mock_set_key.call_count >= 2
+
+
 def test_configure_model_minimax_success(tmp_path):
     """Test successful MiniMax.io provider configuration."""
     env_path = tmp_path / ".gac.env"
