@@ -1,13 +1,13 @@
 ---
 name: adding-provider
-description: Use when adding a new AI provider to the GAC project (e.g. a new OpenAI-compatible inference service, Anthropic-compatible endpoint, or OAuth-based provider). Lists every file that must be created or edited and the exact registration steps required for the provider to appear in the registry, the `gac init` flow, the README, and the test suite.
+description: Use when adding a new AI provider to the GAC project (e.g. a new OpenAI-compatible inference service, Anthropic-compatible endpoint, or OAuth-based provider). Lists every file that must be created or edited and the exact registration steps required for the provider to appear in the registry, the `uvx gac init` flow, the README, and the test suite.
 ---
 
 # Adding a Provider to GAC
 
 ## Overview
 
-GAC supports ~30 providers via a registry pattern. Adding one means creating a provider class, registering it, listing it in the interactive setup CLI, advertising it in the README, and adding standardized tests. Skipping any step leaves the provider partially wired (e.g. selectable in `gac init` but not in the registry, or callable but not advertised).
+GAC supports ~30 providers via a registry pattern. Adding one means creating a provider class, registering it, listing it in the interactive setup CLI, advertising it in the README, and adding standardized tests. Skipping any step leaves the provider partially wired (e.g. selectable in `uvx gac init` but not in the registry, or callable but not advertised).
 
 **Core principle:** every provider lives in five places. Touch all five.
 
@@ -101,7 +101,7 @@ from .crof import CrofProvider          # add to imports
 register_provider("crof", CrofProvider) # add to registrations
 ```
 
-### 5. Wire into `gac init` (`src/gac/model_cli.py`)
+### 5. Wire into `uvx gac init` (`src/gac/model_cli.py`)
 
 Add a tuple `(display_name, default_model)` to the `providers` list inside `_configure_model`. Keep alphabetical.
 
@@ -159,14 +159,14 @@ All of these must pass before claiming done.
 
 ## Common Mistakes
 
-| Mistake                                                        | Symptom                                                                                  | Fix                                                            |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Forgot `register_provider` call                                | `KeyError: '<key>'` from `PROVIDER_REGISTRY[<key>]`                                      | Add the registration in `__init__.py`                          |
-| Display name → key mismatch, no alias                          | `gac init` selects provider but `GAC_MODEL` prefix is wrong (e.g. `crofai:` not `crof:`) | Add `elif provider_key == "..."` mapping in `_configure_model` |
-| Missed `tests/test_ai.py` update                               | `test_provider_registry_complete` fails                                                  | Add key to `expected_providers` set                            |
-| Used `pip install` instead of `uv pip install`                 | CLAUDE.md violation                                                                      | Always use `uv pip install`                                    |
-| Tried to manually bump `__version__.py` or edit `CHANGELOG.md` | CLAUDE.md violation                                                                      | Don't — these are auto-managed                                 |
-| Hardcoded base URL instead of env-overridable                  | Users on enterprise gateways can't redirect                                              | Read `<KEY>_BASE_URL` env var with fallback default            |
+| Mistake                                                        | Symptom                                                                                      | Fix                                                            |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Forgot `register_provider` call                                | `KeyError: '<key>'` from `PROVIDER_REGISTRY[<key>]`                                          | Add the registration in `__init__.py`                          |
+| Display name → key mismatch, no alias                          | `uvx gac init` selects provider but `GAC_MODEL` prefix is wrong (e.g. `crofai:` not `crof:`) | Add `elif provider_key == "..."` mapping in `_configure_model` |
+| Missed `tests/test_ai.py` update                               | `test_provider_registry_complete` fails                                                      | Add key to `expected_providers` set                            |
+| Used `pip install` instead of `uv pip install`                 | CLAUDE.md violation                                                                          | Always use `uv pip install`                                    |
+| Tried to manually bump `__version__.py` or edit `CHANGELOG.md` | CLAUDE.md violation                                                                          | Don't — these are auto-managed                                 |
+| Hardcoded base URL instead of env-overridable                  | Users on enterprise gateways can't redirect                                                  | Read `<KEY>_BASE_URL` env var with fallback default            |
 
 ## Provider Type Cheat Sheet
 
@@ -182,6 +182,6 @@ All of these must pass before claiming done.
 
 - **Provider class**: actually implements the API call.
 - **`__init__.py` registration**: makes it callable via `PROVIDER_REGISTRY[key]`. Without this, the class exists but is unreachable.
-- **`model_cli.py`**: makes it discoverable via `gac init`. Without this, users must hand-edit `~/.gac.env`.
+- **`model_cli.py`**: makes it discoverable via `uvx gac init`. Without this, users must hand-edit `~/.gac.env`.
 - **README**: marketing/discoverability. Without this, users don't know the provider exists.
 - **Tests**: prevents regressions; the `BaseProviderTest` inheritance enforces standard behavior across all providers.
