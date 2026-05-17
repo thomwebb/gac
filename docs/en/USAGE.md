@@ -122,97 +122,97 @@ You can also set `GAC_USE_50_72_RULE=true` in your `.gac.env` file to always app
 - **Stage all changes and commit:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **Commit and push in one step:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **Generate a one-line commit message:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **Generate a detailed commit message with structured sections:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **Add a hint for the LLM:**
 
   ```sh
-  gac -h "Refactor authentication logic"
+  uvx gac -h "Refactor authentication logic"
   ```
 
 - **Infer scope for the commit:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **Group staged changes into logical commits:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # Groups only the files you've already staged
   ```
 
 - **Group all changes (staged + unstaged) and auto-confirm:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # Stages everything, groups it, and auto-confirms
   ```
 
 - **Use a specific model just for this commit:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **Generate commit message in a specific language:**
 
   ```sh
   # Using language codes (shorter)
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # Using full names
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **Dry run (see what would happen):**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **Get only the commit message (for script integration):**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # Outputs: feat: add user authentication system
   ```
 
 - **Get commit message in one-liner format:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # Outputs: feat: add user authentication system
   ```
 
 - **Use interactive mode to provide context:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # What is the main purpose of these changes?
   # What problem are you solving?
   # Are there any implementation details worth mentioning?
@@ -221,7 +221,7 @@ You can also set `GAC_USE_50_72_RULE=true` in your `.gac.env` file to always app
 - **Interactive mode with verbose output:**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # Ask questions and generate detailed commit message
   ```
 
@@ -248,7 +248,7 @@ The `--message-only` flag is designed for script integration and external tool w
 ```sh
 #!/bin/bash
 # Get commit message and use with custom commit function
-MESSAGE=$(gac --message-only --add-all --yes)
+MESSAGE=$(uvx gac --message-only --add-all --yes)
 git commit -m "$MESSAGE"
 ```
 

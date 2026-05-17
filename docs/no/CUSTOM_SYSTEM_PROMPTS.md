@@ -71,7 +71,7 @@ You might want a custom system prompt if:
 3. **Test it:**
 
    ```bash
-   gac --dry-run
+   uvx gac --dry-run
    ```
 
 That's it! GAC will now use your custom instructions instead of the default.
@@ -253,7 +253,7 @@ routes/auth.ts, routes/api.ts, and routes/admin.ts.
 1. Check that `GAC_SYSTEM_PROMPT_PATH` is set correctly:
 
    ```bash
-   gac config get GAC_SYSTEM_PROMPT_PATH
+   uvx gac config get GAC_SYSTEM_PROMPT_PATH
    ```
 
 2. Verify the file path exists and is readable:

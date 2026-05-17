@@ -71,7 +71,7 @@ Sie möchten möglicherweise einen benutzerdefinierten System-Prompt, wenn:
 3. **Testen Sie es:**
 
    ```bash
-   gac --dry-run
+   uvx gac --dry-run
    ```
 
 Das ist alles! GAC wird jetzt Ihre benutzerdefinierten Anweisungen anstelle des Standards verwenden.
@@ -253,7 +253,7 @@ routes/auth.ts, routes/api.ts und routes/admin.ts.
 1. Überprüfen Sie, dass `GAC_SYSTEM_PROMPT_PATH` korrekt gesetzt ist:
 
    ```bash
-   gac config get GAC_SYSTEM_PROMPT_PATH
+   uvx gac config get GAC_SYSTEM_PROMPT_PATH
    ```
 
 2. Überprüfen Sie, dass der Dateipfad existiert und lesbar ist:

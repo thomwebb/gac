@@ -71,7 +71,7 @@ GAC 在生成提交訊息時使用兩個提示：
 3. **測試它：**
 
    ```bash
-   gac --dry-run
+   uvx gac --dry-run
    ```
 
 就是這樣！GAC 現在將使用你的自訂指令而不是預設指令。
@@ -253,7 +253,7 @@ routes/auth.ts、routes/api.ts 和 routes/admin.ts 進行遷移。
 1. 檢查 `GAC_SYSTEM_PROMPT_PATH` 是否設定正確：
 
    ```bash
-   gac config get GAC_SYSTEM_PROMPT_PATH
+   uvx gac config get GAC_SYSTEM_PROMPT_PATH
    ```
 
 2. 驗證檔案路徑是否存在且可讀：

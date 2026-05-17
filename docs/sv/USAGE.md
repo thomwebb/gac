@@ -121,97 +121,97 @@ Du kan också ställa in `GAC_USE_50_72_RULE=true` i din `.gac.env` fil för att
 - **Stagea alla ändringar och commit:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **Commit och push i ett steg:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **Generera ett enrads commit-meddelande:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **Generera ett detaljerat commit-meddelande med strukturerade sektioner:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **Lägg till en ledtråd för LLM:n:**
 
   ```sh
-  gac -h "Refaktorisera autentiseringslogik"
+  uvx gac -h "Refaktorisera autentiseringslogik"
   ```
 
 - **Härled scope för commiten:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **Gruppera stageade ändringar i logiska commits:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # Grupperar endast de filer du redan har stageade
   ```
 
 - **Gruppera alla ändringar (stageade + unstageda) och auto-bekräfta:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # Stagear allt, grupperar det och auto-bekräftar
   ```
 
 - **Använd en specifik modell för denna commit:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **Generera commit-meddelande på ett specifikt språk:**
 
   ```sh
   # Använda språkkoder (kortare)
-  gac -l sv
-  gac -l ja
-  gac -l es
+  uvx gac -l sv
+  uvx gac -l ja
+  uvx gac -l es
 
   # Använda fullständiga namn
-  gac -l "Svenska"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Svenska"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **Testkörning (se vad som skulle hända):**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **Hämta endast commit-meddelandet (för skriptintegration):**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # Exempelutdata: feat: add user authentication system
   ```
 
 - **Hämta commit-meddelandet i enradsformat:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # Exempelutdata: feat: add user authentication system
   ```
 
 - **Använd interaktivt läge för att ge kontext:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # Vad är huvudsyftet med dessa ändringar?
   # Vilket problem löser du?
   # Finns det implementeringsdetaljer att nämna?
@@ -220,7 +220,7 @@ Du kan också ställa in `GAC_USE_50_72_RULE=true` i din `.gac.env` fil för att
 - **Interaktivt läge med detaljerad output:**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # Ställ frågor och generera detaljerade commit-meddelanden
   ```
 

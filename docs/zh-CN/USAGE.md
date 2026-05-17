@@ -122,97 +122,97 @@ uvx gac
 - **暂存所有更改并提交：**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **一步提交并推送：**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **生成单行提交信息：**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **生成包含结构化部分的详细提交信息：**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **为 LLM 添加提示：**
 
   ```sh
-  gac -h "重构身份验证逻辑"
+  uvx gac -h "重构身份验证逻辑"
   ```
 
 - **为提交推断范围：**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **将暂存的更改分组为逻辑提交：**
 
   ```sh
-  gac -g
+  uvx gac -g
   # 仅分组你已经暂存的文件
   ```
 
 - **分组所有更改（暂存 + 未暂存）并自动确认：**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # 暂存所有内容，分组，并自动确认
   ```
 
 - **仅为此次提交使用特定模型：**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **以特定语言生成提交信息：**
 
   ```sh
   # 使用语言代码（较短）
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # 使用完整名称
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **演练（查看会发生什么）：**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **仅获取提交信息（用于脚本集成）：**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # 输出示例：feat: add user authentication system
   ```
 
 - **以单行格式获取提交信息：**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # 输出示例：feat: add user authentication system
   ```
 
 - **使用交互模式提供上下文：**
 
   ```sh
-  gac -i
+  uvx gac -i
   # 这些更改的主要目的是什么？
   # 你在解决什么问题？
   # 有什么实现细节值得一提吗？
@@ -221,7 +221,7 @@ uvx gac
 - **交互模式配合详细输出：**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # 提问并生成详细的提交信息
   ```
 
@@ -248,7 +248,7 @@ uvx gac
 ```sh
 #!/bin/bash
 # 获取提交信息并配合自定义提交函数使用
-MESSAGE=$(gac --message-only --add-all --yes)
+MESSAGE=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400uvx gac --message-only --add-all --yes)
 git commit -m "$MESSAGE"
 ```
 

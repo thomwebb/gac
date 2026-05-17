@@ -256,4 +256,4 @@ uv run -- pytest tests/test_prompt.py::TestExtractRepositoryContext::test_extrac
 - उपयोग और CLI विकल्पों के लिए, [../USAGE.md](../USAGE.md) देखें
 - लाइसेंस विवरण के लिए, [../LICENSE](../LICENSE) देखें
 
-gac को बेहतर बनाने में मदद करने के लिए धन्यवाद!
+uvx gac को बेहतर बनाने में मदद करने के लिए धन्यवाद!

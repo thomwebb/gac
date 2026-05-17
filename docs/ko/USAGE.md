@@ -122,97 +122,97 @@ uvx gac
 - **모든 변경 사항 스테이징 및 커밋:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **한 단계로 커밋 및 푸시:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **한 줄 커밋 메시지 생성:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **구조화된 섹션으로 상세한 커밋 메시지 생성:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **LLM을 위한 힌트 추가:**
 
   ```sh
-  gac -h "Refactor authentication logic"
+  uvx gac -h "Refactor authentication logic"
   ```
 
 - **커밋에 대한 스코프 추론:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **스테이징된 변경 사항을 논리적 커밋으로 그룹화:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # 이미 스테이징한 파일만 그룹화
   ```
 
 - **모든 변경 사항 그룹화 (스테이징 + 스테이징되지 않음) 및 자동 확인:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # 모든 것을 스테이징하고, 그룹화하며, 자동 확인
   ```
 
 - **이 커밋에만 특정 모델 사용:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **특정 언어로 커밋 메시지 생성:**
 
   ```sh
   # 언어 코드 사용 (더 짧게)
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # 전체 이름 사용
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **드라이 런 (어떤 일이 발생할지 확인):**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **커밋 메시지만 가져오기 (스크립트 통합용):**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # 예시 출력: feat: add user authentication system
   ```
 
 - **한 줄 형식의 커밋 메시지 가져오기:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # 예시 출력: feat: add user authentication system
   ```
 
 - **컨텍스트를 제공하기 위해 대화형 모드 사용:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # 이 변경들의 주요 목적은 무엇입니까?
   # 어떤 문제를 해결하고 있습니까?
   # 언급할 가치가 있는 구현 세부사항이 있습니까?
@@ -221,7 +221,7 @@ uvx gac
 - **상세 출력으로 대화형 모드:**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # 질문하고 상세한 커밋 메시지 생성
   ```
 
@@ -248,7 +248,7 @@ uvx gac
 ```sh
 #!/bin/bash
 # 커밋 메시지를 가져와서 사용자 정의 커밋 함수와 함께 사용
-MESSAGE=$(gac --message-only --add-all --yes)
+MESSAGE=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400uvx gac --message-only --add-all --yes)
 git commit -m "$MESSAGE"
 ```
 

@@ -71,7 +71,7 @@ Bạn có thể muốn gợi ý hệ thống tùy chỉnh nếu:
 3. **Kiểm tra nó:**
 
    ```bash
-   gac --dry-run
+   uvx gac --dry-run
    ```
 
 Chỉ vậy thôi! GAC bây giờ sẽ sử dụng hướng dẫn tùy chỉnh của bạn thay vì mặc định.
@@ -253,7 +253,7 @@ routes/auth.ts, routes/api.ts và routes/admin.ts.
 1. Kiểm tra rằng `GAC_SYSTEM_PROMPT_PATH` được đặt đúng:
 
    ```bash
-   gac config get GAC_SYSTEM_PROMPT_PATH
+   uvx gac config get GAC_SYSTEM_PROMPT_PATH
    ```
 
 2. Xác minh đường dẫn tệp tồn tại và có thể đọc:

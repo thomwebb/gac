@@ -121,97 +121,97 @@ uvx gac
 - **सभी परिवर्तनों को स्टेज करें और कमिट करें:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **एक कदम में कमिट और पुश करें:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **एक लाइन का कमिट मैसेज जेनरेट करें:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **संरचित सेक्शन के साथ विस्तृत कमिट मैसेज जेनरेट करें:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **LLM के लिए एक हिंट जोड़ें:**
 
   ```sh
-  gac -h "Refactor authentication logic"
+  uvx gac -h "Refactor authentication logic"
   ```
 
 - **कमिट के लिए स्कोप अनुमान लगाएं:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **स्टेज्ड परिवर्तनों को तार्किक कमिट्स में ग्रुप करें:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # केवल उन फाइलों को ग्रुप करता है जिन्हें आपने पहले से स्टेज किया है
   ```
 
 - **सभी परिवर्तनों को ग्रुप करें (स्टेज्ड + अनस्टेज्ड) और ऑटो-कन्फर्म करें:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # सब कुछ स्टेज करता है, इसे ग्रुप करता है, और ऑटो-कन्फर्म करता है
   ```
 
 - **इस कमिट के लिए एक विशिष्ट मॉडल का उपयोग करें:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **एक विशिष्ट भाषा में कमिट मैसेज जेनरेट करें:**
 
   ```sh
   # भाषा कोड का उपयोग करके (छोटा)
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # पूरे नामों का उपयोग करके
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **ड्राई रन (देखें कि क्या होगा):**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **केवल कमिट मैसेज प्राप्त करें (स्क्रिप्ट इंटीग्रेशन के लिए):**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # उदाहरण आउटपुट: feat: add user authentication system
   ```
 
 - **एक-लाइनर फ़ॉर्मेट में कमिट मैसेज प्राप्त करें:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # उदाहरण आउटपुट: feat: add user authentication system
   ```
 
 - **संदर्भ प्रदान करने के लिए इंटरैक्टिव मोड का उपयोग करें:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # इन परिवर्तनों का मुख्य उद्देश्य क्या है?
   # आप कौन सी समस्या हल कर रहे हैं?
   # क्या उल्लेख करने लायक कोई इम्प्लीमेंटेशन डिटेल्स हैं?
@@ -220,7 +220,7 @@ uvx gac
 - **विस्तृत आउटपुट के साथ इंटरैक्टिव मोड:**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # प्रश्न पूछें और विस्तृत कमिट मैसेज जेनरेट करें
   ```
 

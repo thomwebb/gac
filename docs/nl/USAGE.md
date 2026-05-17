@@ -121,97 +121,97 @@ U kunt ook `GAC_USE_50_72_RULE=true` instellen in uw `.gac.env` bestand om deze 
 - **Stage alle wijzigingen en commit:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **Commit en push in één stap:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **Genereer een eenregelig commitbericht:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **Genereer een gedetailleerd commitbericht met gestructureerde secties:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **Voeg een hint toe voor de LLM:**
 
   ```sh
-  gac -h "Refactor authenticatielogica"
+  uvx gac -h "Refactor authenticatielogica"
   ```
 
 - **Stel een scope voor de commit vast:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **Groepeer staged wijzigingen in logische commits:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # Groepeert alleen de bestanden die u al gestaged heeft
   ```
 
 - **Groepeer alle wijzigingen (staged + unstaged) en auto-bevestig:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # Staged alles, groepeert het, en bevestigt automatisch
   ```
 
 - **Gebruik een specifiek model alleen voor deze commit:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **Genereer commitbericht in een specifieke taal:**
 
   ```sh
   # Gebruik taalcodes (korter)
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # Gebruik volledige namen
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **Dry run (zie wat er zou gebeuren):**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **Alleen het commitbericht ophalen (voor script-integratie):**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # Voorbeeldoutput: feat: add user authentication system
   ```
 
 - **Commitbericht in eenregel-formaat ophalen:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # Voorbeeldoutput: feat: add user authentication system
   ```
 
 - **Gebruik interactieve modus voor context:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # Wat is het hoofddoel van deze wijzigingen?
   # Welk probleem lost u op?
   # Zijn er implementatiedetails om te vermelden?
@@ -220,7 +220,7 @@ U kunt ook `GAC_USE_50_72_RULE=true` instellen in uw `.gac.env` bestand om deze 
 - **Interactieve modus met gedetailleerde output:**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # Stel vragen en genereer gedetailleerde commitberichten
   ```
 

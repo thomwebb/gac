@@ -71,7 +71,7 @@ Du kanske vill ha en anpassad system prompt om:
 3. **Testa den:**
 
    ```bash
-   gac --dry-run
+   uvx gac --dry-run
    ```
 
 Det var allt! GAC kommer nu att använda dina anpassade instruktioner istället för standardinställningarna.
@@ -253,7 +253,7 @@ routes/auth.ts, routes/api.ts och routes/admin.ts.
 1. Kontrollera att `GAC_SYSTEM_PROMPT_PATH` är korrekt inställd:
 
    ```bash
-   gac config get GAC_SYSTEM_PROMPT_PATH
+   uvx gac config get GAC_SYSTEM_PROMPT_PATH
    ```
 
 2. Verifiera att filsökvägen existerar och är läsbar:

@@ -71,7 +71,7 @@ GAC는 커밋 메시지를 생성할 때 두 개의 프롬프트를 사용합니
 3. **테스트:**
 
    ```bash
-   gac --dry-run
+   uvx gac --dry-run
    ```
 
 이게 전부입니다! GAC는 이제 기본값 대신 커스텀 지시를 사용합니다.
@@ -253,7 +253,7 @@ routes/auth.ts, routes/api.ts 및 routes/admin.ts 마이그레이션 필요.
 1. `GAC_SYSTEM_PROMPT_PATH`가 올바르게 설정되었는지 확인:
 
    ```bash
-   gac config get GAC_SYSTEM_PROMPT_PATH
+   uvx gac config get GAC_SYSTEM_PROMPT_PATH
    ```
 
 2. 파일 경로가 존재하고 읽기 가능한지 확인:

@@ -122,97 +122,97 @@ Vous pouvez aussi définir `GAC_USE_50_72_RULE=true` dans votre fichier `.gac.en
 - **Indexer tous les changements et commiter :**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **Commiter et pousser en une étape :**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **Générer un message de commit sur une seule ligne :**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **Générer un message de commit détaillé avec sections structurées :**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **Ajouter un indice pour l'IA :**
 
   ```sh
-  gac -h "Refactoriser la logique d'authentification"
+  uvx gac -h "Refactoriser la logique d'authentification"
   ```
 
 - **Inférer la portée pour le commit :**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **Grouper les changements indexés en commits logiques :**
 
   ```sh
-  gac -g
+  uvx gac -g
   # Groupe uniquement les fichiers que vous avez déjà indexés
   ```
 
 - **Grouper tous les changements (indexés + non indexés) et confirmer automatiquement :**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # Indexe tout, le groupe, et confirme automatiquement
   ```
 
 - **Utiliser un modèle spécifique juste pour ce commit :**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **Générer un message de commit dans une langue spécifique :**
 
   ```sh
   # Utilisant les codes de langue (plus court)
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # Utilisant les noms complets
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **Test à blanc (voir ce qui se passerait) :**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **Récupérer uniquement le message de commit (pour intégration par script) :**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # Sortie : feat : ajouter un système d'authentification utilisateur
   ```
 
 - **Récupérer le message de commit au format une seule ligne :**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # Sortie : feat : ajouter un système d'authentification utilisateur
   ```
 
 - **Utiliser le mode interactif pour fournir du contexte :**
 
   ```sh
-  gac -i
+  uvx gac -i
   # Quel est le but principal de ces changements ?
   # Quel problème résolvez-vous ?
   # Y a-t-il des détails d'implémentation dignes d'être mentionnés ?
@@ -221,7 +221,7 @@ Vous pouvez aussi définir `GAC_USE_50_72_RULE=true` dans votre fichier `.gac.en
 - **Mode interactif avec sortie détaillée :**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # Poser des questions et générer un message de commit détaillé
   ```
 
@@ -248,7 +248,7 @@ Le drapeau `--message-only` est conçu pour l'intégration par script et les wor
 ```sh
 #!/bin/bash
 # Récupérer le message de commit et l'utiliser avec une fonction de commit personnalisée
-MESSAGE=$(gac --message-only --add-all --yes)
+MESSAGE=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400uvx gac --message-only --add-all --yes)
 git commit -m "$MESSAGE"
 ```
 

@@ -122,97 +122,97 @@ También puedes establecer `GAC_USE_50_72_RULE=true` en tu archivo `.gac.env` pa
 - **Staging de todos los cambios y commit:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **Commit y push en un paso:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **Generar un mensaje de commit de una línea:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **Generar un mensaje de commit detallado con secciones estructuradas:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **Añadir una pista para el LLM:**
 
   ```sh
-  gac -h "Refactor authentication logic"
+  uvx gac -h "Refactor authentication logic"
   ```
 
 - **Inferir scope para el commit:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **Agrupar cambios staged en commits lógicos:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # Agrupa solo los files que ya tienes en staging
   ```
 
 - **Agrupar todos los cambios (staged + unstaged) y auto-confirmar:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # Hace staging de todo, lo agrupa, y auto-confirma
   ```
 
 - **Usar un modelo específico solo para este commit:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **Generar mensaje de commit en un idioma específico:**
 
   ```sh
   # Usando códigos de idioma (más corto)
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # Usando nombres completos
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **Dry run (ver qué pasaría):**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **Obtener solo el mensaje de commit (para integración con scripts):**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # Salida: feat: add user authentication system
   ```
 
 - **Obtener el mensaje de commit en formato de una sola línea:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # Salida: feat: add user authentication system
   ```
 
 - **Usar modo interactivo para proporcionar contexto:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # ¿Cuál es el propósito principal de estos cambios?
   # ¿Qué problema estás resolviendo?
   # ¿Hay algún detalle de implementación que valga la pena mencionar?
@@ -221,7 +221,7 @@ También puedes establecer `GAC_USE_50_72_RULE=true` en tu archivo `.gac.env` pa
 - **Modo interactivo con salida detallada:**
 
   ```sh
-  gac -i -v
+  uvx gac -i -v
   # Hacer preguntas y generar mensaje de commit detallado
   ```
 
@@ -248,7 +248,7 @@ La bandera `--message-only` está diseñada para integración con scripts y fluj
 ```sh
 #!/bin/bash
 # Obtener el mensaje de commit y usarlo con una función de commit personalizada
-MESSAGE=$(gac --message-only --add-all --yes)
+MESSAGE=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400uvx gac --message-only --add-all --yes)
 git commit -m "$MESSAGE"
 ```
 

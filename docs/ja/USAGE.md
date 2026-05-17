@@ -122,97 +122,97 @@ uvx gac
 - **すべての変更をステージしてコミット:**
 
   ```sh
-  gac -a
+  uvx gac -a
   ```
 
 - **ワンステップでコミットしてプッシュ:**
 
   ```sh
-  gac -ap
+  uvx gac -ap
   ```
 
 - **単一行コミットメッセージを生成:**
 
   ```sh
-  gac -o
+  uvx gac -o
   ```
 
 - **構造化セクション付きの詳細なコミットメッセージを生成:**
 
   ```sh
-  gac -v
+  uvx gac -v
   ```
 
 - **LLM にヒントを追加:**
 
   ```sh
-  gac -h "認証ロジックをリファクタリング"
+  uvx gac -h "認証ロジックをリファクタリング"
   ```
 
 - **コミットのスコープを推論:**
 
   ```sh
-  gac -s
+  uvx gac -s
   ```
 
 - **ステージされた変更を論理的なコミットにグループ化:**
 
   ```sh
-  gac -g
+  uvx gac -g
   # すでにステージしたファイルのみをグループ化
   ```
 
 - **すべての変更（ステージ＋未ステージ）をグループ化して自動確定:**
 
   ```sh
-  gac -agy
+  uvx gac -agy
   # すべてをステージ、グループ化、自動確定
   ```
 
 - **このコミットのみ特定のモデルを使用:**
 
   ```sh
-  gac -m anthropic:claude-haiku-4-5
+  uvx gac -m anthropic:claude-haiku-4-5
   ```
 
 - **特定の言語でコミットメッセージを生成:**
 
   ```sh
   # 言語コードを使用（短い）
-  gac -l zh-CN
-  gac -l ja
-  gac -l es
+  uvx gac -l zh-CN
+  uvx gac -l ja
+  uvx gac -l es
 
   # 完全な名前を使用
-  gac -l "Simplified Chinese"
-  gac -l Japanese
-  gac -l Spanish
+  uvx gac -l "Simplified Chinese"
+  uvx gac -l Japanese
+  uvx gac -l Spanish
   ```
 
 - **ドライラン（何が起こるかを確認）:**
 
   ```sh
-  gac --dry-run
+  uvx gac --dry-run
   ```
 
 - **コミットメッセージのみを取得（スクリプト統合用）:**
 
   ```sh
-  gac --message-only
+  uvx gac --message-only
   # 出力例: feat: add user authentication system
   ```
 
 - **1 行形式のコミットメッセージを取得:**
 
   ```sh
-  gac --message-only --one-liner
+  uvx gac --message-only --one-liner
   # 出力例: feat: add user authentication system
   ```
 
 - **コンテキストを提供するためにインタラクティブモードを使用:**
 
   ```sh
-  gac -i
+  uvx gac -i
   # これらの変更の主な目的は何ですか？
   # どの問題を解決していますか？
   ```
@@ -249,7 +249,7 @@ uvx gac -i -v
 ```sh
 #!/bin/bash
 # コミットメッセージを取得し、カスタムコミット関数で使用
-MESSAGE=$(gac --message-only --add-all --yes)
+MESSAGE=20 20 12 61 79 80 81 98 701 33 100 204 250 395 398 399 400uvx gac --message-only --add-all --yes)
 git commit -m "$MESSAGE"
 ```
 

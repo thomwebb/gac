@@ -137,7 +137,7 @@ Monitor the [Actions tab](https://github.com/cellwebb/gac/actions) to track the 
    uv tool install --reinstall gac
 
    # Verify version
-   gac --version  # Should show the new version
+   uvx gac --version  # Should show the new version
    ```
 
 4. **Create GitHub Release** (optional but recommended):
@@ -296,7 +296,7 @@ open https://github.com/cellwebb/gac/actions
 
 # Verify after release
 uv tool install --reinstall gac
-gac --version
+uvx gac --version
 ```
 
 ## Need Help?
