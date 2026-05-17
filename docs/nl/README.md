@@ -37,28 +37,12 @@ Intelligente, contextuele berichten die het **waarom** achter uw wijzigingen uit
 
 ## Snel Starten
 
-### Gebruik gac zonder installatie
-
 ```bash
 uvx gac init   # Configureer uw provider, model en taal
 uvx gac        # Genereer en commit met LLM
 ```
 
 Dat is alles! Beoordeel het gegenereerde bericht en bevestig met `y`.
-
-### Installeer en gebruik gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Upgrade geïnstalleerde gac
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

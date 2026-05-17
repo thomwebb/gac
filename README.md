@@ -37,28 +37,12 @@ Intelligent, contextual messages that explain the **why** behind your changes:
 
 ## Quick Start
 
-### Use gac without installing
-
 ```bash
 uvx gac init   # Configure your provider, model, and language
 uvx gac  # Generate and commit with LLM
 ```
 
 That's it! Review the generated message and confirm with `y`.
-
-### Install and use gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Upgrade installed gac
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

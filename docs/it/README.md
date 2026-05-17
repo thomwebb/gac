@@ -37,28 +37,12 @@ Messaggi intelligenti e contestuali che spiegano il **perché** dietro le tue mo
 
 ## Avvio Rapido
 
-### Usa gac senza installarlo
-
 ```bash
 uvx gac init   # Configura il tuo provider, modello e lingua
 uvx gac  # Genera e fai commit con LLM
 ```
 
 Questo è tutto! Rivedi il messaggio generato e conferma con `y`.
-
-### Installa e usa gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Aggiorna gac installato
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

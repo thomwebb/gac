@@ -37,28 +37,12 @@ Intelligente, kontekstuelle meldinger som forklarer **hvorfor** bak endringene d
 
 ## Hurtigstart
 
-### Bruk gac uten installasjon
-
 ```bash
 uvx gac init   # Konfigurer din leverandør, modell og språk
 uvx gac        # Generer og commit med LLM
 ```
 
 Det er alt! Gjennomgå den genererte meldingen og bekreft med `y`.
-
-### Installer og bruk gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Oppgrader installert gac
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

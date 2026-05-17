@@ -37,28 +37,12 @@ Thông điệp thông minh, có ngữ cảnh giải thích **tại sao** đằng
 
 ## Bắt Đầu Nhanh
 
-### Sử dụng gac mà không cần cài đặt
-
 ```bash
 uvx gac init   # Cấu hình nhà cung cấp, mô hình và ngôn ngữ của bạn
 uvx gac  # Tạo và commit với LLM
 ```
 
 Chỉ vậy thôi! Xem lại thông điệp đã tạo và xác nhận bằng `y`.
-
-### Cài đặt và sử dụng gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Nâng cấp gac đã cài đặt
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

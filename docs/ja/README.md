@@ -37,28 +37,12 @@
 
 ## クイックスタート
 
-### インストールなしで gac を使用する
-
 ```bash
 uvx gac init   # プロバイダー、モデル、言語を設定
 uvx gac  # LLMで生成してコミット
 ```
 
 これだけです！生成されたメッセージを確認して `y` で確定します。
-
-### gac をインストールして使用する
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### インストール済みの gac をアップグレード
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

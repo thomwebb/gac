@@ -37,28 +37,12 @@ Des messages intelligents et contextuels qui expliquent le **pourquoi** derrièr
 
 ## Démarrage rapide
 
-### Utiliser gac sans l'installer
-
 ```bash
 uvx gac init   # Configurez votre fournisseur, votre modèle et votre langue
 uvx gac  # Générez et commitez avec l'IA
 ```
 
 C'est tout ! Vérifiez le message généré et confirmez avec `y`.
-
-### Installer et utiliser gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Mettre à niveau gac installé
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

@@ -37,28 +37,12 @@ Mensagens inteligentes e contextuais que explicam o **porquê** por trás de sua
 
 ## Início Rápido
 
-### Use o gac sem instalar
-
 ```bash
 uvx gac init   # Configure seu provedor, modelo e idioma
 uvx gac  # Gere e envie commit com LLM
 ```
 
 É isso! Revise a mensagem gerada e confirme com `y`.
-
-### Instale e use o gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Atualize o gac instalado
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

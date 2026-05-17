@@ -37,28 +37,12 @@
 
 ## 快速开始
 
-### 无需安装直接使用 gac
-
 ```bash
 uvx gac init   # 配置提供商、模型和语言
 uvx gac  # 使用 LLM 生成并提交
 ```
 
 就是这么简单！查看生成的信息并用 `y` 确认。
-
-### 安装并使用 gac
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### 升级已安装的 gac
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 

@@ -37,28 +37,12 @@ Intelligente, kontextbezogene Nachrichten, die das **Warum** hinter Ihren Änder
 
 ## Schnellstart
 
-### gac ohne Installation verwenden
-
 ```bash
 uvx gac init   # Konfigurieren Sie Ihren Provider, Ihr Modell und Ihre Sprache
 uvx gac  # Generieren und committen mit KI
 ```
 
 Das ist alles! Überprüfen Sie die generierte Nachricht und bestätigen Sie mit `y`.
-
-### gac installieren und verwenden
-
-```bash
-uv tool install gac
-gac init
-gac
-```
-
-### Installiertes gac aktualisieren
-
-```bash
-uv tool upgrade gac
-```
 
 ---
 
