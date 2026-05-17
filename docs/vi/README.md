@@ -19,7 +19,7 @@
 
 **Thông điệp commit được hỗ trợ bởi LLM, hiểu mã của bạn!**
 
-**Tự động hóa commit của bạn!** Thay thế `git commit -m "..."` bằng `gac` để có thông điệp commit có ngữ cảnh, được định dạng tốt được tạo ra bởi các mô hình ngôn ngữ lớn!
+**Tự động hóa commit của bạn!** Thay thế `git commit -m "..."` bằng `uvx gac` để có thông điệp commit có ngữ cảnh, được định dạng tốt được tạo ra bởi các mô hình ngôn ngữ lớn!
 
 ---
 
@@ -76,32 +76,32 @@ Chỉ vậy thôi! Xem lại thông điệp đã tạo và xác nhận bằng `y
 
 - **25+ ngôn ngữ**: Tạo thông điệp commit bằng tiếng Anh, tiếng Trung, tiếng Nhật, tiếng Hàn, tiếng Tây Ban Nha, tiếng Pháp, tiếng Đức và 18+ ngôn ngữ khác
 - **Dịch linh hoạt**: Chọn giữ tiền tố commit tiêu chuẩn bằng tiếng Anh để tương thích công cụ, hoặc dịch hoàn toàn chúng
-- **Nhiều quy trình làm việc**: Đặt ngôn ngữ mặc định với `gac language`, hoặc sử dụng flag `-l <language>` để ghi đè một lần
+- **Nhiều quy trình làm việc**: Đặt ngôn ngữ mặc định với `uvx gac language`, hoặc sử dụng flag `-l <language>` để ghi đè một lần
 - **Hỗ trợ chữ viết gốc**: Hỗ trợ đầy đủ cho các chữ viết không phải Latin bao gồm CJK, Cyrillic, Thai và nhiều hơn nữa
 
 ### 💻 **Trải Nghiệm Nhà Phát Triển**
 
 - **Phản hồi tương tác**: Gõ `r` để reroll, `e` để chỉnh sửa (TUI tại chỗ mặc định, hoặc `$GAC_EDITOR` nếu đã đặt), hoặc gõ trực tiếp phản hồi của bạn như `làm nó ngắn hơn` hoặc `tập trung vào sửa lỗi`
 - **Hỏi đáp tương tác**: Sử dụng `--interactive` (`-i`) để trả lời các câu hỏi nhắm mục tiêu về các thay đổi của bạn để có thông điệp commit có nhiều ngữ cảnh hơn
-- **Quy trình làm việc một lệnh**: Quy trình làm việc hoàn chỉnh với các flag như `gac -ayp` (stage tất cả, tự động xác nhận, push)
+- **Quy trình làm việc một lệnh**: Quy trình làm việc hoàn chỉnh với các flag như `uvx gac -ayp` (stage tất cả, tự động xác nhận, push)
 - **Tích hợp Git**: Tôn các hook pre-commit và lefthook, chạy chúng trước các thao tác LLM tốn kém
-- **MCP server**: Chạy `gac serve` để cung cấp công cụ commit cho AI agent thông qua [Model Context Protocol](https://modelcontextprotocol.io/)
+- **MCP server**: Chạy `uvx gac serve` để cung cấp công cụ commit cho AI agent thông qua [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ### 📊 **Thống Kê Sử Dụng**
 
 ```bash
-gac stats               # Tổng quan: tổng gac, chuỗi, đỉnh hàng ngày/hàng tuần, dự án và mô hình hàng đầu
-gac stats models        # Chi tiết theo mô hình: gac, token, độ trễ, tốc độ
-gac stats projects      # Chi tiết theo dự án: gac, commit, token trên tất cả repo
-gac stats reset         # Đặt lại tất cả thống kê (yêu cầu xác nhận)
-gac stats reset model <model-id>  # Chỉ đặt lại thống kê cho một mô hình cụ thể
+uvx gac stats               # Tổng quan: tổng gac, chuỗi, đỉnh hàng ngày/hàng tuần, dự án và mô hình hàng đầu
+uvx gac stats models        # Chi tiết theo mô hình: gac, token, độ trễ, tốc độ
+uvx gac stats projects      # Chi tiết theo dự án: gac, commit, token trên tất cả repo
+uvx gac stats reset         # Đặt lại tất cả thống kê (yêu cầu xác nhận)
+uvx gac stats reset model <model-id>  # Chỉ đặt lại thống kê cho một mô hình cụ thể
 ```
 
 - **Theo dõi các gac của bạn**: Xem bạn đã thực hiện bao nhiêu commit với gac, chuỗi hiện tại, hoạt động đỉnh hàng ngày/hàng tuần, và các dự án hàng đầu
 - **Theo dõi token**: Tổng token prompt, output và suy luận theo ngày, tuần, dự án và mô hình — với cúp kỷ lục cho việc sử dụng token
 - **Mô hình hàng đầu**: Xem mô hình nào bạn sử dụng nhiều nhất và mỗi mô hình tiêu thụ bao nhiêu token
 - **Ăn mừng điểm cao**: 🏆 cúp khi bạn thiết lập kỷ lục hàng ngày, hàng tuần, token, hoặc chuỗi mới; 🥈 khi ngang bằng
-- **Chọn tham gia khi cài đặt**: `gac init` hỏi bạn có muốn bật thống kê và giải thích chính xác những gì được lưu trữ
+- **Chọn tham gia khi cài đặt**: `uvx gac init` hỏi bạn có muốn bật thống kê và giải thích chính xác những gì được lưu trữ
 - **Từ chối bất cứ lúc nào**: Đặt `GAC_DISABLE_STATS=true` (hoặc `1`/`yes`/`on`) để vô hiệu hóa. Đặt thành `false`/`0`/`no` (hoặc bỏ đặt) giữ thống kê được bật
 - **Ưu tiên quyền riêng tư**: Lưu trữ cục bộ trong `~/.gac_stats.json`. Chỉ số lượng, ngày tháng, tên dự án và tên mô hình — không có thông điệp commit, mã, hay dữ liệu cá nhân. Không thu thập dữ liệu từ xa
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # Chỉ đặt lại thống kê cho một mô
 git add .
 
 # Tạo và commit với LLM
-gac
+uvx gac
 
 # Xem lại → y (commit) | n (hủy) | r (reroll) | e (chỉnh sửa) | hoặc gõ phản hồi
 ```
 
 ### Lệnh Thông Dụng
 
-| Lệnh             | Mô t�                                                                         |
-| ---------------- | ----------------------------------------------------------------------------- |
-| `gac`            | Tạo thông điệp commit                                                         |
-| `gac -y`         | Tự động xác nhận (không cần xem lại)                                          |
-| `gac -a`         | Stage tất cả trước khi tạo thông điệp commit                                  |
-| `gac -S`         | Chọn tệp tương tác để stage                                                   |
-| `gac -o`         | Thông điệp một dòng cho các thay đổi nhỏ                                      |
-| `gac -v`         | Định dạng chi tiết với Động cơ, Cách tiếp cận Kỹ thuật, và Phân tích Tác động |
-| `gac -h "gợi ý"` | Thêm ngữ cảnh cho LLM (ví dụ, `gac -h "sửa lỗi"`)                             |
-| `gac -s`         | Bao gồm phạm vi (ví dụ, feat(auth):)                                          |
-| `gac -i`         | Hỏi về các thay đổi để có ngữ cảnh tốt hơn                                    |
-| `gac -g`         | Nhóm các thay đổi thành nhiều commit logic                                    |
-| `gac -p`         | Commit và push                                                                |
-| `gac stats`      | Xem thống kê sử dụng gac của bạn                                              |
+| Lệnh                 | Mô t�                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `uvx gac`            | Tạo thông điệp commit                                                         |
+| `uvx gac -y`         | Tự động xác nhận (không cần xem lại)                                          |
+| `uvx gac -a`         | Stage tất cả trước khi tạo thông điệp commit                                  |
+| `uvx gac -S`         | Chọn tệp tương tác để stage                                                   |
+| `uvx gac -o`         | Thông điệp một dòng cho các thay đổi nhỏ                                      |
+| `uvx gac -v`         | Định dạng chi tiết với Động cơ, Cách tiếp cận Kỹ thuật, và Phân tích Tác động |
+| `uvx gac -h "gợi ý"` | Thêm ngữ cảnh cho LLM (ví dụ, `uvx gac -h "sửa lỗi"`)                         |
+| `uvx gac -s`         | Bao gồm phạm vi (ví dụ, feat(auth):)                                          |
+| `uvx gac -i`         | Hỏi về các thay đổi để có ngữ cảnh tốt hơn                                    |
+| `uvx gac -g`         | Nhóm các thay đổi thành nhiều commit logic                                    |
+| `uvx gac -p`         | Commit và push                                                                |
+| `uvx gac stats`      | Xem thống kê sử dụng gac của bạn                                              |
 
 ### Ví Dụ Người Dùng Nâng Cao
 
 ```bash
 # Quy trình hoàn chỉnh trong một lệnh
 # Xem thống kê commit của bạn
-gac stats
+uvx gac stats
 
 # Thống kê tất cả dự án
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "chuẩn bị phát hành"
+uvx gac -ayp -h "chuẩn bị phát hành"
 
 # Giải thích chi tiết với phạm vi
-gac -v -s
+uvx gac -v -s
 
 # Thông điệp một dòng nhanh cho các thay đổi nhỏ
-gac -o
+uvx gac -o
 
 # Tạo thông điệp commit bằng một ngôn ngữ cụ thể
-gac -l vi
+uvx gac -l vi
 
 # Nhóm các thay đổi thành các commit logic liên quan
-gac -ag
+uvx gac -ag
 
 # Chế độ tương tác với đầu ra chi tiết cho giải thích chi tiết
-gac -iv
+uvx gac -iv
 
 # Gỡ lỗi xem LLM thấy gì
-gac --show-prompt
+uvx gac --show-prompt
 
 # Bỏ qua quét bảo mật (sử dụng cẩn thận)
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # Thêm signoff để tuân thủ DCO (Cherry Studio, Linux kernel, v.v.)
-gac --signoff
+uvx gac --signoff
 ```
 
 ### Hệ Thống Phản Hồi Tương Tác
@@ -218,9 +218,9 @@ Trình soạn thảo GUI như VS Code được xử lý tự động: gac chèn 
 
 ## Cấu Hình
 
-Chạy `gac init` để cấu hình nhà cung cấp của bạn một cách tương tác, hoặc đặt các biến môi trường:
+Chạy `uvx gac init` để cấu hình nhà cung cấp của bạn một cách tương tác, hoặc đặt các biến môi trường:
 
-Cần thay đổi nhà cung cấp hoặc mô hình sau này mà không ảnh hưởng đến cài đặt ngôn ngữ? Sử dụng `gac model` cho quy trình hợp lý bỏ qua các gợi ý ngôn ngữ.
+Cần thay đổi nhà cung cấp hoặc mô hình sau này mà không ảnh hưởng đến cài đặt ngôn ngữ? Sử dụng `uvx gac model` cho quy trình hợp lý bỏ qua các gợi ý ngôn ngữ.
 
 ```bash
 # Ví dụ cấu hình
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Xem `.gac.env.example` cho tất cả các tùy chọn có sẵn.
 
-**Muốn thông điệp commit bằng ngôn ngữ khác?** Chạy `gac language` để chọn từ 25+ ngôn ngữ bao gồm Español, Français, 日本語 và nhiều hơn nữa.
+**Muốn thông điệp commit bằng ngôn ngữ khác?** Chạy `uvx gac language` để chọn từ 25+ ngôn ngữ bao gồm Español, Français, 日本語 và nhiều hơn nữa.
 
 **Muốn tùy chỉnh kiểu thông điệp commit?** Xem [docs/CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) để được hướng dẫn viết các gợi ý hệ thống tùy chỉnh.
 
@@ -244,7 +244,7 @@ Xem `.gac.env.example` cho tất cả các tùy chọn có sẵn.
 - **Claude Code OAuth**: [docs/CLAUDE_CODE.md](docs/vi/CLAUDE_CODE.md) - Cài đặt và xác thực Claude Code
 - **ChatGPT OAuth**: [docs/CHATGPT_OAUTH.md](docs/vi/CHATGPT_OAUTH.md) - Cài đặt và xác thực ChatGPT OAuth
 - **Gợi ý tùy chỉnh**: [CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) - Tùy chỉnh kiểu thông điệp commit
-- **Thống kê sử dụng**: Xem `gac stats --help` hoặc [tài liệu đầy đủ](docs/vi/USAGE.md#thống-kê-sử-dụng)
+- **Thống kê sử dụng**: Xem `uvx gac stats --help` hoặc [tài liệu đầy đủ](docs/vi/USAGE.md#thống-kê-sử-dụng)
 - **Xử lý sự cố**: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Các vấn đề phổ biến và giải pháp
 - **Đóng góp**: [CONTRIBUTING.md](CONTRIBUTING.md) - Thiết lập phát triển và hướng dẫn
 

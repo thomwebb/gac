@@ -19,7 +19,7 @@
 
 **Met LLM-gedreven commitberichten die uw code begrijpen!**
 
-**Automatiseer uw commits!** Vervang `git commit -m "..."` door `gac` voor contextuele, goed geformateerde commitberichten die zijn gegenereerd door grote taalmodellen!
+**Automatiseer uw commits!** Vervang `git commit -m "..."` door `uvx gac` voor contextuele, goed geformateerde commitberichten die zijn gegenereerd door grote taalmodellen!
 
 ---
 
@@ -76,32 +76,32 @@ Dat is alles! Beoordeel het gegenereerde bericht en bevestig met `y`.
 
 - **25+ talen**: Genereer commitberichten in Engels, Chinees, Japans, Koreaans, Spaans, Frans, Duits en 18+ andere talen
 - **Flexibele vertaling**: Kies ervoor om conventionele commit-prefixen in het Engels te houden voor tool-compatibiliteit, of vertaal ze volledig
-- **Meerdere workflows**: Stel een standaardtaal in met `gac language`, of gebruik de `-l <taal>` vlag voor eenmalige overschrijvingen
+- **Meerdere workflows**: Stel een standaardtaal in met `uvx gac language`, of gebruik de `-l <taal>` vlag voor eenmalige overschrijvingen
 - **Ondersteuning voor native scripts**: Volledige ondersteuning voor niet-Latijnse scripts inclusief CJK, Cyrillisch, Thai en meer
 
 ### 💻 **Ontwikkelervaring**
 
 - **Interactieve feedback**: Typ `r` om opnieuw te rollen, `e` om te bewerken (standaard in-place TUI, of `$GAC_EDITOR` indien ingesteld), of typ direct uw feedback zoals `maak het korter` of `focus op de bugfix`
 - **Interactieve ondervraging**: Gebruik `--interactive` (`-i`) om gerichte vragen over uw wijzigingen te beantwoorden voor meer contextuele commitberichten
-- **Één-commando workflows**: Volledige workflows met vlaggen zoals `gac -ayp` (stage alles, auto-bevestig, push)
+- **Één-commando workflows**: Volledige workflows met vlaggen zoals `uvx gac -ayp` (stage alles, auto-bevestig, push)
 - **Git-integratie**: Respecteert pre-commit en lefthook hooks en voert ze uit vóór dure LLM-operaties
-- **MCP-server**: Voer `gac serve` uit om commit-tools beschikbaar te stellen aan AI-agents via het [Model Context Protocol](https://modelcontextprotocol.io/)
+- **MCP-server**: Voer `uvx gac serve` uit om commit-tools beschikbaar te stellen aan AI-agents via het [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ### 📊 **Gebruiksstatistieken**
 
 ```bash
-gac stats               # Overzicht: totale gacs, streaks, dagelijkse/wekelijkse pieken, topprojecten & -modellen
-gac stats models        # Per model: gacs, tokens, latentie, snelheid
-gac stats projects      # Per project: gacs, commits, tokens over alle repo's
-gac stats reset         # Alle statistieken resetten (vraagt om bevestiging)
-gac stats reset model <model-id>  # Alleen statistieken van een specifiek model resetten
+uvx gac stats               # Overzicht: totale gacs, streaks, dagelijkse/wekelijkse pieken, topprojecten & -modellen
+uvx gac stats models        # Per model: gacs, tokens, latentie, snelheid
+uvx gac stats projects      # Per project: gacs, commits, tokens over alle repo's
+uvx gac stats reset         # Alle statistieken resetten (vraagt om bevestiging)
+uvx gac stats reset model <model-id>  # Alleen statistieken van een specifiek model resetten
 ```
 
 - **Volg uw gacs**: Zie hoeveel commits u met gac heeft gedaan, uw huidige streak, piekdagelijkse/wekelijkse activiteit en topprojecten
 - **Token-tracking**: Totaal aan prompt-, output- en reasoning-tokens per dag, week, project en model — met highscore-trofeeën voor tokengebruik
 - **Topmodellen**: Zie welke modellen u het meest gebruikt en hoeveel tokens elk model verbruikt
 - **Highscore-vieringen**: 🏆 trofeeën wanneer u nieuwe dagelijkse, wekelijkse, token- of streak-records vestigt; 🥈 voor het evenaren ervan
-- **Opt-in tijdens setup**: `gac init` vraagt of u statistieken wilt inschakelen en legt uit wat er wordt opgeslagen
+- **Opt-in tijdens setup**: `uvx gac init` vraagt of u statistieken wilt inschakelen en legt uit wat er wordt opgeslagen
 - **Altijd opt-out**: Stel `GAC_DISABLE_STATS=true` (of `1`/`yes`/`on`) in om uit te schakelen. Instellen op `false`/`0`/`no` (of verwijderen) houdt statistieken ingeschakeld
 - **Privacy eerst**: Lokaal opgeslagen in `~/.gac_stats.json`. Alleen tellingen, datums, projectnamen en modelnamen — geen commitberichten, code of persoonlijke gegevens. Geen telemetrie
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # Alleen statistieken van een specifiek model 
 git add .
 
 # Genereer en commit met LLM
-gac
+uvx gac
 
 # Beoordeel → y (commit) | n (annuleer) | r (opnieuw rollen) | e (bewerken) | of typ feedback
 ```
 
 ### Veelgebruikte Commando's
 
-| Commando        | Beschrijving                                                         |
-| --------------- | -------------------------------------------------------------------- |
-| `gac`           | Genereer commitbericht                                               |
-| `gac -y`        | Auto-bevestig (geen beoordeling nodig)                               |
-| `gac -a`        | Stage alles voordat u commitbericht genereert                        |
-| `gac -S`        | Interactief bestanden selecteren om te stagen                        |
-| `gac -o`        | Eénregelig bericht voor triviale wijzigingen                         |
-| `gac -v`        | Uitgebreid formaat met Motivatie, Technische Aanpak en Impactanalyse |
-| `gac -h "hint"` | Voeg context toe voor LLM (bv., `gac -h "bug fix"`)                  |
-| `gac -s`        | Inclusief scope (bv., feat(auth):)                                   |
-| `gac -i`        | Stel vragen over wijzigingen voor betere context                     |
-| `gac -g`        | Wijzigingen groeperen in meerdere logische commits                   |
-| `gac -p`        | Commit en push                                                       |
-| `gac stats`     | Uw gac-gebruiksstatistieken bekijken                                 |
+| Commando            | Beschrijving                                                         |
+| ------------------- | -------------------------------------------------------------------- |
+| `uvx gac`           | Genereer commitbericht                                               |
+| `uvx gac -y`        | Auto-bevestig (geen beoordeling nodig)                               |
+| `uvx gac -a`        | Stage alles voordat u commitbericht genereert                        |
+| `uvx gac -S`        | Interactief bestanden selecteren om te stagen                        |
+| `uvx gac -o`        | Eénregelig bericht voor triviale wijzigingen                         |
+| `uvx gac -v`        | Uitgebreid formaat met Motivatie, Technische Aanpak en Impactanalyse |
+| `uvx gac -h "hint"` | Voeg context toe voor LLM (bv., `uvx gac -h "bug fix"`)              |
+| `uvx gac -s`        | Inclusief scope (bv., feat(auth):)                                   |
+| `uvx gac -i`        | Stel vragen over wijzigingen voor betere context                     |
+| `uvx gac -g`        | Wijzigingen groeperen in meerdere logische commits                   |
+| `uvx gac -p`        | Commit en push                                                       |
+| `uvx gac stats`     | Uw gac-gebruiksstatistieken bekijken                                 |
 
 ### Power User Voorbeelden
 
 ```bash
 # Volledige workflow in één commando
 # Uw commitstatistieken bekijken
-gac stats
+uvx gac stats
 
 # Statistieken van alle projecten
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "release preparation"
+uvx gac -ayp -h "release preparation"
 
 # Gedetailleerde uitleg met scope
-gac -v -s
+uvx gac -v -s
 
 # Snelle one-liner voor kleine wijzigingen
-gac -o
+uvx gac -o
 
 # Genereer commitbericht in een specifieke taal
-gac -l nl
+uvx gac -l nl
 
 # Groepeer wijzigingen in logisch gerelateerde commits
-gac -ag
+uvx gac -ag
 
 # Interactieve modus met gedetailleerde output voor gedetailleerde uitleg
-gac -iv
+uvx gac -iv
 
 # Debug wat de LLM ziet
-gac --show-prompt
+uvx gac --show-prompt
 
 # Sla security scan over (gebruik voorzichtig)
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # Signoff toevoegen voor DCO naleving (Cherry Studio, Linux kernel, etc.)
-gac --signoff
+uvx gac --signoff
 ```
 
 ### Interactief Feedbacksysteem
@@ -218,9 +218,9 @@ GUI-editors zoals VS Code worden automatisch afgehandeld: gac voegt `--wait` in 
 
 ## Configuratie
 
-Voer `gac init` uit om uw provider interactief te configureren, of stel omgevingsvariabelen in:
+Voer `uvx gac init` uit om uw provider interactief te configureren, of stel omgevingsvariabelen in:
 
-Wilt u later providers of modellen wijzigen zonder taalinstellingen aan te passen? Gebruik `gac model` voor een gestroomlijnde workflow die de taalprompts overslaat.
+Wilt u later providers of modellen wijzigen zonder taalinstellingen aan te passen? Gebruik `uvx gac model` voor een gestroomlijnde workflow die de taalprompts overslaat.
 
 ```bash
 # Voorbeeldconfiguratie
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Zie `.gac.env.example` voor alle beschikbare opties.
 
-**Wilt u commitberichten in een andere taal?** Voer `gac language` uit om te kiezen uit 25+ talen inclusief Español, Français, 日本語 en meer.
+**Wilt u commitberichten in een andere taal?** Voer `uvx gac language` uit om te kiezen uit 25+ talen inclusief Español, Français, 日本語 en meer.
 
 **Wilt u de stijl van commitberichten aanpassen?** Zie [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/nl/CUSTOM_SYSTEM_PROMPTS.md) voor begeleiding bij het schrijven van aangepaste systeemprompts.
 
@@ -244,7 +244,7 @@ Zie `.gac.env.example` voor alle beschikbare opties.
 - **Claude Code OAuth**: [docs/CLAUDE_CODE.md](docs/nl/CLAUDE_CODE.md) - Claude Code installatie en authenticatie
 - **ChatGPT OAuth**: [docs/CHATGPT_OAUTH.md](docs/nl/CHATGPT_OAUTH.md) - ChatGPT OAuth installatie en authenticatie
 - **Aangepaste prompts**: [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/nl/CUSTOM_SYSTEM_PROMPTS.md) - Pas stijl van commitberichten aan
-- **Gebruiksstatistieken**: Zie `gac stats --help` of de [volledige docs](docs/nl/USAGE.md#gebruiksstatistieken)
+- **Gebruiksstatistieken**: Zie `uvx gac stats --help` of de [volledige docs](docs/nl/USAGE.md#gebruiksstatistieken)
 - **Probleemoplossing**: [docs/TROUBLESHOOTING.md](docs/nl/TROUBLESHOOTING.md) - Veelvoorkomende problemen en oplossingen
 - **Bijdragen**: [docs/CONTRIBUTING.md](docs/nl/CONTRIBUTING.md) - Ontwikkelsetup en richtlijnen
 

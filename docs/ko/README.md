@@ -19,7 +19,7 @@
 
 **코드를 이해하는 LLM 기반 커밋 메시지!**
 
-**커밋을 자동화하세요!** `git commit -m "..."` 대신 `gac`를 사용하여 대규모 언어 모델이 생성하는 맥락적이고 잘 포맷된 커밋 메시지를 받으세요!
+**커밋을 자동화하세요!** `git commit -m "..."` 대신 `uvx gac`를 사용하여 대규모 언어 모델이 생성하는 맥락적이고 잘 포맷된 커밋 메시지를 받으세요!
 
 ---
 
@@ -76,32 +76,32 @@ uvx gac  # LLM으로 생성 및 커밋
 
 - **25+ 언어**: 영어, 중국어, 일본어, 한국어, 스페인어, 프랑스어, 독일어 등 18+ 언어로 커밋 메시지 생성
 - **유연한 번역**: 도구 호환성을 위해 컨벤셔널 커밋 접두사를 영어로 유지하거나 완전히 번역
-- **다양한 워크플로우**: `gac language`로 기본 언어 설정 또는 `-l <language>` 플래그로 일회성 재정의
+- **다양한 워크플로우**: `uvx gac language`로 기본 언어 설정 또는 `-l <language>` 플래그로 일회성 재정의
 - **네이티브 스크립트 지원**: CJK, 키릴, 태국어 등 비라틴 스크립트 완전 지원
 
 ### 💻 **개발자 경험**
 
 - **상호작용 피드백**: `r`을 입력하여 재생성, `e`를 입력하여 편집 (기본적으로 인플레이스 TUI, 또는 `$GAC_EDITOR`가 설정된 경우 해당 에디터), 또는 `더 짧게 만들어줘`나 `버그 수정에 집중해줘`와 같이 피드백 직접 입력
 - **상호작용 질문**: `--interactive` (`-i`)를 사용하여 변경 사항에 대한 목표 질문에 답해 더 풍부한 컨텍스트를 담은 커밋 메시지 생성
-- **한 번의 명령 워크플로우**: `gac -ayp` (모두 스테이징, 자동 확인, 푸시)와 같은 플래그로 완전한 워크플로우
+- **한 번의 명령 워크플로우**: `uvx gac -ayp` (모두 스테이징, 자동 확인, 푸시)와 같은 플래그로 완전한 워크플로우
 - **Git 통합**: 비싼 LLM 작업 전에 pre-commit 및 lefthook hooks 실행
-- **MCP 서버**: `gac serve`를 실행하여 [Model Context Protocol](https://modelcontextprotocol.io/)을 통해 AI 에이전트에 커밋 도구 제공
+- **MCP 서버**: `uvx gac serve`를 실행하여 [Model Context Protocol](https://modelcontextprotocol.io/)을 통해 AI 에이전트에 커밋 도구 제공
 
 ### 📊 **사용 통계**
 
 ```bash
-gac stats               # 개요: 총 gac 수, 연속 기록, 일일/주간 피크, 상위 프로젝트 및 모델
-gac stats models        # 모델별 세부 정보: gac 수, 토큰, 지연 시간, 속도
-gac stats projects      # 프로젝트별 세부 정보: 모든 저장소의 gac 수, 커밋 수, 토큰 수
-gac stats reset         # 모든 통계 초기화 (확인 필요)
-gac stats reset model <model-id>  # 특정 모델의 통계만 초기화
+uvx gac stats               # 개요: 총 gac 수, 연속 기록, 일일/주간 피크, 상위 프로젝트 및 모델
+uvx gac stats models        # 모델별 세부 정보: gac 수, 토큰, 지연 시간, 속도
+uvx gac stats projects      # 프로젝트별 세부 정보: 모든 저장소의 gac 수, 커밋 수, 토큰 수
+uvx gac stats reset         # 모든 통계 초기화 (확인 필요)
+uvx gac stats reset model <model-id>  # 특정 모델의 통계만 초기화
 ```
 
 - **gac 사용 추적**: gac으로 몇 번 커밋했는지, 현재 연속 사용 일수, 일일/주간 활동 피크, 상위 프로젝트 확인
 - **토큰 추적**: 일, 주, 프로젝트, 모델별 총 프롬프트 + 완료 토큰 — 토큰 사용량 하이 스코어 트로피 포함
 - **상위 모델**: 가장 많이 사용하는 모델과 각 모델의 토큰 소비량 확인
 - **하이 스코어 축하**: 🏆 새로운 일일, 주간, 토큰 또는 연속 기록을 세우면 트로피 획득; 🥈 기록과 타이면 획득
-- **설정 시 옵트인**: `gac init`이 통계 활성화 여부를 묻고 저장되는 항목을 설명합니다
+- **설정 시 옵트인**: `uvx gac init`이 통계 활성화 여부를 묻고 저장되는 항목을 설명합니다
 - **언제든 옵트아웃**: `GAC_DISABLE_STATS=true` (또는 `1`/`yes`/`on`) 설정으로 비활성화. `false`/`0`/`no`로 설정 (또는 해제) 시 통계가 활성화 상태로 유지
 - **개인정보 보호 우선**: `~/.gac_stats.json`에 로컬 저장. 카운트, 날짜, 프로젝트 이름, 모델 이름만 — 커밋 메시지, 코드, 개인 데이터는 저장하지 않습니다. 원격 측정 없음
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # 특정 모델의 통계만 초기화
 git add .
 
 # LLM으로 생성하고 커밋
-gac
+uvx gac
 
 # 검토 → y (커밋) | n (취소) | r (재생성) | e (편집) | 또는 피드백 입력
 ```
 
 ### 일반 명령어
 
-| 명령어          | 설명                                                 |
-| --------------- | ---------------------------------------------------- |
-| `gac`           | 커밋 메시지 생성                                     |
-| `gac -y`        | 자동 확인 (검토 불필요)                              |
-| `gac -a`        | 커밋 메시지 생성 전 모두 스테이징                    |
-| `gac -S`        | 인터랙티브하게 스테이징할 파일 선택                  |
-| `gac -o`        | 사소한 변경을 위한 한 줄 메시지                      |
-| `gac -v`        | 동기, 기술적 접근 방식, 영향 분석이 포함된 상세 형식 |
-| `gac -h "hint"` | LLM을 위한 컨텍스트 추가 (예: `gac -h "버그 수정"`)  |
-| `gac -s`        | 스코프 포함 (예: feat(auth):)                        |
-| `gac -i`        | 변경에 대한 질문하여 더 나은 컨텍스트 얻기           |
-| `gac -g`        | 변경 사항을 여러 논리적인 커밋으로 그룹화            |
-| `gac -p`        | 커밋하고 푸시                                        |
-| `gac stats`     | gac 사용 통계 보기                                   |
+| 명령어              | 설명                                                    |
+| ------------------- | ------------------------------------------------------- |
+| `uvx gac`           | 커밋 메시지 생성                                        |
+| `uvx gac -y`        | 자동 확인 (검토 불필요)                                 |
+| `uvx gac -a`        | 커밋 메시지 생성 전 모두 스테이징                       |
+| `uvx gac -S`        | 인터랙티브하게 스테이징할 파일 선택                     |
+| `uvx gac -o`        | 사소한 변경을 위한 한 줄 메시지                         |
+| `uvx gac -v`        | 동기, 기술적 접근 방식, 영향 분석이 포함된 상세 형식    |
+| `uvx gac -h "hint"` | LLM을 위한 컨텍스트 추가 (예: `uvx gac -h "버그 수정"`) |
+| `uvx gac -s`        | 스코프 포함 (예: feat(auth):)                           |
+| `uvx gac -i`        | 변경에 대한 질문하여 더 나은 컨텍스트 얻기              |
+| `uvx gac -g`        | 변경 사항을 여러 논리적인 커밋으로 그룹화               |
+| `uvx gac -p`        | 커밋하고 푸시                                           |
+| `uvx gac stats`     | gac 사용 통계 보기                                      |
 
 ### 고급 사용자 예제
 
 ```bash
 # 한 명령어로 완전한 워크플로우
 # 커밋 통계 보기
-gac stats
+uvx gac stats
 
 # 모든 프로젝트의 통계
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "릴리스 준비"
+uvx gac -ayp -h "릴리스 준비"
 
 # 스코프가 포함된 상세 설명
-gac -v -s
+uvx gac -v -s
 
 # 작은 변경을 위한 빠른 한 줄 요약
-gac -o
+uvx gac -o
 
 # 특정 언어로 커밋 메시지 생성
-gac -l ko
+uvx gac -l ko
 
 # 변경을 논리적으로 관련된 커밋으로 그룹화
-gac -ag
+uvx gac -ag
 
 # 상세한 출력으로 상호작용 모드 사용한 상세한 설명
-gac -iv
+uvx gac -iv
 
 # LLM이 보는 내용 디버깅
-gac --show-prompt
+uvx gac --show-prompt
 
 # 보안 스캔 건너뛰기 (주의해서 사용)
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # DCO 규정 준수를 위한 signoff 추가 (Cherry Studio, Linux 커널 등)
-gac --signoff
+uvx gac --signoff
 ```
 
 ### 상호작용 피드백 시스템
@@ -218,9 +218,9 @@ VS Code 같은 GUI 에디터는 자동으로 처리됩니다: gac이 `--wait`을
 
 ## 설정
 
-상호작용적으로 프로바이더를 설정하려면 `gac init`를 실행하거나 환경 변수를 설정하세요:
+상호작용적으로 프로바이더를 설정하려면 `uvx gac init`를 실행하거나 환경 변수를 설정하세요:
 
-나중에 언어 설정을 건드리지 않고 프로바이더나 모델을 변경해야 하나요? 언어 프롬프트를 건너뛰는 간소화된 흐름을 위해 `gac model`을 사용하세요.
+나중에 언어 설정을 건드리지 않고 프로바이더나 모델을 변경해야 하나요? 언어 프롬프트를 건너뛰는 간소화된 흐름을 위해 `uvx gac model`을 사용하세요.
 
 ```bash
 # 설정 예제
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 사용 가능한 모든 옵션은 `.gac.env.example`을 참조하세요.
 
-**다른 언어로 커밋 메시지를 원하시나요?** `gac language`를 실행하여 Español, Français, 日本語 등 25+ 언어 중에서 선택하세요.
+**다른 언어로 커밋 메시지를 원하시나요?** `uvx gac language`를 실행하여 Español, Français, 日本語 등 25+ 언어 중에서 선택하세요.
 
 **커밋 메시지 스타일을 사용자 정의하고 싶으신가요?** 사용자 정의 시스템 프롬프트 작성에 대한 안내는 [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/ko/CUSTOM_SYSTEM_PROMPTS.md)를 참조하세요.
 
@@ -244,7 +244,7 @@ ANTHROPIC_API_KEY=your_key_here
 - **Claude Code OAuth**: [docs/CLAUDE_CODE.md](docs/ko/CLAUDE_CODE.md) - Claude Code 설정 및 인증
 - **ChatGPT OAuth**: [docs/CHATGPT_OAUTH.md](docs/ko/CHATGPT_OAUTH.md) - ChatGPT OAuth 설정 및 인증
 - **사용자 정의 프롬프트**: [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/ko/CUSTOM_SYSTEM_PROMPTS.md) - 커밋 메시지 스타일 사용자 정의
-- **사용 통계**: `gac stats --help` 또는 [전체 문서](docs/ko/USAGE.md#사용-통계)를 참조하세요
+- **사용 통계**: `uvx gac stats --help` 또는 [전체 문서](docs/ko/USAGE.md#사용-통계)를 참조하세요
 - **문제 해결**: [docs/TROUBLESHOOTING.md](docs/ko/TROUBLESHOOTING.md) - 일반적인 문제 및 해결책
 - **기여**: [docs/CONTRIBUTING.md](docs/ko/CONTRIBUTING.md) - 개발 설정 및 가이드라인
 

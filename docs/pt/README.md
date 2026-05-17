@@ -19,7 +19,7 @@
 
 **Mensagens de commit alimentadas por LLM que entendem seu código!**
 
-**Automatize seus commits!** Substitua `git commit -m "..."` por `gac` para mensagens de commit contextuais e bem formatadas geradas por modelos de linguagem grandes!
+**Automatize seus commits!** Substitua `git commit -m "..."` por `uvx gac` para mensagens de commit contextuais e bem formatadas geradas por modelos de linguagem grandes!
 
 ---
 
@@ -76,32 +76,32 @@ uvx gac  # Gere e envie commit com LLM
 
 - **25+ idiomas**: Gere mensagens de commit em inglês, chinês, japonês, coreano, espanhol, francês, alemão e 18+ idiomas
 - **Tradução flexível**: Escolha manter prefixos de commit convencionais em inglês para compatibilidade de ferramentas, ou traduza-os completamente
-- **Múltiplos workflows**: Defina um idioma padrão com `gac language`, ou use a flag `-l <idioma>` para substituições únicas
+- **Múltiplos workflows**: Defina um idioma padrão com `uvx gac language`, ou use a flag `-l <idioma>` para substituições únicas
 - **Suporte a script nativo**: Suporte completo para scripts não-latinos incluindo CJK, cirílico, tailandês e mais
 
 ### 💻 **Experiência do Desenvolvedor**
 
 - **Feedback interativo**: Digite `r` para rerolar, `e` para editar (TUI in-place por padrão, ou `$GAC_EDITOR` se definido), ou digite diretamente seu feedback como `make it shorter` ou `focus on the bug fix`
 - **Questionamento interativo**: Use `--interactive` (`-i`) para responder a perguntas direcionadas sobre suas alterações para mensagens de commit mais contextuais
-- **Workflows de um comando**: Workflows completos com flags como `gac -ayp` (adicionar tudo, auto-confirmar, push)
+- **Workflows de um comando**: Workflows completos com flags como `uvx gac -ayp` (adicionar tudo, auto-confirmar, push)
 - **Integração Git**: Respeita hooks pre-commit e lefthook, executando-os antes de operações LLM caras
-- **Servidor MCP**: Execute `gac serve` para expor ferramentas de commit para agentes de IA através do [Model Context Protocol](https://modelcontextprotocol.io/)
+- **Servidor MCP**: Execute `uvx gac serve` para expor ferramentas de commit para agentes de IA através do [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ### 📊 **Estatísticas de Uso**
 
 ```bash
-gac stats               # Visão geral: gacs totais, sequências, picos diários/semanais, projetos e modelos principais
-gac stats models        # Detalhamento por modelo: gacs, tokens, latência, velocidade
-gac stats projects      # Detalhamento por projeto: gacs, commits, tokens em todos os repositórios
-gac stats reset         # Redefinir todas as estatísticas (solicita confirmação)
-gac stats reset model <model-id>  # Redefinir estatísticas apenas para um modelo específico
+uvx gac stats               # Visão geral: gacs totais, sequências, picos diários/semanais, projetos e modelos principais
+uvx gac stats models        # Detalhamento por modelo: gacs, tokens, latência, velocidade
+uvx gac stats projects      # Detalhamento por projeto: gacs, commits, tokens em todos os repositórios
+uvx gac stats reset         # Redefinir todas as estatísticas (solicita confirmação)
+uvx gac stats reset model <model-id>  # Redefinir estatísticas apenas para um modelo específico
 ```
 
 - **Acompanhe seus gacs**: Veja quantos commits você fez com gac, sua sequência atual, pico de atividade diária/semanal e projetos principais
 - **Rastreamento de tokens**: Tokens totais de prompt, output e raciocínio por dia, semana, projeto e modelo — com troféus de recorde para uso de tokens também
 - **Modelos principais**: Veja quais modelos você mais usa e quantos tokens cada um consome
 - **Celebrações de recordes**: 🏆 troféus quando você estabelece novos recordes diários, semanais, de tokens ou de sequência; 🥈 por empatá-los
-- **Opt-in durante a configuração**: `gac init` pergunta se você deseja ativar as estatísticas e explica exatamente o que é armazenado
+- **Opt-in durante a configuração**: `uvx gac init` pergunta se você deseja ativar as estatísticas e explica exatamente o que é armazenado
 - **Opt-out a qualquer momento**: Defina `GAC_DISABLE_STATS=true` (ou `1`/`yes`/`on`) para desativar. Definir como `false`/`0`/`no` (ou não definir) mantém as estatísticas ativadas
 - **Privacidade em primeiro lugar**: Armazenado localmente em `~/.gac_stats.json`. Apenas contagens, datas, nomes de projetos e nomes de modelos — sem mensagens de commit, código ou dados pessoais. Sem telemetria
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # Redefinir estatísticas apenas para um model
 git add .
 
 # Gere e envie commit com LLM
-gac
+uvx gac
 
 # Revise → y (commit) | n (cancelar) | r (rerolar) | e (editar) | ou digite feedback
 ```
 
 ### Comandos Comuns
 
-| Comando         | Descrição                                                             |
-| --------------- | --------------------------------------------------------------------- |
-| `gac`           | Gerar mensagem de commit                                              |
-| `gac -y`        | Auto-confirmar (sem necessidade de revisão)                           |
-| `gac -a`        | Adicionar tudo antes de gerar mensagem de commit                      |
-| `gac -S`        | Selecionar interativamente ficheiros para stage                       |
-| `gac -o`        | Mensagem de uma linha para alterações triviais                        |
-| `gac -v`        | Formato verboso com Motivação, Abordagem Técnica e Análise de Impacto |
-| `gac -h "hint"` | Adicionar contexto para LLM (ex: `gac -h "bug fix"`)                  |
-| `gac -s`        | Incluir escopo (ex: feat(auth):)                                      |
-| `gac -i`        | Fazer perguntas sobre alterações para melhor contexto                 |
-| `gac -g`        | Agrupar alterações em múltiplos commits lógicos                       |
-| `gac -p`        | Fazer commit e push                                                   |
-| `gac stats`     | Veja suas estatísticas de uso do gac                                  |
+| Comando             | Descrição                                                             |
+| ------------------- | --------------------------------------------------------------------- |
+| `uvx gac`           | Gerar mensagem de commit                                              |
+| `uvx gac -y`        | Auto-confirmar (sem necessidade de revisão)                           |
+| `uvx gac -a`        | Adicionar tudo antes de gerar mensagem de commit                      |
+| `uvx gac -S`        | Selecionar interativamente ficheiros para stage                       |
+| `uvx gac -o`        | Mensagem de uma linha para alterações triviais                        |
+| `uvx gac -v`        | Formato verboso com Motivação, Abordagem Técnica e Análise de Impacto |
+| `uvx gac -h "hint"` | Adicionar contexto para LLM (ex: `uvx gac -h "bug fix"`)              |
+| `uvx gac -s`        | Incluir escopo (ex: feat(auth):)                                      |
+| `uvx gac -i`        | Fazer perguntas sobre alterações para melhor contexto                 |
+| `uvx gac -g`        | Agrupar alterações em múltiplos commits lógicos                       |
+| `uvx gac -p`        | Fazer commit e push                                                   |
+| `uvx gac stats`     | Veja suas estatísticas de uso do gac                                  |
 
 ### Exemplos para Usuários Avançados
 
 ```bash
 # Workflow completo em um comando
 # Veja suas estatísticas de commits
-gac stats
+uvx gac stats
 
 # Estatísticas de todos os projetos
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "preparação de release"
+uvx gac -ayp -h "preparação de release"
 
 # Explicação detalhada com escopo
-gac -v -s
+uvx gac -v -s
 
 # Mensagem rápida de uma linha para pequenas alterações
-gac -o
+uvx gac -o
 
 # Gerar mensagem de commit em um idioma específico
-gac -l pt
+uvx gac -l pt
 
 # Agrupe alterações em commits logicamente relacionados
-gac -ag
+uvx gac -ag
 
 # Modo interativo com saída detalhada para explicações detalhadas
-gac -iv
+uvx gac -iv
 
 # Debugue o que o LLM vê
-gac --show-prompt
+uvx gac --show-prompt
 
 # Pule verificação de segurança (use com cuidado)
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # Adicionar signoff para conformidade DCO (Cherry Studio, Linux kernel, etc.)
-gac --signoff
+uvx gac --signoff
 ```
 
 ### Sistema de Feedback Interativo
@@ -218,9 +218,9 @@ Editores GUI como VS Code são tratados automaticamente: gac insere `--wait` par
 
 ## Configuração
 
-Execute `gac init` para configurar seu provedor interativamente, ou defina variáveis de ambiente:
+Execute `uvx gac init` para configurar seu provedor interativamente, ou defina variáveis de ambiente:
 
-Precisa mudar provedores ou modelos depois sem tocar nas configurações de idioma? Use `gac model` para um fluxo simplificado que pula os prompts de idioma.
+Precisa mudar provedores ou modelos depois sem tocar nas configurações de idioma? Use `uvx gac model` para um fluxo simplificado que pula os prompts de idioma.
 
 ```bash
 # Exemplo de configuração
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Veja `.gac.env.example` para todas as opções disponíveis.
 
-**Quer mensagens de commit em outro idioma?** Execute `gac language` para selecionar entre 25+ idiomas incluindo Español, Français, 日本語, e mais.
+**Quer mensagens de commit em outro idioma?** Execute `uvx gac language` para selecionar entre 25+ idiomas incluindo Español, Français, 日本語, e mais.
 
 **Quer personalizar o estilo da mensagem de commit?** Veja [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/pt/CUSTOM_SYSTEM_PROMPTS.md) para orientação sobre como escrever prompts de sistema personalizados.
 
@@ -244,7 +244,7 @@ Veja `.gac.env.example` para todas as opções disponíveis.
 - **Claude Code OAuth**: [docs/CLAUDE_CODE.md](docs/pt/CLAUDE_CODE.md) - Configuração e autenticação do Claude Code
 - **ChatGPT OAuth**: [docs/CHATGPT_OAUTH.md](docs/pt/CHATGPT_OAUTH.md) - Configuração e autenticação do ChatGPT OAuth
 - **Prompts personalizados**: [CUSTOM_SYSTEM_PROMPTS.md](docs/pt/CUSTOM_SYSTEM_PROMPTS.md) - Personalize o estilo da mensagem de commit
-- **Estatísticas de uso**: Veja `gac stats --help` ou a [documentação completa](docs/pt/USAGE.md#estatísticas-de-uso)
+- **Estatísticas de uso**: Veja `uvx gac stats --help` ou a [documentação completa](docs/pt/USAGE.md#estatísticas-de-uso)
 - **Solução de problemas**: [TROUBLESHOOTING.md](docs/pt/TROUBLESHOOTING.md) - Problemas comuns e soluções
 - **Contribuindo**: [CONTRIBUTING.md](docs/pt/CONTRIBUTING.md) - Configuração de desenvolvimento e diretrizes
 

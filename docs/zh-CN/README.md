@@ -19,7 +19,7 @@
 
 **能理解你代码的 LLM 驱动的提交信息！**
 
-**自动化你的提交！**用 `gac` 替代 `git commit -m "..."`，生成由大型语言模型创建的上下文相关、格式良好的提交信息！
+**自动化你的提交！**用 `uvx gac` 替代 `git commit -m "..."`，生成由大型语言模型创建的上下文相关、格式良好的提交信息！
 
 ---
 
@@ -76,32 +76,32 @@ uvx gac  # 使用 LLM 生成并提交
 
 - **25+ 种语言**：生成英语、中文、日语、韩语、西班牙语、法语、德语等 18+ 种语言的提交信息
 - **灵活翻译**：选择保持常规提交前缀为英语以保持工具兼容性，或完全翻译它们
-- **多种工作流**：使用 `gac language` 设置默认语言，或使用 `-l <语言>` 标志进行一次性覆盖
+- **多种工作流**：使用 `uvx gac language` 设置默认语言，或使用 `-l <语言>` 标志进行一次性覆盖
 - **原生脚本支持**：完全支持非拉丁文字，包括中日韩、西里尔文、泰文等
 
 ### 💻 **开发者体验**
 
 - **交互式反馈**：输入 `r` 重新生成，`e` 编辑（默认就地 TUI，或设置了 `$GAC_EDITOR` 时使用该编辑器），或直接输入你的反馈，如 `让它更短` 或 `专注于错误修复`
 - **交互式提问**：使用 `--interactive` (`-i`) 回答有关你更改的定向问题，以获得更多上下文的提交信息
-- **单命令工作流**：使用 `gac -ayp`（暂存所有、自动确认、推送）等标志完成完整工作流
+- **单命令工作流**：使用 `uvx gac -ayp`（暂存所有、自动确认、推送）等标志完成完整工作流
 - **Git 集成**：尊重 pre-commit 和 lefthook 钩子，在昂贵的 LLM 操作之前运行它们
-- **MCP 服务器**：运行 `gac serve` 通过 [Model Context Protocol](https://modelcontextprotocol.io/) 向 AI 代理公开提交工具
+- **MCP 服务器**：运行 `uvx gac serve` 通过 [Model Context Protocol](https://modelcontextprotocol.io/) 向 AI 代理公开提交工具
 
 ### 📊 **使用统计**
 
 ```bash
-gac stats               # 概览：总 gac 数、连续使用、每日/每周峰值、热门项目和模型
-gac stats models        # 按模型细分：gac 数、令牌、延迟、速度
-gac stats projects      # 按项目细分：所有仓库的 gac 数、提交数、令牌数
-gac stats reset         # 重置所有统计数据（需确认）
-gac stats reset model <model-id>  # 仅重置特定模型的统计数据
+uvx gac stats               # 概览：总 gac 数、连续使用、每日/每周峰值、热门项目和模型
+uvx gac stats models        # 按模型细分：gac 数、令牌、延迟、速度
+uvx gac stats projects      # 按项目细分：所有仓库的 gac 数、提交数、令牌数
+uvx gac stats reset         # 重置所有统计数据（需确认）
+uvx gac stats reset model <model-id>  # 仅重置特定模型的统计数据
 ```
 
 - **追踪你的 gac 使用**：查看你用 gac 做了多少次提交、当前连续使用天数、每日/每周活动峰值和热门项目
 - **Token 追踪**：按日、周、项目和模型统计的提示 + 完成令牌总数 — 令牌使用量也有高分奖杯
 - **热门模型**：查看你最常用的模型以及每个模型消耗的令牌数
 - **高分庆祝**：🏆 在你创造新的每日、每周、令牌或连续使用记录时获得奖杯；🥈 在追平记录时获得
-- **设置时选择加入**：`gac init` 会询问是否启用统计，并详细说明存储的内容
+- **设置时选择加入**：`uvx gac init` 会询问是否启用统计，并详细说明存储的内容
 - **随时退出**：设置 `GAC_DISABLE_STATS=true`（或 `1`/`yes`/`on`）以禁用。设置为 `false`/`0`/`no`（或取消设置）则保持统计启用
 - **隐私优先**：本地存储在 `~/.gac_stats.json`。仅存储计数、日期、项目名称和模型名称 — 不含提交信息、代码或个人数据。无遥测
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # 仅重置特定模型的统计数据
 git add .
 
 # 使用 LLM 生成并提交
-gac
+uvx gac
 
 # 查看 → y（提交）| n（取消）| r（重新生成）| e（编辑）| 或输入反馈
 ```
 
 ### 常用命令
 
-| 命令            | 描述                                           |
-| --------------- | ---------------------------------------------- |
-| `gac`           | 生成提交信息                                   |
-| `gac -y`        | 自动确认（无需查看）                           |
-| `gac -a`        | 在生成提交信息之前暂存所有内容                 |
-| `gac -S`        | 交互式选择要暂存的文件                         |
-| `gac -o`        | 用于琐碎更改的单行信息                         |
-| `gac -v`        | 包含动机、技术方法和影响分析的详细格式         |
-| `gac -h "提示"` | 为 LLM 添加上下文（例如，`gac -h "错误修复"`） |
-| `gac -s`        | 包括范围（例如，feat(auth):）                  |
-| `gac -i`        | 询问有关更改的问题以获得更好的上下文           |
-| `gac -g`        | 将更改分组为多个逻辑提交                       |
-| `gac -p`        | 提交并推送                                     |
-| `gac stats`     | 查看你的 gac 使用统计                          |
+| 命令                | 描述                                               |
+| ------------------- | -------------------------------------------------- |
+| `uvx gac`           | 生成提交信息                                       |
+| `uvx gac -y`        | 自动确认（无需查看）                               |
+| `uvx gac -a`        | 在生成提交信息之前暂存所有内容                     |
+| `uvx gac -S`        | 交互式选择要暂存的文件                             |
+| `uvx gac -o`        | 用于琐碎更改的单行信息                             |
+| `uvx gac -v`        | 包含动机、技术方法和影响分析的详细格式             |
+| `uvx gac -h "提示"` | 为 LLM 添加上下文（例如，`uvx gac -h "错误修复"`） |
+| `uvx gac -s`        | 包括范围（例如，feat(auth):）                      |
+| `uvx gac -i`        | 询问有关更改的问题以获得更好的上下文               |
+| `uvx gac -g`        | 将更改分组为多个逻辑提交                           |
+| `uvx gac -p`        | 提交并推送                                         |
+| `uvx gac stats`     | 查看你的 gac 使用统计                              |
 
 ### 高级用户示例
 
 ```bash
 # 一条命令完成完整工作流
 # 查看你的提交统计
-gac stats
+uvx gac stats
 
 # 所有项目的统计
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "发布准备"
+uvx gac -ayp -h "发布准备"
 
 # 带范围的详细解释
-gac -v -s
+uvx gac -v -s
 
 # 小更改的快速单行
-gac -o
+uvx gac -o
 
 # 生成特定语言的提交信息
-gac -l zh-CN
+uvx gac -l zh-CN
 
 # 将更改分组为逻辑相关的提交
-gac -ag
+uvx gac -ag
 
 # 带详细输出的交互模式用于详细解释
-gac -iv
+uvx gac -iv
 
 # 调试 LLM 看到的内容
-gac --show-prompt
+uvx gac --show-prompt
 
 # 跳过安全扫描（谨慎使用）
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # 添加 signoff 以符合 DCO（Cherry Studio、Linux 内核等）
-gac --signoff
+uvx gac --signoff
 ```
 
 ### 交互式反馈系统
@@ -218,9 +218,9 @@ VS Code 等 GUI 编辑器会自动处理：gac 会插入 `--wait`，使进程在
 
 ## 配置
 
-运行 `gac init` 以交互方式配置你的提供商，或设置环境变量：
+运行 `uvx gac init` 以交互方式配置你的提供商，或设置环境变量：
 
-想要在之后仅更新提供商或模型且不修改语言？使用 `gac model`，它会跳过语言相关的提示。
+想要在之后仅更新提供商或模型且不修改语言？使用 `uvx gac model`，它会跳过语言相关的提示。
 
 ```bash
 # 示例配置
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 查看 `.gac.env.example` 了解所有可用选项。
 
-**想要其他语言的提交信息？**运行 `gac language` 从 25+ 种语言中选择，包括 Español、Français、日本語 等。
+**想要其他语言的提交信息？**运行 `uvx gac language` 从 25+ 种语言中选择，包括 Español、Français、日本語 等。
 
 **想要自定义提交信息风格？**请参阅 [docs/CUSTOM_SYSTEM_PROMPTS.md](docs/zh-CN/CUSTOM_SYSTEM_PROMPTS.md) 了解编写自定义系统提示的指导。
 
@@ -244,7 +244,7 @@ ANTHROPIC_API_KEY=your_key_here
 - **Claude Code OAuth**：[docs/CLAUDE_CODE.md](docs/zh-CN/CLAUDE_CODE.md) - Claude Code 设置与认证
 - **ChatGPT OAuth**：[docs/CHATGPT_OAUTH.md](docs/zh-CN/CHATGPT_OAUTH.md) - ChatGPT OAuth 设置与认证
 - **自定义提示**：[CUSTOM_SYSTEM_PROMPTS.md](docs/zh-CN/CUSTOM_SYSTEM_PROMPTS.md) - 自定义提交信息风格
-- **使用统计**：参见 `gac stats --help` 或[完整文档](docs/zh-CN/USAGE.md#使用统计)
+- **使用统计**：参见 `uvx gac stats --help` 或[完整文档](docs/zh-CN/USAGE.md#使用统计)
 - **故障排除**：[TROUBLESHOOTING.md](docs/zh-CN/TROUBLESHOOTING.md) - 常见问题和解决方案
 - **贡献**：[CONTRIBUTING.md](docs/zh-CN/CONTRIBUTING.md) - 开发设置和指南
 

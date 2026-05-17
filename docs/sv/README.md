@@ -19,7 +19,7 @@
 
 **LLM-drivna commit-meddelanden som förstår din kod!**
 
-**Automatisera dina commits!** Ersätt `git commit -m "..."` med `gac` för kontekstuell, velformaterade commit-meddelanden genererade av stora språkmodeller!
+**Automatisera dina commits!** Ersätt `git commit -m "..."` med `uvx gac` för kontekstuell, velformaterade commit-meddelanden genererade av stora språkmodeller!
 
 ---
 
@@ -76,32 +76,32 @@ Det är allt! Granska det genererade meddelandet och bekräfta med `y`.
 
 - **25+ språk**: Generera commit-meddelanden på engelska, kinesiska, japanska, koreanska, spanska, franska, tyska och 18+ fler språk
 - **Flexibel översättning**: Välj att behålla conventional commit-prefix på engelska för verktygskompatibilitet, eller översätt dem helt
-- **Flera arbetsflöden**: Ställ in ett standardspråk med `gac language`, eller använd `-l <språk>` flagget för engångsöverstyrning
+- **Flera arbetsflöden**: Ställ in ett standardspråk med `uvx gac language`, eller använd `-l <språk>` flagget för engångsöverstyrning
 - **Stöd för originalskript**: Fullt stöd för icke-latinska skript inklusive CJK, kyrilliska, thai och mer
 
 ### 💻 **Utvecklarupplevelse**
 
 - **Interaktiv feedback**: Skriv `r` för att köra om, `e` för att redigera (inbyggd TUI som standard, eller `$GAC_EDITOR` om angiven), eller skriv din feedback direkt som `gör den kortare` eller `fokusera på bug-fixen`
 - **Interaktiv frågning**: Använd `--interactive` (`-i`) för att svara på riktade frågor om dina ändringar för mer kontextuella commit-meddelanden
-- **Ett-kommandos arbetsflöden**: Kompletta arbetsflöden med flaggor som `gac -ayp` (stage alla, auto-bekräfta, push)
+- **Ett-kommandos arbetsflöden**: Kompletta arbetsflöden med flaggor som `uvx gac -ayp` (stage alla, auto-bekräfta, push)
 - **Git-integration**: Respekterar pre-commit och lefthook hooks, kör dem innan dyra LLM-operationer
-- **MCP-server**: Kör `gac serve` för att exponera commit-verktyg till AI-agenter via [Model Context Protocol](https://modelcontextprotocol.io/)
+- **MCP-server**: Kör `uvx gac serve` för att exponera commit-verktyg till AI-agenter via [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ### 📊 **Användningsstatistik**
 
 ```bash
-gac stats               # Översikt: totala gacs, streaks, dagliga/veckovisa toppar, topprojekt & -modeller
-gac stats models        # Modelluppdelning: gacs, tokens, latens, hastighet
-gac stats projects      # Projektuppdelning: gacs, commits, tokens över alla repo
-gac stats reset         # Återställ all statistik (ber om bekräftelse)
-gac stats reset model <model-id>  # Återställ statistik endast för en specifik modell
+uvx gac stats               # Översikt: totala gacs, streaks, dagliga/veckovisa toppar, topprojekt & -modeller
+uvx gac stats models        # Modelluppdelning: gacs, tokens, latens, hastighet
+uvx gac stats projects      # Projektuppdelning: gacs, commits, tokens över alla repo
+uvx gac stats reset         # Återställ all statistik (ber om bekräftelse)
+uvx gac stats reset model <model-id>  # Återställ statistik endast för en specifik modell
 ```
 
 - **Spåra dina gacs**: Se hur många commits du har gjort med gac, din nuvarande streak, topp dagliga/veckovisa aktivitet och topprojekt
 - **Token-spårning**: Totalt antal prompt-, output- och reasoning-tokens per dag, vecka, projekt och modell — med highscore-troféer för tokenanvändning också
 - **Toppmodeller**: Se vilka modeller du använder mest och hur många tokens var och en förbrukar
 - **Highscore-firanden**: 🏆 troféer när du sätter nya dagliga, veckovisa, token- eller streak-rekord; 🥈 för att matcha dem
-- **Opt-in vid installation**: `gac init` frågar om du vill aktivera statistik och förklarar exakt vad som sparas
+- **Opt-in vid installation**: `uvx gac init` frågar om du vill aktivera statistik och förklarar exakt vad som sparas
 - **Opt-out när som helst**: Ställ in `GAC_DISABLE_STATS=true` (eller `1`/`yes`/`on`) för att inaktivera. Att ställa in den på `false`/`0`/`no` (eller ta bort den) håller statistiken aktiverad
 - **Integritet först**: Lagrat lokalt i `~/.gac_stats.json`. Endast antal, datum, projektnamn och modellnamn — inga commit-meddelanden, kod eller personlig information. Ingen telemetri
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # Återställ statistik endast för en specifi
 git add .
 
 # Generera och commit med LLM
-gac
+uvx gac
 
 # Granska → y (commit) | n (avbryt) | r (köra om) | e (redigera) | eller skriv feedback
 ```
 
 ### Vanliga Kommandon
 
-| Kommando        | Beskrivning                                                        |
-| --------------- | ------------------------------------------------------------------ |
-| `gac`           | Generera commit-meddelande                                         |
-| `gac -y`        | Auto-bekräfta (ingen granskning behövs)                            |
-| `gac -a`        | Stage alla innan generering av commit-meddelande                   |
-| `gac -S`        | Välj interaktivt filer att stagea                                  |
-| `gac -o`        | En-rads meddelande för triviala ändringar                          |
-| `gac -v`        | Utförligt format med Motivation, Teknisk Ansats och Påverkananalys |
-| `gac -h "hint"` | Lägg till kontext för LLM (t.ex., `gac -h "bug fix"`)              |
-| `gac -s`        | Inkludera scope (t.ex., feat(auth):)                               |
-| `gac -i`        | Ställ frågor om ändringar för bättre kontext                       |
-| `gac -g`        | Gruppera ändringar i flera logiska commits                         |
-| `gac -p`        | Commit och push                                                    |
-| `gac stats`     | Visa din gac-användningsstatistik                                  |
+| Kommando            | Beskrivning                                                        |
+| ------------------- | ------------------------------------------------------------------ |
+| `uvx gac`           | Generera commit-meddelande                                         |
+| `uvx gac -y`        | Auto-bekräfta (ingen granskning behövs)                            |
+| `uvx gac -a`        | Stage alla innan generering av commit-meddelande                   |
+| `uvx gac -S`        | Välj interaktivt filer att stagea                                  |
+| `uvx gac -o`        | En-rads meddelande för triviala ändringar                          |
+| `uvx gac -v`        | Utförligt format med Motivation, Teknisk Ansats och Påverkananalys |
+| `uvx gac -h "hint"` | Lägg till kontext för LLM (t.ex., `uvx gac -h "bug fix"`)          |
+| `uvx gac -s`        | Inkludera scope (t.ex., feat(auth):)                               |
+| `uvx gac -i`        | Ställ frågor om ändringar för bättre kontext                       |
+| `uvx gac -g`        | Gruppera ändringar i flera logiska commits                         |
+| `uvx gac -p`        | Commit och push                                                    |
+| `uvx gac stats`     | Visa din gac-användningsstatistik                                  |
 
 ### Exempel för Avancerade Användare
 
 ```bash
 # Komplett arbetsflöde i ett kommando
 # Visa din commitstatistik
-gac stats
+uvx gac stats
 
 # Statistik för alla projekt
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "release preparation"
+uvx gac -ayp -h "release preparation"
 
 # Detaljerad förklaring med scope
-gac -v -s
+uvx gac -v -s
 
 # Snabb en-rads för små ändringar
-gac -o
+uvx gac -o
 
 # Generera commitmeddelande på ett specifikt språk
-gac -l sv
+uvx gac -l sv
 
 # Gruppera ändringar i logiskt relaterade commits
-gac -ag
+uvx gac -ag
 
 # Interaktivt läge med utförlig output för detaljerade förklaringar
-gac -iv
+uvx gac -iv
 
 # Debug vad LLM ser
-gac --show-prompt
+uvx gac --show-prompt
 
 # Hoppa över säkerhetsskanning (använd med försiktighet)
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # Lägg till signoff för DCO-efterlevnad (Cherry Studio, Linux-kärnan, etc.)
-gac --signoff
+uvx gac --signoff
 ```
 
 ### Interaktivt Feedbacksystem
@@ -218,9 +218,9 @@ GUI-editorer som VS Code hanteras automatiskt: gac infogar `--wait` så att proc
 
 ## Konfiguration
 
-Kör `gac init` för att konfigurera din leverantör interaktivt, eller sätt miljövariabler:
+Kör `uvx gac init` för att konfigurera din leverantör interaktivt, eller sätt miljövariabler:
 
-Behöver du ändra leverantörer eller modeller senare utan att röra språkinställningar? Använd `gac model` för ett strömlinjeformat flöde som hoppar över språkfrågorna.
+Behöver du ändra leverantörer eller modeller senare utan att röra språkinställningar? Använd `uvx gac model` för ett strömlinjeformat flöde som hoppar över språkfrågorna.
 
 ```bash
 # Exempelkonfiguration
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Se `.gac.env.example` för alla tillgängliga alternativ.
 
-**Vill du ha commit-meddelanden på ett annat språk?** Kör `gac language` för att välja från 25+ språk inklusive Español, Français, 日本語 och mer.
+**Vill du ha commit-meddelanden på ett annat språk?** Kör `uvx gac language` för att välja från 25+ språk inklusive Español, Français, 日本語 och mer.
 
 **Vill du anpassa commit-meddelandestil?** Se [docs/CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) för vägledning om att skriva anpassade system-prompts.
 
@@ -244,7 +244,7 @@ Se `.gac.env.example` för alla tillgängliga alternativ.
 - **Claude Code OAuth**: [docs/CLAUDE_CODE.md](docs/sv/CLAUDE_CODE.md) - Claude Code konfiguration och autentisering
 - **ChatGPT OAuth**: [docs/CHATGPT_OAUTH.md](docs/sv/CHATGPT_OAUTH.md) - ChatGPT OAuth konfiguration och autentisering
 - **Anpassade prompts**: [CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) - Anpassa commit-meddelandestil
-- **Användningsstatistik**: Se `gac stats --help` eller den [fulla dokumentationen](USAGE.md#användningsstatistik)
+- **Användningsstatistik**: Se `uvx gac stats --help` eller den [fulla dokumentationen](USAGE.md#användningsstatistik)
 - **Felsökning**: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Vanliga problem och lösningar
 - **Bidra**: [CONTRIBUTING.md](CONTRIBUTING.md) - Utvecklings-setup och riktlinjer
 

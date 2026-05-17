@@ -19,7 +19,7 @@
 
 **LLM-drevne commit-meldinger som forstår koden din!**
 
-**Automatiser dine commits!** Erstatt `git commit -m "..."` med `gac` for kontekstuelle, velformaterte commit-meldinger generert av store språkmodeller!
+**Automatiser dine commits!** Erstatt `git commit -m "..."` med `uvx gac` for kontekstuelle, velformaterte commit-meldinger generert av store språkmodeller!
 
 ---
 
@@ -76,32 +76,32 @@ Det er alt! Gjennomgå den genererte meldingen og bekreft med `y`.
 
 - **25+ språk**: Generer commit-meldinger på engelsk, kinesisk, japansk, koreansk, spansk, fransk, tysk og 18+ flere språk
 - **Fleksibel oversettelse**: Velg å beholde conventional commit-prefikser på engelsk for verktøykompatibilitet, eller oversett dem fullstendig
-- **Flere arbeidsflyter**: Sett et standardspråk med `gac language`, eller bruk `-l <språk>` flagget for engangs-overstyring
+- **Flere arbeidsflyter**: Sett et standardspråk med `uvx gac language`, eller bruk `-l <språk>` flagget for engangs-overstyring
 - **Støtte for det opprinnelige skriptet**: Full støtte for ikke-latinske skript inkludert CJK, kyrillisk, thai og mer
 
 ### 💻 **Utvikleropplevelse**
 
 - **Interaktiv tilbakemelding**: Skriv `r` for å kjøre på nytt, `e` for å redigere (innebygd TUI som standard, eller `$GAC_EDITOR` hvis satt), eller skriv direkte tilbakemeldingen din som `gjør den kortere` eller `fokuser på bug-fiksen`
 - **Interaktiv spørsmålsstilling**: Bruk `--interactive` (`-i`) for å svare på målrettede spørsmål om endringene dine for mer kontekstuelle commit-meldinger
-- **Én-kommandos arbeidsflyter**: Komplette arbeidsflyter med flagg som `gac -ayp` (stage alle, auto-bekreft, push)
+- **Én-kommandos arbeidsflyter**: Komplette arbeidsflyter med flagg som `uvx gac -ayp` (stage alle, auto-bekreft, push)
 - **Git-integrasjon**: Respekterer pre-commit og lefthook hooks, og kjører dem før dyre LLM-operasjoner
-- **MCP-server**: Kjør `gac serve` for å eksponere commit-verktøy til AI-agenter via [Model Context Protocol](https://modelcontextprotocol.io/)
+- **MCP-server**: Kjør `uvx gac serve` for å eksponere commit-verktøy til AI-agenter via [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ### 📊 **Bruksstatistikk**
 
 ```bash
-gac stats               # Oversikt: totale gacs, streaks, daglige/ukentlige topper, topprosjekter & -modeller
-gac stats models        # Modelloppdelning: gacs, tokens, latens, hastighet
-gac stats projects      # Prosjektoppdelning: gacs, commits, tokens over alle repoer
-gac stats reset         # Tilbakestill all statistikk (ber om bekreftelse)
-gac stats reset model <model-id>  # Tilbakestill statistikk kun for en spesifikk modell
+uvx gac stats               # Oversikt: totale gacs, streaks, daglige/ukentlige topper, topprosjekter & -modeller
+uvx gac stats models        # Modelloppdelning: gacs, tokens, latens, hastighet
+uvx gac stats projects      # Prosjektoppdelning: gacs, commits, tokens over alle repoer
+uvx gac stats reset         # Tilbakestill all statistikk (ber om bekreftelse)
+uvx gac stats reset model <model-id>  # Tilbakestill statistikk kun for en spesifikk modell
 ```
 
 - **Spor dine gacs**: Se hvor mange committer du har gjort med gac, din nåværende streak, topp daglige/ukentlige aktivitet og topprosjekter
 - **Token-sporing**: Totalt antall prompt-, output- og reasoning-tokens per dag, uke, prosjekt og modell — med highscore-trofeer for tokenbruk også
 - **Toppmodeller**: Se hvilke modeller du bruker mest og hvor mange tokens hver av dem forbruker
 - **Highscore-feiringer**: 🏆 trofeer når du setter nye daglige, ukentlige, token- eller streak-rekorder; 🥈 for å tangere dem
-- **Opt-in under oppsett**: `gac init` spør om du vil aktivere statistikk og forklarer nøyaktig hva som lagres
+- **Opt-in under oppsett**: `uvx gac init` spør om du vil aktivere statistikk og forklarer nøyaktig hva som lagres
 - **Opt-out når som helst**: Sett `GAC_DISABLE_STATS=true` (eller `1`/`yes`/`on`) for å deaktivere. Å sette den til `false`/`0`/`no` (eller fjerne den) holder statistikk aktivert
 - **Personvern først**: Lagret lokalt i `~/.gac_stats.json`. Kun tellinger, datoer, prosjektnavn og modellnavn — ingen commit-meldinger, kode eller personopplysninger. Ingen telemetri
 
@@ -122,63 +122,63 @@ gac stats reset model <model-id>  # Tilbakestill statistikk kun for en spesifikk
 git add .
 
 # Generer og commit med LLM
-gac
+uvx gac
 
 # Gjennomgå → y (commit) | n (avbryt) | r (kjør på nytt) | e (rediger) | eller skriv tilbakemelding
 ```
 
 ### Vanlige Kommandoer
 
-| Kommando        | Beskrivelse                                                              |
-| --------------- | ------------------------------------------------------------------------ |
-| `gac`           | Generer commit-melding                                                   |
-| `gac -y`        | Auto-bekreft (ingen gjennomgang nødvendig)                               |
-| `gac -a`        | Stage alle før generering av commit-melding                              |
-| `gac -S`        | Interaktivt velg filer for staging                                       |
-| `gac -o`        | En-linjers melding for trivielle endringer                               |
-| `gac -v`        | Utførlig format med Motivasjon, Teknisk Tilnærming og Påvirkningsanalyse |
-| `gac -h "hint"` | Legg til kontekst for LLM (f.eks., `gac -h "bug fix"`)                   |
-| `gac -s`        | Inkluder scope (f.eks., feat(auth):)                                     |
-| `gac -i`        | Stil spørsmål om endringer for bedre kontekst                            |
-| `gac -g`        | Gruppere endringer i flere logiske commits                               |
-| `gac -p`        | Commit og push                                                           |
-| `gac stats`     | Vis din gac-bruksstatistikk                                              |
+| Kommando            | Beskrivelse                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| `uvx gac`           | Generer commit-melding                                                   |
+| `uvx gac -y`        | Auto-bekreft (ingen gjennomgang nødvendig)                               |
+| `uvx gac -a`        | Stage alle før generering av commit-melding                              |
+| `uvx gac -S`        | Interaktivt velg filer for staging                                       |
+| `uvx gac -o`        | En-linjers melding for trivielle endringer                               |
+| `uvx gac -v`        | Utførlig format med Motivasjon, Teknisk Tilnærming og Påvirkningsanalyse |
+| `uvx gac -h "hint"` | Legg til kontekst for LLM (f.eks., `uvx gac -h "bug fix"`)               |
+| `uvx gac -s`        | Inkluder scope (f.eks., feat(auth):)                                     |
+| `uvx gac -i`        | Stil spørsmål om endringer for bedre kontekst                            |
+| `uvx gac -g`        | Gruppere endringer i flere logiske commits                               |
+| `uvx gac -p`        | Commit og push                                                           |
+| `uvx gac stats`     | Vis din gac-bruksstatistikk                                              |
 
 ### Eksempler for Avanserte Brukere
 
 ```bash
 # Komplett arbeidsflyt i én kommando
 # Vis din commitstatistikk
-gac stats
+uvx gac stats
 
 # Statistikk for alle prosjekter
-gac stats projects
+uvx gac stats projects
 
-gac -ayp -h "release preparation"
+uvx gac -ayp -h "release preparation"
 
 # Detaljert forklaring med scope
-gac -v -s
+uvx gac -v -s
 
 # Rask en-linjers for små endringer
-gac -o
+uvx gac -o
 
 # Generer commit-melding på et spesifikt språk
-gac -l no
+uvx gac -l no
 
 # Grupper endringer i logisk relaterte commits
-gac -ag
+uvx gac -ag
 
 # Interaktiv modus med utførlig output for detaljerte forklaringer
-gac -iv
+uvx gac -iv
 
 # Debug hva LLM ser
-gac --show-prompt
+uvx gac --show-prompt
 
 # Hopp over sikkerhetsskanning (bruk med forsiktighet)
-gac --skip-secret-scan
+uvx gac --skip-secret-scan
 
 # Legg til signoff for DCO-samsvar (Cherry Studio, Linux-kjernen, etc.)
-gac --signoff
+uvx gac --signoff
 ```
 
 ### Interaktivt Tilbakemeldingssystem
@@ -218,9 +218,9 @@ GUI-editorer som VS Code håndteres automatisk: gac setter inn `--wait` slik at 
 
 ## Konfigurasjon
 
-Kjør `gac init` for å konfigurere din leverandør interaktivt, eller sett miljøvariabler:
+Kjør `uvx gac init` for å konfigurere din leverandør interaktivt, eller sett miljøvariabler:
 
-Trenger du å endre leverandører eller modeller senere uten å røre språkinnstillinger? Bruk `gac model` for en strømlinjeformet flyt som hopper over språk-spørsmålene.
+Trenger du å endre leverandører eller modeller senere uten å røre språkinnstillinger? Bruk `uvx gac model` for en strømlinjeformet flyt som hopper over språk-spørsmålene.
 
 ```bash
 # Eksempelkonfigurasjon
@@ -231,7 +231,7 @@ ANTHROPIC_API_KEY=your_key_here
 
 Se `.gac.env.example` for alle tilgjengelige alternativer.
 
-**Vil du ha commit-meldinger på et annet språk?** Kjør `gac language` for å velge fra 25+ språk inkludert Español, Français, 日本語 og mer.
+**Vil du ha commit-meldinger på et annet språk?** Kjør `uvx gac language` for å velge fra 25+ språk inkludert Español, Français, 日本語 og mer.
 
 **Vil du tilpasse commit-meldingsstil?** Se [docs/CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) for veiledning om å skrive egendefinerte system-prompts.
 
@@ -244,7 +244,7 @@ Se `.gac.env.example` for alle tilgjengelige alternativer.
 - **Claude Code OAuth**: [docs/CLAUDE_CODE.md](docs/no/CLAUDE_CODE.md) - Claude Code oppsett og autentisering
 - **ChatGPT OAuth**: [docs/CHATGPT_OAUTH.md](docs/no/CHATGPT_OAUTH.md) - ChatGPT OAuth oppsett og autentisering
 - **Egendefinerte prompts**: [CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md) - Tilpass commit-meldingsstil
-- **Bruksstatistikk**: Se `gac stats --help` eller den [fulle dokumentasjonen](USAGE.md#bruksstatistikk)
+- **Bruksstatistikk**: Se `uvx gac stats --help` eller den [fulle dokumentasjonen](USAGE.md#bruksstatistikk)
 - **Feilsøking**: [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Vanlige problemer og løsninger
 - **Bidra**: [CONTRIBUTING.md](CONTRIBUTING.md) - Utviklingsoppsett og retningslinjer
 
