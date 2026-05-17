@@ -39,7 +39,7 @@ Il Model Context Protocol è uno standard aperto che permette alle applicazioni 
 
 ## Installazione
 
-Il server MCP viene avviato con `gac serve` e comunica tramite stdio, il trasporto standard MCP.
+Il server MCP viene avviato con `uvx gac serve` e comunica tramite stdio, il trasporto standard MCP.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Genera un messaggio di commit alimentato dall'IA e opzionalmente esegue il commi
 
 Il server MCP utilizza la tua configurazione GAC esistente. Non è necessaria alcuna configurazione aggiuntiva oltre a:
 
-1. **Provider e modello**: Esegui `gac init` o `gac model` per configurare il tuo provider IA
-2. **Chiavi API**: Memorizzate in `~/.gac.env` (configurate durante `gac init`)
+1. **Provider e modello**: Esegui `uvx gac init` o `uvx gac model` per configurare il tuo provider IA
+2. **Chiavi API**: Memorizzate in `~/.gac.env` (configurate durante `uvx gac init`)
 3. **Impostazioni opzionali**: Tutte le variabili d'ambiente GAC si applicano (`GAC_LANGUAGE`, `GAC_VERBOSE`, ecc.)
 
 Consulta la [documentazione principale](USAGE.md#note-di-configurazione) per tutte le opzioni di configurazione.
@@ -192,7 +192,7 @@ Consulta la [documentazione principale](USAGE.md#note-di-configurazione) per tut
 
 ### "No model configured"
 
-Esegui `gac init` per configurare il tuo provider IA e il modello prima di usare il server MCP.
+Esegui `uvx gac init` per configurare il tuo provider IA e il modello prima di usare il server MCP.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Verifica che GAC sia installato e accessibile:
 
 ```bash
 uvx gac --version
-# o
-gac --version
 ```
 
 Se usi `uvx`, assicurati che `uv` sia installato e nel tuo PATH.
@@ -216,7 +214,7 @@ Assicurati che il file di configurazione MCP sia nella posizione corretta per il
 
 ### Corruzione dell'output Rich
 
-Il server MCP reindirizza automaticamente tutto l'output della console Rich su stderr per prevenire la corruzione del protocollo stdio. Se vedi output illeggibile, assicurati di eseguire `gac serve` (non `gac` direttamente) quando usi MCP.
+Il server MCP reindirizza automaticamente tutto l'output della console Rich su stderr per prevenire la corruzione del protocollo stdio. Se vedi output illeggibile, assicurati di eseguire `uvx gac serve` (non `uvx gac` direttamente) quando usi MCP.
 
 ## Vedi Anche
 

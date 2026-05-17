@@ -39,7 +39,7 @@ Model Context Protocol er en apen standard som lar AI-applikasjoner kalle ekster
 
 ## Oppsett
 
-MCP-serveren startes med `gac serve` og kommuniserer over stdio, standard MCP-transport.
+MCP-serveren startes med `uvx gac serve` og kommuniserer over stdio, standard MCP-transport.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Generer en AI-drevet commit-melding og utfor eventuelt committen.
 
 MCP-serveren bruker din eksisterende GAC-konfigurasjon. Ingen ekstra oppsett er nodvendig utover:
 
-1. **Leverandor og modell**: Kjor `gac init` eller `gac model` for a konfigurere AI-leverandoren din
-2. **API-nokler**: Lagret i `~/.gac.env` (satt opp under `gac init`)
+1. **Leverandor og modell**: Kjor `uvx gac init` eller `uvx gac model` for a konfigurere AI-leverandoren din
+2. **API-nokler**: Lagret i `~/.gac.env` (satt opp under `uvx gac init`)
 3. **Valgfrie innstillinger**: Alle GAC-miljovariabler gjelder (`GAC_LANGUAGE`, `GAC_VERBOSE` osv.)
 
 Se [hoveddokumentasjonen](USAGE.md#konfigurasjonsnotater) for alle konfigurasjonsalternativer.
@@ -192,7 +192,7 @@ Se [hoveddokumentasjonen](USAGE.md#konfigurasjonsnotater) for alle konfigurasjon
 
 ### "No model configured"
 
-Kjor `gac init` for a sette opp AI-leverandoren og modellen din for du bruker MCP-serveren.
+Kjor `uvx gac init` for a sette opp AI-leverandoren og modellen din for du bruker MCP-serveren.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Verifiser at GAC er installert og tilgjengelig:
 
 ```bash
 uvx gac --version
-# eller
-gac --version
 ```
 
 Hvis du bruker `uvx`, sjekk at `uv` er installert og i din PATH.
@@ -216,7 +214,7 @@ Sjekk at MCP-konfigurasjonsfilen er pa riktig sted for klienten din og at `comma
 
 ### Rich-utdatakorrupsjon
 
-MCP-serveren omdirigerer automatisk all Rich-konsollutdata til stderr for a forhindre stdio-protokollkorrupsjon. Hvis du ser forvrengd utdata, sjekk at du kjorer `gac serve` (ikke `gac` direkte) nar du bruker MCP.
+MCP-serveren omdirigerer automatisk all Rich-konsollutdata til stderr for a forhindre stdio-protokollkorrupsjon. Hvis du ser forvrengd utdata, sjekk at du kjorer `uvx gac serve` (ikke `uvx gac` direkte) nar du bruker MCP.
 
 ## Se ogsa
 

@@ -39,7 +39,7 @@ Het Model Context Protocol is een open standaard die AI-applicaties in staat ste
 
 ## Installatie
 
-De MCP-server wordt gestart met `gac serve` en communiceert via stdio, het standaard MCP-transport.
+De MCP-server wordt gestart met `uvx gac serve` en communiceert via stdio, het standaard MCP-transport.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Genereer een AI-gestuurd commitbericht en voer optioneel de commit uit.
 
 De MCP-server gebruikt uw bestaande GAC-configuratie. Geen extra configuratie nodig naast:
 
-1. **Provider en model**: Voer `gac init` of `gac model` uit om uw AI-provider te configureren
-2. **API-sleutels**: Opgeslagen in `~/.gac.env` (ingesteld tijdens `gac init`)
+1. **Provider en model**: Voer `uvx gac init` of `uvx gac model` uit om uw AI-provider te configureren
+2. **API-sleutels**: Opgeslagen in `~/.gac.env` (ingesteld tijdens `uvx gac init`)
 3. **Optionele instellingen**: Alle GAC-omgevingsvariabelen zijn van toepassing (`GAC_LANGUAGE`, `GAC_VERBOSE`, enz.)
 
 Zie de [hoofddocumentatie](USAGE.md#configuratie-notities) voor alle configuratieopties.
@@ -192,7 +192,7 @@ Zie de [hoofddocumentatie](USAGE.md#configuratie-notities) voor alle configurati
 
 ### "No model configured"
 
-Voer `gac init` uit om uw AI-provider en model in te stellen voordat u de MCP-server gebruikt.
+Voer `uvx gac init` uit om uw AI-provider en model in te stellen voordat u de MCP-server gebruikt.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Controleer of GAC geinstalleerd en toegankelijk is:
 
 ```bash
 uvx gac --version
-# of
-gac --version
 ```
 
 Als u `uvx` gebruikt, zorg ervoor dat `uv` geinstalleerd is en in uw PATH staat.
@@ -216,7 +214,7 @@ Zorg ervoor dat het MCP-configuratiebestand op de juiste locatie staat voor uw c
 
 ### Rich-uitvoercorruptie
 
-De MCP-server leidt alle Rich-console-uitvoer automatisch om naar stderr om stdio-protocolcorruptie te voorkomen. Als u onleesbare uitvoer ziet, zorg ervoor dat u `gac serve` gebruikt (niet `gac` direct) wanneer u MCP gebruikt.
+De MCP-server leidt alle Rich-console-uitvoer automatisch om naar stderr om stdio-protocolcorruptie te voorkomen. Als u onleesbare uitvoer ziet, zorg ervoor dat u `uvx gac serve` gebruikt (niet `uvx gac` direct) wanneer u MCP gebruikt.
 
 ## Zie ook
 

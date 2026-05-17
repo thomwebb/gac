@@ -39,7 +39,7 @@ Model Context Protocol ar en oppen standard som later AI-applikationer anropa ex
 
 ## Installation
 
-MCP-servern startas med `gac serve` och kommunicerar over stdio, standard MCP-transport.
+MCP-servern startas med `uvx gac serve` och kommunicerar over stdio, standard MCP-transport.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Generera ett AI-drivet commit-meddelande och utfor valfritt committen.
 
 MCP-servern anvander din befintliga GAC-konfiguration. Ingen ytterligare installation behovs utover:
 
-1. **Leverantor och modell**: Kor `gac init` eller `gac model` for att konfigurera din AI-leverantor
-2. **API-nycklar**: Lagrade i `~/.gac.env` (installda under `gac init`)
+1. **Leverantor och modell**: Kor `uvx gac init` eller `uvx gac model` for att konfigurera din AI-leverantor
+2. **API-nycklar**: Lagrade i `~/.gac.env` (installda under `uvx gac init`)
 3. **Valfria installningar**: Alla GAC-miljovariabler galler (`GAC_LANGUAGE`, `GAC_VERBOSE` osv.)
 
 Se [huvuddokumentationen](USAGE.md#konfigurationsanteckningar) for alla konfigurationsalternativ.
@@ -192,7 +192,7 @@ Se [huvuddokumentationen](USAGE.md#konfigurationsanteckningar) for alla konfigur
 
 ### "No model configured"
 
-Kor `gac init` for att stalla in din AI-leverantor och modell innan du anvander MCP-servern.
+Kor `uvx gac init` for att stalla in din AI-leverantor och modell innan du anvander MCP-servern.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Verifiera att GAC ar installerat och tillgangligt:
 
 ```bash
 uvx gac --version
-# eller
-gac --version
 ```
 
 Om du anvander `uvx`, se till att `uv` ar installerat och finns i din PATH.
@@ -216,7 +214,7 @@ Se till att MCP-konfigurationsfilen ar pa ratt plats for din klient och att `com
 
 ### Rich-utdatakorruption
 
-MCP-servern omdirigerar automatiskt alla Rich-konsolutdata till stderr for att forhindra stdio-protokollkorruption. Om du ser forvrängd utdata, se till att du kor `gac serve` (inte `gac` direkt) nar du anvander MCP.
+MCP-servern omdirigerar automatiskt alla Rich-konsolutdata till stderr for att forhindra stdio-protokollkorruption. Om du ser forvrängd utdata, se till att du kor `uvx gac serve` (inte `uvx gac` direkt) nar du anvander MCP.
 
 ## Se aven
 

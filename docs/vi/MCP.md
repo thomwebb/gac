@@ -39,7 +39,7 @@ Model Context Protocol là một tiêu chuẩn mở cho phép các ứng dụng 
 
 ## Thiết Lập
 
-MCP server được khởi động bằng `gac serve` và giao tiếp qua stdio, phương thức truyền tải MCP tiêu chuẩn.
+MCP server được khởi động bằng `uvx gac serve` và giao tiếp qua stdio, phương thức truyền tải MCP tiêu chuẩn.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Tạo thông điệp commit được hỗ trợ bởi AI và tùy chọn thực 
 
 MCP server sử dụng cấu hình GAC hiện có của bạn. Không cần thiết lập thêm ngoài:
 
-1. **Nhà cung cấp và mô hình**: Chạy `gac init` hoặc `gac model` để cấu hình nhà cung cấp AI
-2. **Khóa API**: Được lưu trong `~/.gac.env` (thiết lập trong quá trình `gac init`)
+1. **Nhà cung cấp và mô hình**: Chạy `uvx gac init` hoặc `uvx gac model` để cấu hình nhà cung cấp AI
+2. **Khóa API**: Được lưu trong `~/.gac.env` (thiết lập trong quá trình `uvx gac init`)
 3. **Cài đặt tùy chọn**: Tất cả các biến môi trường GAC đều áp dụng (`GAC_LANGUAGE`, `GAC_VERBOSE`, v.v.)
 
 Xem [tài liệu chính](USAGE.md#ghi-chú-cấu-hình) để biết tất cả các tùy chọn cấu hình.
@@ -192,7 +192,7 @@ Xem [tài liệu chính](USAGE.md#ghi-chú-cấu-hình) để biết tất cả 
 
 ### "No model configured"
 
-Chạy `gac init` để thiết lập nhà cung cấp AI và mô hình trước khi sử dụng MCP server.
+Chạy `uvx gac init` để thiết lập nhà cung cấp AI và mô hình trước khi sử dụng MCP server.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Xác minh GAC đã được cài đặt và có thể truy cập:
 
 ```bash
 uvx gac --version
-# hoặc
-gac --version
 ```
 
 Nếu sử dụng `uvx`, đảm bảo `uv` đã được cài đặt và nằm trong PATH của bạn.
@@ -216,7 +214,7 @@ Nếu sử dụng `uvx`, đảm bảo `uv` đã được cài đặt và nằm t
 
 ### Lỗi đầu ra Rich
 
-MCP server tự động chuyển hướng tất cả đầu ra Rich console sang stderr để ngăn lỗi giao thức stdio. Nếu bạn thấy đầu ra bị lỗi, hãy đảm bảo bạn đang chạy `gac serve` (không phải `gac` trực tiếp) khi sử dụng MCP.
+MCP server tự động chuyển hướng tất cả đầu ra Rich console sang stderr để ngăn lỗi giao thức stdio. Nếu bạn thấy đầu ra bị lỗi, hãy đảm bảo bạn đang chạy `uvx gac serve` (không phải `uvx gac` trực tiếp) khi sử dụng MCP.
 
 ## Xem Thêm
 

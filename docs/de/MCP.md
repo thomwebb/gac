@@ -39,7 +39,7 @@ Das Model Context Protocol ist ein offener Standard, der es KI-Anwendungen ermoe
 
 ## Einrichtung
 
-Der MCP-Server wird mit `gac serve` gestartet und kommuniziert ueber stdio, den Standard-MCP-Transport.
+Der MCP-Server wird mit `uvx gac serve` gestartet und kommuniziert ueber stdio, den Standard-MCP-Transport.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Generiert eine KI-gestuetzte Commit-Nachricht und fuehrt optional den Commit aus
 
 Der MCP-Server verwendet Ihre bestehende GAC-Konfiguration. Ueber Folgendes hinaus ist keine zusaetzliche Einrichtung erforderlich:
 
-1. **Provider und Modell**: Fuehren Sie `gac init` oder `gac model` aus, um Ihren KI-Provider zu konfigurieren
-2. **API-Schluessel**: Gespeichert in `~/.gac.env` (eingerichtet waehrend `gac init`)
+1. **Provider und Modell**: Fuehren Sie `uvx gac init` oder `uvx gac model` aus, um Ihren KI-Provider zu konfigurieren
+2. **API-Schluessel**: Gespeichert in `~/.gac.env` (eingerichtet waehrend `uvx gac init`)
 3. **Optionale Einstellungen**: Alle GAC-Umgebungsvariablen gelten (`GAC_LANGUAGE`, `GAC_VERBOSE` usw.)
 
 Siehe die [Hauptdokumentation](USAGE.md#konfigurationshinweise) fuer alle Konfigurationsoptionen.
@@ -192,7 +192,7 @@ Siehe die [Hauptdokumentation](USAGE.md#konfigurationshinweise) fuer alle Konfig
 
 ### "No model configured"
 
-Fuehren Sie `gac init` aus, um Ihren KI-Provider und Ihr Modell einzurichten, bevor Sie den MCP-Server verwenden.
+Fuehren Sie `uvx gac init` aus, um Ihren KI-Provider und Ihr Modell einzurichten, bevor Sie den MCP-Server verwenden.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Ueberpruefen Sie, ob GAC installiert und zugaenglich ist:
 
 ```bash
 uvx gac --version
-# oder
-gac --version
 ```
 
 Wenn Sie `uvx` verwenden, stellen Sie sicher, dass `uv` installiert und in Ihrem PATH ist.
@@ -216,7 +214,7 @@ Stellen Sie sicher, dass die MCP-Konfigurationsdatei am richtigen Ort fuer Ihren
 
 ### Rich-Ausgabe-Korruption
 
-Der MCP-Server leitet alle Rich-Konsolenausgaben automatisch auf stderr um, um stdio-Protokoll-Korruption zu verhindern. Wenn Sie fehlerhafte Ausgaben sehen, stellen Sie sicher, dass Sie `gac serve` (nicht `gac` direkt) ausfuehren, wenn Sie MCP verwenden.
+Der MCP-Server leitet alle Rich-Konsolenausgaben automatisch auf stderr um, um stdio-Protokoll-Korruption zu verhindern. Wenn Sie fehlerhafte Ausgaben sehen, stellen Sie sicher, dass Sie `uvx gac serve` (nicht `uvx gac` direkt) ausfuehren, wenn Sie MCP verwenden.
 
 ## Siehe auch
 

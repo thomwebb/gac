@@ -39,7 +39,7 @@ The Model Context Protocol is an open standard that lets AI applications call ex
 
 ## Setup
 
-The MCP server is started with `gac serve` and communicates over stdio, the standard MCP transport.
+The MCP server is started with `uvx gac serve` and communicates over stdio, the standard MCP transport.
 
 ### Claude Code
 
@@ -182,8 +182,8 @@ Generate an AI-powered commit message and optionally execute the commit.
 
 The MCP server uses your existing GAC configuration. No additional setup is needed beyond:
 
-1. **Provider and model**: Run `gac init` or `gac model` to configure your AI provider
-2. **API keys**: Stored in `~/.gac.env` (set up during `gac init`)
+1. **Provider and model**: Run `uvx gac init` or `uvx gac model` to configure your AI provider
+2. **API keys**: Stored in `~/.gac.env` (set up during `uvx gac init`)
 3. **Optional settings**: All GAC environment variables apply (`GAC_LANGUAGE`, `GAC_VERBOSE`, etc.)
 
 See the [main documentation](USAGE.md#configuration-notes) for all configuration options.
@@ -192,7 +192,7 @@ See the [main documentation](USAGE.md#configuration-notes) for all configuration
 
 ### "No model configured"
 
-Run `gac init` to set up your AI provider and model before using the MCP server.
+Run `uvx gac init` to set up your AI provider and model before using the MCP server.
 
 ### "No staged changes found"
 
@@ -204,8 +204,6 @@ Verify GAC is installed and accessible:
 
 ```bash
 uvx gac --version
-# or
-gac --version
 ```
 
 If using `uvx`, ensure `uv` is installed and on your PATH.
@@ -216,7 +214,7 @@ Make sure the MCP configuration file is in the correct location for your client 
 
 ### Rich output corruption
 
-The MCP server automatically redirects all Rich console output to stderr to prevent stdio protocol corruption. If you see garbled output, ensure you're running `gac serve` (not `gac` directly) when using MCP.
+The MCP server automatically redirects all Rich console output to stderr to prevent stdio protocol corruption. If you see garbled output, ensure you're running `uvx gac serve` (not `uvx gac` directly) when using MCP.
 
 ## See Also
 
