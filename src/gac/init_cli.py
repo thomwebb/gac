@@ -116,7 +116,7 @@ def _configure_stats(existing_env: dict[str, str], env_path: Path = GAC_ENV_PATH
     click.echo("\nGAC Stats")
     click.echo(
         "GAC can track local usage statistics — total gacs, commits, tokens, streaks,\n"
-        "and per-project / per-model breakdowns. View them anytime with `gac stats`."
+        "and per-project / per-model breakdowns. View them anytime with `uvx gac stats`."
     )
     click.echo(f"Data stays on your machine in {Path.home() / '.gac_stats.json'}.")
     click.echo("Nothing is uploaded. There is no telemetry.")

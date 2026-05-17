@@ -1,7 +1,7 @@
 """CLI for configuring reasoning effort interactively.
 
-Provides both a standalone `gac reasoning` subcommand and a reusable
-workflow function consumed by `gac init` and `gac model`.
+Provides both a standalone `uvx gac reasoning` subcommand and a reusable
+workflow function consumed by `uvx gac init` and `uvx gac model`.
 """
 
 from pathlib import Path
