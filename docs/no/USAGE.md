@@ -2,7 +2,7 @@
 
 [English](../en/USAGE.md) | [简体中文](../zh-CN/USAGE.md) | [繁體中文](../zh-TW/USAGE.md) | [日本語](../ja/USAGE.md) | [한국어](../ko/USAGE.md) | [हिन्दी](../hi/USAGE.md) | [Tiếng Việt](../vi/USAGE.md) | [Français](../fr/USAGE.md) | [Русский](../ru/USAGE.md) | [Español](../es/USAGE.md) | [Português](../pt/USAGE.md) | **Norsk** | [Svenska](../sv/USAGE.md) | [Deutsch](../de/USAGE.md) | [Nederlands](../nl/USAGE.md) | [Italiano](../it/USAGE.md)
 
-Dette dokumentet beskriver alle tilgjengelige flagg og alternativer for `gac` CLI-verktøyet.
+Dette dokumentet beskriver alle tilgjengelige flagg og alternativer for `uvx gac` CLI-verktøyet.
 
 ## Innholdsfortegnelse
 
@@ -34,9 +34,9 @@ Dette dokumentet beskriver alle tilgjengelige flagg og alternativer for `gac` CL
 ## Grunnleggende Bruk
 
 ```sh
-gac init
+uvx gac init
 # Følg deretter instruksjonene for å konfigurere din provider, modell og API-nøkler interaktivt
-gac
+uvx gac
 ```
 
 Genererer en LLM-drevet commit-melding for staged endringer og ber om bekreftelse. Bekreftelsesprompten aksepterer:
@@ -226,7 +226,7 @@ Du kan også sette `GAC_USE_50_72_RULE=true` i `.gac.env` filen din for å allti
 
 ## Avansert
 
-- Kombiner flagg for mer kraftfulle workflows (f.eks. `gac -ayp` for å stage, auto-bekrefte og pushe)
+- Kombiner flagg for mer kraftfulle workflows (f.eks. `uvx gac -ayp` for å stage, auto-bekrefte og pushe)
 - Bruk `--show-prompt` for å debugge eller gjennomgå prompten sendt til LLM-en
 - Juster detaljnivå med `--log-level` eller `--quiet`
 
@@ -235,7 +235,7 @@ Du kan også sette `GAC_USE_50_72_RULE=true` i `.gac.env` filen din for å allti
 `--no-verify`-flagget lar deg hoppe over alle pre-commit eller lefthook hooks konfigurert i prosjektet ditt:
 
 ```sh
-gac --no-verify  # Hopp over alle pre-commit og lefthook hooks
+uvx gac --no-verify  # Hopp over alle pre-commit og lefthook hooks
 ```
 
 **Bruk `--no-verify` når:**
@@ -248,12 +248,12 @@ gac --no-verify  # Hopp over alle pre-commit og lefthook hooks
 
 ### Sikkerhetsskanning
 
-gac inkluderer innebygd sikkerhetsskanning som automatisk oppdager potensielle hemmeligheter og API-nøkler i dine staged endringer før commit. Dette hjelper med å forhindre utilsiktet commit av sensitiv informasjon.
+uvx gac inkluderer innebygd sikkerhetsskanning som automatisk oppdager potensielle hemmeligheter og API-nøkler i dine staged endringer før commit. Dette hjelper med å forhindre utilsiktet commit av sensitiv informasjon.
 
 **Hoppe over sikkerhetsskanninger:**
 
 ```sh
-gac --skip-secret-scan  # Hopp over sikkerhetsskanning for denne commit
+uvx gac --skip-secret-scan  # Hopp over sikkerhetsskanning for denne commit
 ```
 
 **For å deaktivere permanent:** Sett `GAC_SKIP_SECRET_SCAN=true` i din `.gac.env`-fil.
@@ -271,7 +271,7 @@ gac --skip-secret-scan  # Hopp over sikkerhetsskanning for denne commit
 `--no-verify-ssl`-flagget lar deg hoppe over SSL-sertifikatverifisering for API-kall:
 
 ```sh
-gac --no-verify-ssl  # Hopp over SSL-verifisering for denne commit
+uvx gac --no-verify-ssl  # Hopp over SSL-verifisering for denne commit
 ```
 
 **For å sette permanent:** Sett `GAC_NO_VERIFY_SSL=true` i din `.gac.env`-fil.
@@ -286,12 +286,12 @@ gac --no-verify-ssl  # Hopp over SSL-verifisering for denne commit
 
 ### Signed-off-by-linje (DCO-samsvar)
 
-gac støtter å legge til en `Signed-off-by`-linje i commit-meldinger, som er påkrevd for [Developer Certificate of Origin (DCO)](https://developercertificate.org/)-samsvar i mange open source-prosjekter.
+uvx gac støtter å legge til en `Signed-off-by`-linje i commit-meldinger, som er påkrevd for [Developer Certificate of Origin (DCO)](https://developercertificate.org/)-samsvar i mange open source-prosjekter.
 
 **Legg til signoff :**
 
 ```sh
-gac --signoff  # Legg til Signed-off-by-linje i commit-meldingen (DCO-samsvar)
+uvx gac --signoff  # Legg til Signed-off-by-linje i commit-meldingen (DCO-samsvar)
 ```
 
 **For å aktivere permanent :** Sett `GAC_SIGNOFF=true` i `.gac.env`-filen din, eller legg til `signoff=true` i konfigurasjonen din.
@@ -315,8 +315,8 @@ git config --global user.email "your.email@example.com"
 
 ## Konfigurasjonsnotater
 
-- Den anbefalte måten å sette opp gac er å kjøre `gac init` og følge de interaktive promptene.
-- Allerede konfigurert språk og trenger bare å bytte provider eller modeller? Kjør `gac model` for å gjenta oppsettet uten språkspørsmål.
+- Den anbefalte måten å sette opp gac er å kjøre `uvx gac init` og følge de interaktive promptene.
+- Allerede konfigurert språk og trenger bare å bytte provider eller modeller? Kjør `uvx gac model` for å gjenta oppsettet uten språkspørsmål.
 - **Bruker Claude Code?** Se [Claude Code oppsettguide](CLAUDE_CODE.md) for OAuth-autentiseringsinstruksjoner.
 - **Bruker ChatGPT OAuth?** Se [ChatGPT OAuth oppsettguide](CHATGPT_OAUTH.md) for nettleserbaserte autentiseringsinstruksjoner.
 - **Bruker du GitHub Copilot?** Se [GitHub Copilot-oppsettsguiden](GITHUB_COPILOT.md) for instruksjoner om Device Flow-autentisering.
@@ -340,7 +340,7 @@ Du kan tilpasse gac sitt oppførsel med disse valgfrie miljøvariablene:
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maksimum tokens for genererte meldinger (automatisk skalert 2-5x når du bruker `--group` basert på filantall; overstyr for å gå høyere eller lavere)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Varsel når prompter overstiger dette tokenantallet
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Bruk et egendefinert systemprompt for commit-meldingsgenerering
-- `GAC_LANGUAGE=Norwegian` - Generer commit-meldinger på et spesifikt språk (f.eks. Norwegian, French, Japanese, German). Støtter fulle navn eller ISO-koder (nb, fr, ja, de, zh-CN). Bruk `gac language` for interaktivt valg
+- `GAC_LANGUAGE=Norwegian` - Generer commit-meldinger på et spesifikt språk (f.eks. Norwegian, French, Japanese, German). Støtter fulle navn eller ISO-koder (nb, fr, ja, de, zh-CN). Bruk `uvx gac language` for interaktivt valg
 - `GAC_TRANSLATE_PREFIXES=true` - Oversett konvensjonelle commit-prefikser (feat, fix, etc.) til målspråket (default: false, beholder prefikser på engelsk)
 - `GAC_SKIP_SECRET_SCAN=true` - Deaktiver automatisk sikkerhetsskanning for hemmeligheter i staged endringer (bruk med forsiktighet)
 - `GAC_NO_VERIFY_SSL=true` - Hopp over SSL-sertifikatverifisering for API-kall (nyttig for bedriftsproxyer som avlytter SSL-trafikk)
@@ -354,32 +354,32 @@ For detaljert veiledning for å lage egendefinerte systemprompts, se [docs/CUSTO
 
 Følgende underkommandoer er tilgjengelige:
 
-- `gac init` — Interaktiv oppsettsguide for provider, modell og språkkonfigurasjon
-- `gac model` — Provider/modell/API-nøkkel oppsett uten språkprompts (ideelt for raske bytter)
-- `gac auth` — Vis OAuth-autentiseringsstatus for alle leverandører
-- `gac auth claude-code login` — Logg inn på Claude Code med OAuth (åpner nettleser)
-- `gac auth claude-code logout` — Logg ut av Claude Code og fjern lagret token
-- `gac auth claude-code status` — Sjekk Claude Code-autentiseringsstatus
-- `gac auth chatgpt login` — Logg inn på ChatGPT med OAuth (åpner nettleser)
-- `gac auth chatgpt logout` — Logg ut av ChatGPT og fjern lagret token
-- `gac auth chatgpt status` — Sjekk ChatGPT-autentiseringsstatus
-- `gac auth copilot login` — Logg inn på GitHub Copilot med Device Flow
-- `gac auth copilot login --host ghe.mycompany.com` — Logg inn på Copilot på en GitHub Enterprise-instans
-- `gac auth copilot logout` — Logg ut av Copilot og fjern lagrede tokens
-- `gac auth copilot status` — Sjekk Copilot-autentiseringsstatus
-- `gac config show` — Vis nåværende konfigurasjon
-- `gac config set KEY VALUE` — Sett en konfigurasjonsnøkkel i `$HOME/.gac.env`
-- `gac config get KEY` — Hent en konfigurasjonsverdi
-- `gac config unset KEY` — Fjern en konfigurasjonsnøkkel fra `$HOME/.gac.env`
-- `gac language` (eller `gac lang`) — Interaktivt språkvalg for commit-meldinger (setter GAC_LANGUAGE)
-- `gac editor` (eller `gac edit`) — Interaktiv editorvelger for `e`-knappen ved bekreftelsesprompten (setter GAC_EDITOR)
-- `gac diff` — Vis filtrert git diff med alternativer for staged/unstaged endringer, farge og trunkering
-- `gac serve` — Start GAC som [MCP-server](MCP.md) for AI-agent integrasjon (stdio transport)
-- `gac stats show` — Vis din gac-bruksstatistikk (totaler, streaks, daglig & ukentlig aktivitet, tokenbruk, topprosjekter, toppmodeller)
-- `gac stats models` — Vis detaljert statistikk for alle modeller med token-nedbryting og hastighetssammenligningsdiagram
-- `gac stats projects` — Vis statistikk for alle prosjekter med token-nedbryting
-- `gac stats reset` — Tilbakestill all statistikk til null (ber om bekreftelse)
-- `gac stats reset model <model-id>` — Tilbakestill statistikk for en spesifikk modell (ufølsom for store/små bokstaver)
+- `uvx gac init` — Interaktiv oppsettsguide for provider, modell og språkkonfigurasjon
+- `uvx gac model` — Provider/modell/API-nøkkel oppsett uten språkprompts (ideelt for raske bytter)
+- `uvx gac auth` — Vis OAuth-autentiseringsstatus for alle leverandører
+- `uvx gac auth claude-code login` — Logg inn på Claude Code med OAuth (åpner nettleser)
+- `uvx gac auth claude-code logout` — Logg ut av Claude Code og fjern lagret token
+- `uvx gac auth claude-code status` — Sjekk Claude Code-autentiseringsstatus
+- `uvx gac auth chatgpt login` — Logg inn på ChatGPT med OAuth (åpner nettleser)
+- `uvx gac auth chatgpt logout` — Logg ut av ChatGPT og fjern lagret token
+- `uvx gac auth chatgpt status` — Sjekk ChatGPT-autentiseringsstatus
+- `uvx gac auth copilot login` — Logg inn på GitHub Copilot med Device Flow
+- `uvx gac auth copilot login --host ghe.mycompany.com` — Logg inn på Copilot på en GitHub Enterprise-instans
+- `uvx gac auth copilot logout` — Logg ut av Copilot og fjern lagrede tokens
+- `uvx gac auth copilot status` — Sjekk Copilot-autentiseringsstatus
+- `uvx gac config show` — Vis nåværende konfigurasjon
+- `uvx gac config set KEY VALUE` — Sett en konfigurasjonsnøkkel i `$HOME/.gac.env`
+- `uvx gac config get KEY` — Hent en konfigurasjonsverdi
+- `uvx gac config unset KEY` — Fjern en konfigurasjonsnøkkel fra `$HOME/.gac.env`
+- `uvx gac language` (eller `uvx gac lang`) — Interaktivt språkvalg for commit-meldinger (setter GAC_LANGUAGE)
+- `uvx gac editor` (eller `uvx gac edit`) — Interaktiv editorvelger for `e`-knappen ved bekreftelsesprompten (setter GAC_EDITOR)
+- `uvx gac diff` — Vis filtrert git diff med alternativer for staged/unstaged endringer, farge og trunkering
+- `uvx gac serve` — Start GAC som [MCP-server](MCP.md) for AI-agent integrasjon (stdio transport)
+- `uvx gac stats show` — Vis din gac-bruksstatistikk (totaler, streaks, daglig & ukentlig aktivitet, tokenbruk, topprosjekter, toppmodeller)
+- `uvx gac stats models` — Vis detaljert statistikk for alle modeller med token-nedbryting og hastighetssammenligningsdiagram
+- `uvx gac stats projects` — Vis statistikk for alle prosjekter med token-nedbryting
+- `uvx gac stats reset` — Tilbakestill all statistikk til null (ber om bekreftelse)
+- `uvx gac stats reset model <model-id>` — Tilbakestill statistikk for en spesifikk modell (ufølsom for store/små bokstaver)
 
 ## Interaktiv Modus
 
@@ -411,7 +411,7 @@ Interaktiv modus er spesielt nyttig for:
 **Basis interaktiv modus:**
 
 ```sh
-gac -i
+uvx gac -i
 ```
 
 Dette vil:
@@ -424,28 +424,28 @@ Dette vil:
 **Interaktiv modus med staged endringer:**
 
 ```sh
-gac -ai
+uvx gac -ai
 # Stage alle endringer, still spørsmål for bedre kontekst
 ```
 
 **Interaktiv modus med spesifikke hints:**
 
 ```sh
-gac -i -h "Databasemigrering for brukerprofiler"
+uvx gac -i -h "Databasemigrering for brukerprofiler"
 # Still spørsmål mens du gir et spesifikt hint for å fokusere LLM
 ```
 
 **Interaktiv modus med detaljert output:**
 
 ```sh
-gac -i -v
+uvx gac -i -v
 # Still spørsmål og generer en detaljert, strukturert commit-melding
 ```
 
 **Automatisk bekreftet interaktiv modus:**
 
 ```sh
-gac -i -y
+uvx gac -i -y
 # Still spørsmål men bekrefter resulterende commit automatisk
 ```
 
@@ -473,10 +473,10 @@ Interaktiv modus fungerer godt med de fleste andre flagg:
 
 ```sh
 # Stage alle endringer og still spørsmål
-gac -ai
+uvx gac -ai
 
 # Still spørsmål med detaljert output
-gac -i -v
+uvx gac -i -v
 ```
 
 ### Beste Praksis
@@ -489,7 +489,7 @@ gac -i -v
 
 ## Bruksstatistikk
 
-gac sporer lettvektig bruksstatistikk slik at du kan se din commit-aktivitet, streaks, tokenbruk og mest aktive prosjekter og modeller. Statistikk lagres lokalt i `~/.gac_stats.json` og sendes aldri noe sted — det er ingen telemetri.
+uvx gac sporer lettvektig bruksstatistikk slik at du kan se din commit-aktivitet, streaks, tokenbruk og mest aktive prosjekter og modeller. Statistikk lagres lokalt i `~/.gac_stats.json` og sendes aldri noe sted — det er ingen telemetri.
 
 **Hva spores:** totalt antall gac-kjøringer, totalt antall committer, totale prompt-, output- og reasoning-tokens, første/siste bruk-datoer, daglige og ukentlige tellinger (gacs, committer, tokens), nåværende og lengste streak, aktivitet per prosjekt (gacs, committer, tokens) og aktivitet per modell (gacs, tokens).
 
@@ -497,58 +497,58 @@ gac sporer lettvektig bruksstatistikk slik at du kan se din commit-aktivitet, st
 
 ### Opt-in eller Opt-out
 
-`gac init` spør om du vil aktivere statistikk og forklarer nøyaktig hva som lagres. Du kan når som helst ombestemme deg:
+`uvx gac init` spør om du vil aktivere statistikk og forklarer nøyaktig hva som lagres. Du kan når som helst ombestemme deg:
 
 - **Aktiver statistikk:** fjern `GAC_DISABLE_STATS` eller sett den til `false`/`0`/`no`/`off`/tom.
 - **Deaktiver statistikk:** sett `GAC_DISABLE_STATS` til en truthy-verdi (`true`, `1`, `yes`, `on`).
 
-Når du avslår statistikk under `gac init` og en eksisterende `~/.gac_stats.json` oppdages, blir du tilbudt muligheten til å slette den.
+Når du avslår statistikk under `uvx gac init` og en eksisterende `~/.gac_stats.json` oppdages, blir du tilbudt muligheten til å slette den.
 
 ### Statistikk-underkommandoer
 
-| Kommando                           | Beskrivelse                                                                                                       |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `gac stats`                        | Vis din statistikk (samme som `gac stats show`)                                                                   |
-| `gac stats show`                   | Vis fullstendig statistikk: totaler, streaks, daglig & ukentlig aktivitet, tokenbruk, topprosjekter, toppmodeller |
-| `gac stats models`                 | Vis detaljert statistikk for **alle** brukte modeller, med token-nedbryting og hastighetssammenligningsdiagram    |
-| `gac stats projects`               | Vis statistikk for **alle** prosjekter med token-nedbryting                                                       |
-| `gac stats reset`                  | Tilbakestill all statistikk til null (ber om bekreftelse)                                                         |
-| `gac stats reset model <model-id>` | Tilbakestill statistikk for en spesifikk modell (ufølsom for store/små bokstaver)                                 |
+| Kommando                               | Beskrivelse                                                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `uvx gac stats`                        | Vis din statistikk (samme som `uvx gac stats show`)                                                               |
+| `uvx gac stats show`                   | Vis fullstendig statistikk: totaler, streaks, daglig & ukentlig aktivitet, tokenbruk, topprosjekter, toppmodeller |
+| `uvx gac stats models`                 | Vis detaljert statistikk for **alle** brukte modeller, med token-nedbryting og hastighetssammenligningsdiagram    |
+| `uvx gac stats projects`               | Vis statistikk for **alle** prosjekter med token-nedbryting                                                       |
+| `uvx gac stats reset`                  | Tilbakestill all statistikk til null (ber om bekreftelse)                                                         |
+| `uvx gac stats reset model <model-id>` | Tilbakestill statistikk for en spesifikk modell (ufølsom for store/små bokstaver)                                 |
 
 ### Eksempler
 
 ```sh
 # Vis din totale statistikk
-gac stats
+uvx gac stats
 
 # Detaljert nedbryting av alle brukte modeller
-gac stats models
+uvx gac stats models
 
 # Statistikk for alle prosjekter
-gac stats projects
+uvx gac stats projects
 
 # Tilbakestill all statistikk (med bekreftelsesprompt)
-gac stats reset
+uvx gac stats reset
 
 # Tilbakestill statistikk for en spesifikk modell
-gac stats reset model wafer:deepseek-v4-pro
+uvx gac stats reset model wafer:deepseek-v4-pro
 ```
 
 ### Hva du vil se
 
-Å kjøre `gac stats` viser:
+Å kjøre `uvx gac stats` viser:
 
 - **Totalt antall gacs og committer** — hvor mange ganger du har brukt gac og hvor mange committer det har opprettet
 - **Nåværende og lengste streak** — etterfølgende dager med gac-aktivitet (🔥 ved 5+ dager)
 - **Aktivitetssammendrag** — dagens og denne ukens gacs, committer og tokens sammenlignet med din toppedag og toppeuke
 - **Topprosjekter** — dine 5 mest aktive repos etter gac- + commit-antall, med tokenbruk per prosjekt
 
-Running `gac stats projects` viser **alle** prosjekter (ikke bare de 5 øverste) med:
+Running `uvx gac stats projects` viser **alle** prosjekter (ikke bare de 5 øverste) med:
 
 - **Alle prosjekter-tabell** — hvert prosjekt sortert etter aktivitet, med gac-antall, commit-antall, prompt-tokens, output-tokens, reasoning-tokens og totale tokens
 - **Toppmodeller** — dine 5 mest brukte modeller med prompt-, output- og totale tokens forbruk
 
-Running `gac stats models` viser **alle** modeller (ikke bare de 5 øverste) med:
+Running `uvx gac stats models` viser **alle** modeller (ikke bare de 5 øverste) med:
 
 - **Alle modeller-tabell** — hver brukte modell sortert etter aktivitet, med gac-antall, hastighet (tokens/sek), prompt-tokens, output-tokens, reasoning-tokens og totale tokens
 - **Hastighetssammenligning** — et horisontalt stolpediagram av alle modeller med kjente hastigheter, sortert fra raskest til tregest, fargekodet etter hastighetspersentil (🟡 lynrask, 🟢 rask, 🔵 moderat, 🔘 treg)

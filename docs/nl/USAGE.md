@@ -2,7 +2,7 @@
 
 [English](../en/USAGE.md) | [简体中文](../zh-CN/USAGE.md) | [繁體中文](../zh-TW/USAGE.md) | [日本語](../ja/USAGE.md) | [한국어](../ko/USAGE.md) | [हिन्दी](../hi/USAGE.md) | [Tiếng Việt](../vi/USAGE.md) | [Français](../fr/USAGE.md) | [Рус../](../ru/USAGE.md) | [Español](../es/USAGE.md) | [Português](../pt/USAGE.md) | [Norsk](../no/USAGE.md) | [Svenska](../sv/USAGE.md) | [Deutsch](../de/USAGE.md) | **Nederlands** | [Italiano](../it/USAGE.md)
 
-Dit document beschrijft alle beschikbare vlaggen en opties voor de `gac` CLI tool.
+Dit document beschrijft alle beschikbare vlaggen en opties voor de `uvx gac` CLI tool.
 
 ## Inhoudsopgave
 
@@ -34,9 +34,9 @@ Dit document beschrijft alle beschikbare vlaggen en opties voor de `gac` CLI too
 ## Basisgebruik
 
 ```sh
-gac init
+uvx gac init
 # Volg daarna de prompts om uw provider, model en API sleutels interactief te configureren
-gac
+uvx gac
 ```
 
 Genereert een LLM-aangedreven commitbericht voor staged wijzigingen en vraagt om bevestiging. De bevestigingsprompt accepteert:
@@ -226,7 +226,7 @@ U kunt ook `GAC_USE_50_72_RULE=true` instellen in uw `.gac.env` bestand om deze 
 
 ## Geavanceerd
 
-- Combineer vlaggen voor krachtigere workflows (bv., `gac -ayp` om te stage, auto-bevestigen en pushen)
+- Combineer vlaggen voor krachtigere workflows (bv., `uvx gac -ayp` om te stage, auto-bevestigen en pushen)
 - Gebruik `--show-prompt` om te debuggen of de prompt die naar de LLM wordt gestuurd te bekijken
 - Pas verbose aan met `--log-level` of `--quiet`
 
@@ -235,7 +235,7 @@ U kunt ook `GAC_USE_50_72_RULE=true` instellen in uw `.gac.env` bestand om deze 
 De `--no-verify` vlag staat u toe om pre-commit of lefthook hooks te overslaan die in uw project geconfigureerd zijn:
 
 ```sh
-gac --no-verify  # Sla alle pre-commit en lefthook hooks over
+uvx gac --no-verify  # Sla alle pre-commit en lefthook hooks over
 ```
 
 **Gebruik `--no-verify` wanneer:**
@@ -248,12 +248,12 @@ gac --no-verify  # Sla alle pre-commit en lefthook hooks over
 
 ### Security Scanning
 
-gac inclusief ingebouwde security scanning die automatisch potentiële geheimen en API sleutels detecteert in uw staged wijzigingen voordat u commit. Dit helpt voorkomen dat u per ongeluk gevoelige informatie commit.
+uvx gac inclusief ingebouwde security scanning die automatisch potentiële geheimen en API sleutels detecteert in uw staged wijzigingen voordat u commit. Dit helpt voorkomen dat u per ongeluk gevoelige informatie commit.
 
 **Security scans overslaan:**
 
 ```sh
-gac --skip-secret-scan  # Sla security scan over voor deze commit
+uvx gac --skip-secret-scan  # Sla security scan over voor deze commit
 ```
 
 **Om permanent uit te schakelen:** Stel `GAC_SKIP_SECRET_SCAN=true` in uw `.gac.env` bestand.
@@ -271,7 +271,7 @@ gac --skip-secret-scan  # Sla security scan over voor deze commit
 De `--no-verify-ssl` vlag staat u toe om SSL-certificaatverificatie voor API-aanroepen over te slaan:
 
 ```sh
-gac --no-verify-ssl  # Sla SSL-verificatie over voor deze commit
+uvx gac --no-verify-ssl  # Sla SSL-verificatie over voor deze commit
 ```
 
 **Om permanent in te stellen:** Stel `GAC_NO_VERIFY_SSL=true` in uw `.gac.env` bestand.
@@ -286,12 +286,12 @@ gac --no-verify-ssl  # Sla SSL-verificatie over voor deze commit
 
 ### Signed-off-by Regel (DCO-naleving)
 
-gac ondersteunt het toevoegen van een `Signed-off-by` regel aan commitberichten, wat vereist is voor naleving van de [Developer Certificate of Origin (DCO)](https://developercertificate.org/) in veel open-source projecten.
+uvx gac ondersteunt het toevoegen van een `Signed-off-by` regel aan commitberichten, wat vereist is voor naleving van de [Developer Certificate of Origin (DCO)](https://developercertificate.org/) in veel open-source projecten.
 
 **Signoff toevoegen :**
 
 ```sh
-gac --signoff  # Voeg Signed-off-by regel toe aan commitbericht (DCO-naleving)
+uvx gac --signoff  # Voeg Signed-off-by regel toe aan commitbericht (DCO-naleving)
 ```
 
 **Om permanent in te stellen :** Stel `GAC_SIGNOFF=true` in je `.gac.env` bestand, of voeg `signoff=true` toe aan je configuratie.
@@ -315,8 +315,8 @@ git config --global user.email "your.email@example.com"
 
 ## Configuratie Notities
 
-- De aanbevolen manier om gac in te stellen is `gac init` uit te voeren en de interactieve prompts te volgen.
-- Al geconfigureerde taal en alleen providers of modellen moeten wisselen? Voer `gac model` uit om de setup te herhalen zonder taalvragen.
+- De aanbevolen manier om gac in te stellen is `uvx gac init` uit te voeren en de interactieve prompts te volgen.
+- Al geconfigureerde taal en alleen providers of modellen moeten wisselen? Voer `uvx gac model` uit om de setup te herhalen zonder taalvragen.
 - **Gebruikt u Claude Code?** Zie de [Claude Code installatiehandleiding](CLAUDE_CODE.md) voor OAuth-authenticatie-instructies.
 - **Gebruikt u ChatGPT OAuth?** Zie de [ChatGPT OAuth installatiehandleiding](CHATGPT_OAUTH.md) voor browsergebaseerde authenticatie-instructies.
 - **GitHub Copilot gebruiken?** Zie de [GitHub Copilot installatiehandleiding](GITHUB_COPILOT.md) voor Device Flow-authenticatie-instructies.
@@ -340,7 +340,7 @@ U kunt het gedrag van gac aanpassen met deze optionele omgevingsvariabelen:
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maximale tokens voor gegenereerde berichten (automatisch geschaald 2-5x bij gebruik van `--group` op basis van bestandsaantal; overschrijf om hoger of lager te gaan)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Waarschuw wanneer prompts dit tokenaantal overschrijden
 - `GAC_SYSTEM_PROMPT_PATH=/pad/naar/custom_prompt.txt` - Gebruik een custom system prompt voor commitberichtgeneratie
-- `GAC_LANGUAGE=Spanish` - Genereer commitberichten in een specifieke taal (bv., Spanish, French, Japanese, German). Ondersteunt volledige namen of ISO codes (es, fr, ja, de, zh-CN). Gebruik `gac language` voor interactieve selectie
+- `GAC_LANGUAGE=Spanish` - Genereer commitberichten in een specifieke taal (bv., Spanish, French, Japanese, German). Ondersteunt volledige namen of ISO codes (es, fr, ja, de, zh-CN). Gebruik `uvx gac language` voor interactieve selectie
 - `GAC_TRANSLATE_PREFIXES=true` - Vertaal conventionele commit prefixen (feat, fix, etc.) naar de doeltaal (standaard: false, houdt prefixen in Engels)
 - `GAC_SKIP_SECRET_SCAN=true` - Schakel automatische security scanning voor geheimen in staged wijzigingen uit (gebruik met voorzichtigheid)
 - `GAC_NO_VERIFY_SSL=true` - Sla SSL-certificaatverificatie over voor API-aanroepen (nuttig voor bedrijfsproxies die SSL-verkeer onderscheppen)
@@ -354,32 +354,32 @@ Voor gedetailleerde begeleiding bij het maken van custom system prompts, zie [do
 
 De volgende subcommando's zijn beschikbaar:
 
-- `gac init` — Interactieve setup wizard voor provider, model en taalconfiguratie
-- `gac model` — Provider/model/API key setup zonder taalprompts (ideaal voor snelle wissels)
-- `gac auth` — Toon OAuth-authenticatiestatus voor alle providers
-- `gac auth claude-code login` — Inloggen op Claude Code met OAuth (opent browser)
-- `gac auth claude-code logout` — Uitloggen uit Claude Code en opgeslagen token verwijderen
-- `gac auth claude-code status` — Claude Code-authenticatiestatus controleren
-- `gac auth chatgpt login` — Inloggen op ChatGPT met OAuth (opent browser)
-- `gac auth chatgpt logout` — Uitloggen uit ChatGPT en opgeslagen token verwijderen
-- `gac auth chatgpt status` — ChatGPT-authenticatiestatus controleren
-- `gac auth copilot login` — Inloggen op GitHub Copilot via Device Flow
-- `gac auth copilot login --host ghe.mycompany.com` — Inloggen op Copilot op een GitHub Enterprise-instantie
-- `gac auth copilot logout` — Uitloggen bij Copilot en opgeslagen tokens verwijderen
-- `gac auth copilot status` — Copilot-authenticatiestatus controleren
-- `gac config show` — Huidige configuratie tonen
-- `gac config set KEY VALUE` — Configuratiesleutel instellen in `$HOME/.gac.env`
-- `gac config get KEY` — Configuratiewaarde krijgen
-- `gac config unset KEY` — Configuratiesleutel verwijderen uit `$HOME/.gac.env`
-- `gac language` (of `gac lang`) — Interactieve taalselector voor commitberichten (stelt GAC_LANGUAGE in)
-- `gac editor` (of `gac edit`) — Interactieve editor-selector voor de `e`-knop bij de bevestigingsprompt (zet GAC_EDITOR)
-- `gac diff` — Gefilterde git diff tonen met opties voor gestagede/ongestagede wijzigingen, kleur en truncatie
-- `gac serve` — Start GAC als [MCP-server](MCP.md) voor AI-agent integratie (stdio transport)
-- `gac stats show` — Bekijk uw gac-gebruiksstatistieken (totalen, streaks, dagelijkse & wekelijkse activiteit, tokengebruik, topprojecten, topmodellen)
-- `gac stats models` — Bekijk gedetailleerde statistieken van alle modellen met token-uitsplitsing en snelheidsvergelijkingsgrafiek
-- `gac stats projects` — Bekijk statistieken van alle projecten met token-uitsplitsing
-- `gac stats reset` — Reset alle statistieken naar nul (vraagt om bevestiging)
-- `gac stats reset model <model-id>` — Reset statistieken voor een specifiek model (hoofdletterongevoelig)
+- `uvx gac init` — Interactieve setup wizard voor provider, model en taalconfiguratie
+- `uvx gac model` — Provider/model/API key setup zonder taalprompts (ideaal voor snelle wissels)
+- `uvx gac auth` — Toon OAuth-authenticatiestatus voor alle providers
+- `uvx gac auth claude-code login` — Inloggen op Claude Code met OAuth (opent browser)
+- `uvx gac auth claude-code logout` — Uitloggen uit Claude Code en opgeslagen token verwijderen
+- `uvx gac auth claude-code status` — Claude Code-authenticatiestatus controleren
+- `uvx gac auth chatgpt login` — Inloggen op ChatGPT met OAuth (opent browser)
+- `uvx gac auth chatgpt logout` — Uitloggen uit ChatGPT en opgeslagen token verwijderen
+- `uvx gac auth chatgpt status` — ChatGPT-authenticatiestatus controleren
+- `uvx gac auth copilot login` — Inloggen op GitHub Copilot via Device Flow
+- `uvx gac auth copilot login --host ghe.mycompany.com` — Inloggen op Copilot op een GitHub Enterprise-instantie
+- `uvx gac auth copilot logout` — Uitloggen bij Copilot en opgeslagen tokens verwijderen
+- `uvx gac auth copilot status` — Copilot-authenticatiestatus controleren
+- `uvx gac config show` — Huidige configuratie tonen
+- `uvx gac config set KEY VALUE` — Configuratiesleutel instellen in `$HOME/.gac.env`
+- `uvx gac config get KEY` — Configuratiewaarde krijgen
+- `uvx gac config unset KEY` — Configuratiesleutel verwijderen uit `$HOME/.gac.env`
+- `uvx gac language` (of `uvx gac lang`) — Interactieve taalselector voor commitberichten (stelt GAC_LANGUAGE in)
+- `uvx gac editor` (of `uvx gac edit`) — Interactieve editor-selector voor de `e`-knop bij de bevestigingsprompt (zet GAC_EDITOR)
+- `uvx gac diff` — Gefilterde git diff tonen met opties voor gestagede/ongestagede wijzigingen, kleur en truncatie
+- `uvx gac serve` — Start GAC als [MCP-server](MCP.md) voor AI-agent integratie (stdio transport)
+- `uvx gac stats show` — Bekijk uw gac-gebruiksstatistieken (totalen, streaks, dagelijkse & wekelijkse activiteit, tokengebruik, topprojecten, topmodellen)
+- `uvx gac stats models` — Bekijk gedetailleerde statistieken van alle modellen met token-uitsplitsing en snelheidsvergelijkingsgrafiek
+- `uvx gac stats projects` — Bekijk statistieken van alle projecten met token-uitsplitsing
+- `uvx gac stats reset` — Reset alle statistieken naar nul (vraagt om bevestiging)
+- `uvx gac stats reset model <model-id>` — Reset statistieken voor een specifiek model (hoofdletterongevoelig)
 
 ## Interactieve Modus
 
@@ -411,7 +411,7 @@ Interactieve modus is vooral handig voor:
 **Basis interactieve modus:**
 
 ```sh
-gac -i
+uvx gac -i
 ```
 
 Dit zal:
@@ -424,28 +424,28 @@ Dit zal:
 **Interactieve modus met gestagede wijzigingen:**
 
 ```sh
-gac -ai
+uvx gac -ai
 # Stage alle wijzigingen, stel dan vragen voor betere context
 ```
 
 **Interactieve modus met specifieke hints:**
 
 ```sh
-gac -i -h "Databasemigratie voor gebruikersprofielen"
+uvx gac -i -h "Databasemigratie voor gebruikersprofielen"
 # Stel vragen terwijl u een specifieke hint geeft om de LLM te focussen
 ```
 
 **Interactieve modus met gedetailleerde output:**
 
 ```sh
-gac -i -v
+uvx gac -i -v
 # Stel vragen en genereer een gedetailleerd, gestructureerd commitbericht
 ```
 
 **Automatisch bevestigde interactieve modus:**
 
 ```sh
-gac -i -y
+uvx gac -i -y
 # Stel vragen maar bevestig de resulterende commit automatisch
 ```
 
@@ -473,10 +473,10 @@ Interactieve modus werkt goed met de meeste andere vlaggen:
 
 ```sh
 # Stage alle wijzigingen en stel vragen
-gac -ai
+uvx gac -ai
 
 # Stel vragen met gedetailleerde output
-gac -i -v
+uvx gac -i -v
 ```
 
 ### Beste Praktijken
@@ -489,7 +489,7 @@ gac -i -v
 
 ## Gebruiksstatistieken
 
-gac houdt lichtgewicht gebruikstatistieken bij, zodat u uw commitactiviteit, streaks, tokengebruik en meest actieve projecten en modellen kunt bekijken. Statistieken worden lokaal opgeslagen in `~/.gac_stats.json` en worden nergens naartoe gestuurd — er is geen telemetrie.
+uvx gac houdt lichtgewicht gebruikstatistieken bij, zodat u uw commitactiviteit, streaks, tokengebruik en meest actieve projecten en modellen kunt bekijken. Statistieken worden lokaal opgeslagen in `~/.gac_stats.json` en worden nergens naartoe gestuurd — er is geen telemetrie.
 
 **Wat wordt bijgehouden:** totaal aantal gac-uitvoeringen, totaal aantal commits, totaal aantal prompt-, output- en reasoning-tokens, eerste/laatste gebruiksdata, dagelijkse en wekelijkse tellingen (gacs, commits, tokens), huidige en langste streak, activiteit per project (gacs, commits, tokens) en activiteit per model (gacs, tokens).
 
@@ -497,58 +497,58 @@ gac houdt lichtgewicht gebruikstatistieken bij, zodat u uw commitactiviteit, str
 
 ### Opt-in of Opt-out
 
-`gac init` vraagt of u statistieken wilt inschakelen en legt uit wat er wordt opgeslagen. U kunt op elk moment van gedachten veranderen:
+`uvx gac init` vraagt of u statistieken wilt inschakelen en legt uit wat er wordt opgeslagen. U kunt op elk moment van gedachten veranderen:
 
 - **Statistieken inschakelen:** verwijder `GAC_DISABLE_STATS` of stel in op `false`/`0`/`no`/`off`/leeg.
 - **Statistieken uitschakelen:** stel `GAC_DISABLE_STATS` in op een truthy-waarde (`true`, `1`, `yes`, `on`).
 
-Wanneer u statistieken afwijst tijdens `gac init` en een bestaand `~/.gac_stats.json` wordt gedetecteerd, wordt u de optie geboden om het te verwijderen.
+Wanneer u statistieken afwijst tijdens `uvx gac init` en een bestaand `~/.gac_stats.json` wordt gedetecteerd, wordt u de optie geboden om het te verwijderen.
 
 ### Statistiek-subcommando's
 
-| Commando                           | Beschrijving                                                                                                                |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `gac stats`                        | Uw statistieken bekijken (hetzelfde als `gac stats show`)                                                                   |
-| `gac stats show`                   | Volledige statistieken tonen: totalen, streaks, dagelijkse & wekelijkse activiteit, tokengebruik, topprojecten, topmodellen |
-| `gac stats models`                 | Gedetailleerde statistieken tonen van **alle** gebruikte modellen, met token-uitsplitsing en snelheidsvergelijkingsgrafiek  |
-| `gac stats projects`               | Statistieken van **alle** projecten tonen met token-uitsplitsing                                                            |
-| `gac stats reset`                  | Alle statistieken naar nul resetten (vraagt om bevestiging)                                                                 |
-| `gac stats reset model <model-id>` | Reset statistieken voor een specifiek model (hoofdletterongevoelig)                                                         |
+| Commando                               | Beschrijving                                                                                                                |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `uvx gac stats`                        | Uw statistieken bekijken (hetzelfde als `uvx gac stats show`)                                                               |
+| `uvx gac stats show`                   | Volledige statistieken tonen: totalen, streaks, dagelijkse & wekelijkse activiteit, tokengebruik, topprojecten, topmodellen |
+| `uvx gac stats models`                 | Gedetailleerde statistieken tonen van **alle** gebruikte modellen, met token-uitsplitsing en snelheidsvergelijkingsgrafiek  |
+| `uvx gac stats projects`               | Statistieken van **alle** projecten tonen met token-uitsplitsing                                                            |
+| `uvx gac stats reset`                  | Alle statistieken naar nul resetten (vraagt om bevestiging)                                                                 |
+| `uvx gac stats reset model <model-id>` | Reset statistieken voor een specifiek model (hoofdletterongevoelig)                                                         |
 
 ### Voorbeelden
 
 ```sh
 # Uw algemene statistieken bekijken
-gac stats
+uvx gac stats
 
 # Gedetailleerde uitsplitsing van alle gebruikte modellen
-gac stats models
+uvx gac stats models
 
 # Statistieken van alle projecten
-gac stats projects
+uvx gac stats projects
 
 # Alle statistieken resetten (met bevestigingsprompt)
-gac stats reset
+uvx gac stats reset
 
 # Reset statistieken voor een specifiek model
-gac stats reset model wafer:deepseek-v4-pro
+uvx gac stats reset model wafer:deepseek-v4-pro
 ```
 
 ### Wat u zult zien
 
-Het uitvoeren van `gac stats` toont:
+Het uitvoeren van `uvx gac stats` toont:
 
 - **Totaal aantal gacs en commits** — hoe vaak u gac heeft gebruikt en hoeveel commits het heeft gemaakt
 - **Huidige en langste streak** — opeenvolgende dagen met gac-activiteit (🔥 bij 5+ dagen)
 - **Activiteitssamenvatting** — gacs, commits en tokens van vandaag en deze week vergeleken met uw piekdag en piekweek
 - **Topprojecten** — uw 5 meest actieve repos op basis van gac- + commit-aantal, met tokengebruik per project
 
-Running `gac stats projects` toont **alle** projecten (niet alleen de top 5) met:
+Running `uvx gac stats projects` toont **alle** projecten (niet alleen de top 5) met:
 
 - **Alle projecten-tabel** — elk project gesorteerd op activiteit, met gac-aantal, commit-aantal, prompt-tokens, output-tokens, reasoning-tokens en totale tokens
 - **Topmodellen** — uw 5 meest gebruikte modellen met verbruikte prompt-, output- en totale tokens
 
-Running `gac stats models` toont **alle** modellen (niet alleen de top 5) met:
+Running `uvx gac stats models` toont **alle** modellen (niet alleen de top 5) met:
 
 - **Alle modellen-tabel** — elk gebruikt model gesorteerd op activiteit, met gac-aantal, snelheid (tokens/sec), prompt-tokens, output-tokens, reasoning-tokens en totale tokens
 - **Snelheidsvergelijking** — een horizontaal staafdiagram van alle modellen met bekende snelheden, gesorteerd van snelst naar traagst, kleurgecodeerd op snelheidspercentiel (🟡 bliksemsnel, 🟢 snel, 🔵 matig, 🔘 traag)

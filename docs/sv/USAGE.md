@@ -2,7 +2,7 @@
 
 [English](../en/USAGE.md) | [简体中文](../zh-CN/USAGE.md) | [繁體中文](../zh-TW/USAGE.md) | [日本語](../ja/USAGE.md) | [한국어](../ko/USAGE.md) | [हिन्दी](../hi/USAGE.md) | [Tiếng Việt](../vi/USAGE.md) | [Français](../fr/USAGE.md) | [Русский](../ru/USAGE.md) | [Español](../es/USAGE.md) | [Português](../pt/USAGE.md) | [Norsk](../no/USAGE.md) | **Svenska** | [Deutsch](../de/USAGE.md) | [Nederlands](../nl/USAGE.md) | [Italiano](../it/USAGE.md)
 
-Det här dokumentet beskriver alla tillgängliga flaggor och alternativ för `gac` CLI-verktyget.
+Det här dokumentet beskriver alla tillgängliga flaggor och alternativ för `uvx gac` CLI-verktyget.
 
 ## Innehållsförteckning
 
@@ -34,9 +34,9 @@ Det här dokumentet beskriver alla tillgängliga flaggor och alternativ för `ga
 ## Grundläggande användning
 
 ```sh
-gac init
+uvx gac init
 # Följ sedan prompterna för att konfigurera din leverantör, modell och API-nycklar interaktivt
-gac
+uvx gac
 ```
 
 Genererar ett LLM-driven commit-meddelande för stageade ändringar och frågar efter bekräftelse. Bekräftelseprompten accepterar:
@@ -226,7 +226,7 @@ Du kan också ställa in `GAC_USE_50_72_RULE=true` i din `.gac.env` fil för att
 
 ## Avancerat
 
-- Kombinera flaggor för mer kraftfulla arbetsflöden (t.ex. `gac -ayp` för att stagea, auto-bekräfta och pusha)
+- Kombinera flaggor för mer kraftfulla arbetsflöden (t.ex. `uvx gac -ayp` för att stagea, auto-bekräfta och pusha)
 - Använd `--show-prompt` för att felsöka eller granska prompten som skickas till LLM:n
 - Justera detaljnivån med `--log-level` eller `--quiet`
 
@@ -235,7 +235,7 @@ Du kan också ställa in `GAC_USE_50_72_RULE=true` i din `.gac.env` fil för att
 Flaggan `--no-verify` gör att du kan hoppa över alla pre-commit eller lefthook hooks som är konfigurerade i ditt projekt:
 
 ```sh
-gac --no-verify  # Hoppa över alla pre-commit och lefthook hooks
+uvx gac --no-verify  # Hoppa över alla pre-commit och lefthook hooks
 ```
 
 **Använd `--no-verify` när:**
@@ -248,12 +248,12 @@ gac --no-verify  # Hoppa över alla pre-commit och lefthook hooks
 
 ### Säkerhetsskanning
 
-gac inkluderar inbyggd säkerhetsskanning som automatiskt upptäcker potentiella hemligheter och API-nycklar i dina stageade ändringar innan commit. Detta hjälper till att förhindra att du oavsiktligt committar känslig information.
+uvx gac inkluderar inbyggd säkerhetsskanning som automatiskt upptäcker potentiella hemligheter och API-nycklar i dina stageade ändringar innan commit. Detta hjälper till att förhindra att du oavsiktligt committar känslig information.
 
 **Hoppa över säkerhetsskanningar:**
 
 ```sh
-gac --skip-secret-scan  # Hoppa över säkerhetsskanning för denna commit
+uvx gac --skip-secret-scan  # Hoppa över säkerhetsskanning för denna commit
 ```
 
 **För att inaktivera permanent:** Ställ in `GAC_SKIP_SECRET_SCAN=true` i din `.gac.env` fil.
@@ -271,7 +271,7 @@ gac --skip-secret-scan  # Hoppa över säkerhetsskanning för denna commit
 Flaggan `--no-verify-ssl` gör att du kan hoppa över SSL-certifikatverifiering för API-anrop:
 
 ```sh
-gac --no-verify-ssl  # Hoppa över SSL-verifiering för denna commit
+uvx gac --no-verify-ssl  # Hoppa över SSL-verifiering för denna commit
 ```
 
 **För att konfigurera permanent:** Ställ in `GAC_NO_VERIFY_SSL=true` i din `.gac.env`-fil.
@@ -286,12 +286,12 @@ gac --no-verify-ssl  # Hoppa över SSL-verifiering för denna commit
 
 ### Signed-off-by-rad (DCO-efterlevnad)
 
-gac stödjer att lägga till en `Signed-off-by`-rad i commit-meddelanden, vilket krävs för [Developer Certificate of Origin (DCO)](https://developercertificate.org/)-efterlevnad i många open source-projekt.
+uvx gac stödjer att lägga till en `Signed-off-by`-rad i commit-meddelanden, vilket krävs för [Developer Certificate of Origin (DCO)](https://developercertificate.org/)-efterlevnad i många open source-projekt.
 
 **Lägg till signoff :**
 
 ```sh
-gac --signoff  # Lägg till Signed-off-by-rad i commit-meddelandet (DCO-efterlevnad)
+uvx gac --signoff  # Lägg till Signed-off-by-rad i commit-meddelandet (DCO-efterlevnad)
 ```
 
 **För att aktivera permanent :** Ställ in `GAC_SIGNOFF=true` i din `.gac.env`-fil, eller lägg till `signoff=true` i din konfiguration.
@@ -315,8 +315,8 @@ git config --global user.email "your.email@example.com"
 
 ## Konfigurationsanteckningar
 
-- Det rekommenderade sättet att konfigurera gac är att köra `gac init` och följa de interaktiva prompterna.
-- Redan konfigurerat språk och bara behöver byta leverantör eller modell? Kör `gac model` för att upprepa installationen utan språkfrågor.
+- Det rekommenderade sättet att konfigurera gac är att köra `uvx gac init` och följa de interaktiva prompterna.
+- Redan konfigurerat språk och bara behöver byta leverantör eller modell? Kör `uvx gac model` för att upprepa installationen utan språkfrågor.
 - **Använder Claude Code?** Se [Claude Code installationsguide](CLAUDE_CODE.md) för OAuth-autentiseringsinstruktioner.
 - **Använder ChatGPT OAuth?** Se [ChatGPT OAuth installationsguide](CHATGPT_OAUTH.md) för webbläsarbaserade autentiseringsinstruktioner.
 - **Använder du GitHub Copilot?** Se [GitHub Copilot-installationsguiden](GITHUB_COPILOT.md) för Device Flow-autentiseringsinstruktioner.
@@ -340,7 +340,7 @@ Du kan anpassa gacs beteende med dessa valfria miljövariabler:
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maximalt antal tokens för genererade meddelanden (automatiskt skalat 2-5x vid användning av `--group` baserat på filantal; åsidosätt för att gå högre eller lägre)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Varna när prompter överskrider denna tokenräkning
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Använd en anpassad systemprompt för commit-meddelande generation
-- `GAC_LANGUAGE=Swedish` - Generera commit-meddelanden på ett specifikt språk (t.ex. Spanish, French, Japanese, German). Stöder fullständiga namn eller ISO-koder (es, fr, ja, de, sv, zh-CN). Använd `gac language` för interaktivt val
+- `GAC_LANGUAGE=Swedish` - Generera commit-meddelanden på ett specifikt språk (t.ex. Spanish, French, Japanese, German). Stöder fullständiga namn eller ISO-koder (es, fr, ja, de, sv, zh-CN). Använd `uvx gac language` för interaktivt val
 - `GAC_TRANSLATE_PREFIXES=true` - Översätt konventionella commit-prefix (feat, fix, etc.) till målspråket (standard: false, behåller prefix på engelska)
 - `GAC_SKIP_SECRET_SCAN=true` - Inaktivera automatisk säkerhetsskanning för hemligheter i stageade ändringar (använd med försiktighet)
 - `GAC_NO_VERIFY_SSL=true` - Hoppa över SSL-certifikatverifiering för API-anrop (användbart för företagsproxyer som fångar SSL-trafik)
@@ -354,32 +354,32 @@ För detaljerad vägledning om hur man skapar anpassade systemprompter, se [docs
 
 Följande underkommandon är tillgängliga:
 
-- `gac init` — Interaktiv installationsguide för leverantör, modell och språk
-- `gac model` — Leverantör/modell/API-nyckel konfiguration utan språkprompter (idealiskt för snabba byten)
-- `gac auth` — Visa OAuth-autentiseringsstatus för alla leverantörer
-- `gac auth claude-code login` — Logga in på Claude Code med OAuth (öppnar webbläsare)
-- `gac auth claude-code logout` — Logga ut från Claude Code och ta bort sparat token
-- `gac auth claude-code status` — Kontrollera Claude Code-autentiseringsstatus
-- `gac auth chatgpt login` — Logga in på ChatGPT med OAuth (öppnar webbläsare)
-- `gac auth chatgpt logout` — Logga ut från ChatGPT och ta bort sparat token
-- `gac auth chatgpt status` — Kontrollera ChatGPT-autentiseringsstatus
-- `gac auth copilot login` — Logga in på GitHub Copilot med Device Flow
-- `gac auth copilot login --host ghe.mycompany.com` — Logga in på Copilot på en GitHub Enterprise-instans
-- `gac auth copilot logout` — Logga ut från Copilot och ta bort lagrade tokens
-- `gac auth copilot status` — Kontrollera Copilot-autentiseringsstatus
-- `gac config show` — Visa nuvarande konfiguration
-- `gac config set KEY VALUE` — Ställ in konfigurationsnyckel i `$HOME/.gac.env`
-- `gac config get KEY` — Hämta konfigurationsvärde
-- `gac config unset KEY` — Ta bort konfigurationsnyckel från `$HOME/.gac.env`
-- `gac language` (eller `gac lang`) — Interaktiv språkväljare för commit-meddelanden (ställer in GAC_LANGUAGE)
-- `gac editor` (eller `gac edit`) — Interaktiv editorväljare för `e`-knappen vid bekäftelsesprompten (ställer in GAC_EDITOR)
-- `gac diff` — Visa filtrerad git diff med alternativ för staged/unstaged ändringar, färg och trunkering
-- `gac serve` — Starta GAC som [MCP-server](MCP.md) för AI-agent integration (stdio transport)
-- `gac stats show` — Visa din gac-användningsstatistik (totaler, streaks, daglig & veckovis aktivitet, tokenanvändning, topprojekt, toppmodeller)
-- `gac stats models` — Visa detaljerad statistik för alla modeller med token-fördelning och hastighetsjämförelsediagram
-- `gac stats projects` — Visa statistik för alla projekt med token-fördelning
-- `gac stats reset` — Återställ all statistik till noll (ber om bekräftelse)
-- `gac stats reset model <model-id>` — Återställ statistik för en specifik modell (skiftlägesokänslig)
+- `uvx gac init` — Interaktiv installationsguide för leverantör, modell och språk
+- `uvx gac model` — Leverantör/modell/API-nyckel konfiguration utan språkprompter (idealiskt för snabba byten)
+- `uvx gac auth` — Visa OAuth-autentiseringsstatus för alla leverantörer
+- `uvx gac auth claude-code login` — Logga in på Claude Code med OAuth (öppnar webbläsare)
+- `uvx gac auth claude-code logout` — Logga ut från Claude Code och ta bort sparat token
+- `uvx gac auth claude-code status` — Kontrollera Claude Code-autentiseringsstatus
+- `uvx gac auth chatgpt login` — Logga in på ChatGPT med OAuth (öppnar webbläsare)
+- `uvx gac auth chatgpt logout` — Logga ut från ChatGPT och ta bort sparat token
+- `uvx gac auth chatgpt status` — Kontrollera ChatGPT-autentiseringsstatus
+- `uvx gac auth copilot login` — Logga in på GitHub Copilot med Device Flow
+- `uvx gac auth copilot login --host ghe.mycompany.com` — Logga in på Copilot på en GitHub Enterprise-instans
+- `uvx gac auth copilot logout` — Logga ut från Copilot och ta bort lagrade tokens
+- `uvx gac auth copilot status` — Kontrollera Copilot-autentiseringsstatus
+- `uvx gac config show` — Visa nuvarande konfiguration
+- `uvx gac config set KEY VALUE` — Ställ in konfigurationsnyckel i `$HOME/.gac.env`
+- `uvx gac config get KEY` — Hämta konfigurationsvärde
+- `uvx gac config unset KEY` — Ta bort konfigurationsnyckel från `$HOME/.gac.env`
+- `uvx gac language` (eller `uvx gac lang`) — Interaktiv språkväljare för commit-meddelanden (ställer in GAC_LANGUAGE)
+- `uvx gac editor` (eller `uvx gac edit`) — Interaktiv editorväljare för `e`-knappen vid bekäftelsesprompten (ställer in GAC_EDITOR)
+- `uvx gac diff` — Visa filtrerad git diff med alternativ för staged/unstaged ändringar, färg och trunkering
+- `uvx gac serve` — Starta GAC som [MCP-server](MCP.md) för AI-agent integration (stdio transport)
+- `uvx gac stats show` — Visa din gac-användningsstatistik (totaler, streaks, daglig & veckovis aktivitet, tokenanvändning, topprojekt, toppmodeller)
+- `uvx gac stats models` — Visa detaljerad statistik för alla modeller med token-fördelning och hastighetsjämförelsediagram
+- `uvx gac stats projects` — Visa statistik för alla projekt med token-fördelning
+- `uvx gac stats reset` — Återställ all statistik till noll (ber om bekräftelse)
+- `uvx gac stats reset model <model-id>` — Återställ statistik för en specifik modell (skiftlägesokänslig)
 
 ## Interaktivt Läge
 
@@ -411,7 +411,7 @@ Interaktivt läge är särskilt användbart för:
 **Grundläggande interaktivt läge:**
 
 ```sh
-gac -i
+uvx gac -i
 ```
 
 Detta kommer att:
@@ -424,28 +424,28 @@ Detta kommer att:
 **Interaktivt läge med stageade ändringar:**
 
 ```sh
-gac -ai
+uvx gac -ai
 # Stage alla ändringar, ställ sedan frågor för bättre kontext
 ```
 
 **Interaktivt läge med specifika hints:**
 
 ```sh
-gac -i -h "Databasmigrering för användarprofiler"
+uvx gac -i -h "Databasmigrering för användarprofiler"
 # Ställ frågor medan du ger ett specifikt hint för att fokusera LLM
 ```
 
 **Interaktivt läge med detaljerad output:**
 
 ```sh
-gac -i -v
+uvx gac -i -v
 # Ställ frågor och generera ett detaljerat, strukturerat commit-meddelande
 ```
 
 **Automatiskt bekräftat interaktivt läge:**
 
 ```sh
-gac -i -y
+uvx gac -i -y
 # Ställ frågor men bekräfta det resulterande committet automatiskt
 ```
 
@@ -473,10 +473,10 @@ Interaktivt läge fungerar bra med de flesta andra flaggor:
 
 ```sh
 # Stage alla ändringar och ställ frågor
-gac -ai
+uvx gac -ai
 
 # Ställ frågor med detaljerad output
-gac -i -v
+uvx gac -i -v
 ```
 
 ### Bästa Praxis
@@ -489,7 +489,7 @@ gac -i -v
 
 ## Användningsstatistik
 
-gac spårar lättviktig användningsstatistik så att du kan se din commit-aktivitet, streaks, tokenanvändning och mest aktiva projekt och modeller. Statistik lagras lokalt i `~/.gac_stats.json` och skickas aldrig någonstans — det finns ingen telemetri.
+uvx gac spårar lättviktig användningsstatistik så att du kan se din commit-aktivitet, streaks, tokenanvändning och mest aktiva projekt och modeller. Statistik lagras lokalt i `~/.gac_stats.json` och skickas aldrig någonstans — det finns ingen telemetri.
 
 **Vad spåras:** totalt antal gac-körningar, totalt antal commits, totalt antal prompt-, output- och reasoning-tokens, första/senaste användningsdatum, dagliga och veckovisa antal (gacs, commits, tokens), nuvarande och längsta streak, aktivitet per projekt (gacs, commits, tokens) och aktivitet per modell (gacs, tokens).
 
@@ -497,58 +497,58 @@ gac spårar lättviktig användningsstatistik så att du kan se din commit-aktiv
 
 ### Opt-in eller Opt-out
 
-`gac init` frågar om du vill aktivera statistik och förklarar exakt vad som sparas. Du kan ändra dig när som helst:
+`uvx gac init` frågar om du vill aktivera statistik och förklarar exakt vad som sparas. Du kan ändra dig när som helst:
 
 - **Aktivera statistik:** ta bort `GAC_DISABLE_STATS` eller ställ in på `false`/`0`/`no`/`off`/tom.
 - **Inaktivera statistik:** ställ in `GAC_DISABLE_STATS` på ett truthy-värde (`true`, `1`, `yes`, `on`).
 
-När du avböjer statistik under `gac init` och en befintlig `~/.gac_stats.json` upptäcks, erbjuds du möjligheten att ta bort den.
+När du avböjer statistik under `uvx gac init` och en befintlig `~/.gac_stats.json` upptäcks, erbjuds du möjligheten att ta bort den.
 
 ### Statistikunderkommandon
 
-| Kommando                           | Beskrivning                                                                                                          |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `gac stats`                        | Visa din statistik (samma som `gac stats show`)                                                                      |
-| `gac stats show`                   | Visa fullständig statistik: totaler, streaks, daglig & veckovis aktivitet, tokenanvändning, topprojekt, toppmodeller |
-| `gac stats models`                 | Visa detaljerad statistik för **alla** använda modeller, med token-fördelning och hastighetsjämförelsediagram        |
-| `gac stats projects`               | Visa statistik för **alla** projekt med token-fördelning                                                             |
-| `gac stats reset`                  | Återställ all statistik till noll (ber om bekräftelse)                                                               |
-| `gac stats reset model <model-id>` | Återställ statistik för en specifik modell (skiftlägesokänslig)                                                      |
+| Kommando                               | Beskrivning                                                                                                          |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `uvx gac stats`                        | Visa din statistik (samma som `uvx gac stats show`)                                                                  |
+| `uvx gac stats show`                   | Visa fullständig statistik: totaler, streaks, daglig & veckovis aktivitet, tokenanvändning, topprojekt, toppmodeller |
+| `uvx gac stats models`                 | Visa detaljerad statistik för **alla** använda modeller, med token-fördelning och hastighetsjämförelsediagram        |
+| `uvx gac stats projects`               | Visa statistik för **alla** projekt med token-fördelning                                                             |
+| `uvx gac stats reset`                  | Återställ all statistik till noll (ber om bekräftelse)                                                               |
+| `uvx gac stats reset model <model-id>` | Återställ statistik för en specifik modell (skiftlägesokänslig)                                                      |
 
 ### Exempel
 
 ```sh
 # Visa din övergripande statistik
-gac stats
+uvx gac stats
 
 # Detaljerad fördelning av alla använda modeller
-gac stats models
+uvx gac stats models
 
 # Statistik för alla projekt
-gac stats projects
+uvx gac stats projects
 
 # Återställ all statistik (med bekräftelseprompt)
-gac stats reset
+uvx gac stats reset
 
 # Återställ statistik för en specifik modell
-gac stats reset model wafer:deepseek-v4-pro
+uvx gac stats reset model wafer:deepseek-v4-pro
 ```
 
 ### Vad du kommer att se
 
-Att köra `gac stats` visar:
+Att köra `uvx gac stats` visar:
 
 - **Totalt antal gacs och commits** — hur många gånger du har använt gac och hur många commits det skapat
 - **Nuvarande och längsta streak** — på varandra följande dagar med gac-aktivitet (🔥 vid 5+ dagar)
 - **Aktivitetssammanfattning** — dagens och denna veckas gacs, commits och tokens jämfört med din toppdag och toppvecka
 - **Toppprojekt** — dina 5 mest aktiva repos efter gac- + commit-antal, med tokenanvändning per projekt
 
-Running `gac stats projects` visar **alla** projekt (inte bara topp 5) med:
+Running `uvx gac stats projects` visar **alla** projekt (inte bara topp 5) med:
 
 - **Alla projekt-tabell** — varje projekt sorterat efter aktivitet, med gac-antal, commit-antal, prompt-tokens, output-tokens, reasoning-tokens och totala tokens
 - **Toppmodeller** — dina 5 mest använda modeller med förbrukade prompt-, output- och totala tokens
 
-Running `gac stats models` visar **alla** modeller (inte bara topp 5) med:
+Running `uvx gac stats models` visar **alla** modeller (inte bara topp 5) med:
 
 - **Alla modeller-tabell** — varje använd modell sorterad efter aktivitet, med gac-antal, hastighet (tokens/sek), prompt-tokens, output-tokens, reasoning-tokens och totala tokens
 - **Hastighetsjämförelse** — ett horisontellt stapeldiagram av alla modeller med kända hastigheter, sorterade från snabbast till långsammast, färgkodade efter hastighetspercentil (🟡 blixtsnabbt, 🟢 snabbt, 🔵 måttligt, 🔘 långsamt)
