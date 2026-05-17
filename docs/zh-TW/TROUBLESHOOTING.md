@@ -23,8 +23,7 @@
 
 **問題：** 安裝後找不到 `gac` 命令
 
-- 確保你使用 `uv tool install gac` 或 `uvx gac` 安裝
-- 如果你使用 `uv tool install`，用 `uv tool list` 驗證安裝
+- 確保你使用 `uvx gac` 安裝
 - 確保 `uv` 已安裝並在你的 `$PATH` 中
 - 安裝後重新啟動你的終端機
 

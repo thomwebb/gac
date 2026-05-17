@@ -23,8 +23,7 @@ Deze gids behandelt veelvoorkomende problemen en oplossingen voor het installere
 
 **Probleem:** `gac` commando niet gevonden na installatie
 
-- Zorg ervoor dat u installeerde met `uv tool install gac` of `uvx gac`
-- Als u `uv tool install` gebruikte, verifieer installatie met `uv tool list`
+- Zorg ervoor dat u installeerde met `uvx gac`
 - Zorg ervoor dat `uv` geïnstalleerd is en in uw `$PATH` staat
 - Herstart uw terminal na installatie
 

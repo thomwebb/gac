@@ -23,8 +23,7 @@ Este guia cobre problemas comuns e soluções para instalar, configurar e execut
 
 **Problema:** Comando `gac` não encontrado após a instalação
 
-- Certifique-se de que você instalou com `uv tool install gac` ou `uvx gac`
-- Se usou `uv tool install`, verifique a instalação com `uv tool list`
+- Certifique-se de que você instalou com `uvx gac`
 - Garanta que `uv` está instalado e no seu `$PATH`
 - Reinicie seu terminal após a instalação
 

@@ -23,8 +23,7 @@ Hướng dẫn này bao gồm các vấn đề phổ biến và giải pháp cho
 
 **Vấn đề:** Lệnh `gac` không tìm thấy sau khi cài đặt
 
-- Đảm bảo bạn đã cài đặt với `uv tool install gac` hoặc `uvx gac`
-- Nếu bạn đã sử dụng `uv tool install`, xác minh cài đặt với `uv tool list`
+- Đảm bảo bạn đã cài đặt với `uvx gac`
 - Đảm bảo `uv` được cài đặt và trong `$PATH` của bạn
 - Khởi động lại terminal của bạn sau khi cài đặt
 

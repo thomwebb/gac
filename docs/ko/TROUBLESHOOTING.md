@@ -23,8 +23,7 @@
 
 **문제:** 설치 후 `gac` 명령을 찾을 수 없음
 
-- `uv tool install gac` 또는 `uvx gac`로 설치했는지 확인
-- `uv tool install`을 사용한 경우, `uv tool list`로 설치 확인
+- `uvx gac`로 설치했는지 확인
 - `uv`가 설치되어 있고 `$PATH`에 있는지 확인
 - 설치 후 터미널 재시작
 

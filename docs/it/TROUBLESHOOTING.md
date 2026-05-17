@@ -1,617 +1,192 @@
-# Risoluzione Problemi
+# Risoluzione problemi gac
 
 [English](../en/TROUBLESHOOTING.md) | [简体中文](../zh-CN/TROUBLESHOOTING.md) | [繁體中文](../zh-TW/TROUBLESHOOTING.md) | [日本語](../ja/TROUBLESHOOTING.md) | [한국어](../ko/TROUBLESHOOTING.md) | [हिन्दी](../hi/TROUBLESHOOTING.md) | [Tiếng Việt](../vi/TROUBLESHOOTING.md) | [Français](../fr/TROUBLESHOOTING.md) | [Русский](../ru/TROUBLESHOOTING.md) | [Español](../es/TROUBLESHOOTING.md) | [Português](../pt/TROUBLESHOOTING.md) | [Norsk](../no/TROUBLESHOOTING.md) | [Svenska](../sv/TROUBLESHOOTING.md) | [Deutsch](../de/TROUBLESHOOTING.md) | [Nederlands](../nl/TROUBLESHOOTING.md) | **Italiano**
 
-Questa guida ti aiuterà a risolvere problemi comuni con `gac`.
+Questa guida illustra i problemi comuni e le soluzioni per l'installazione, la configurazione e l'esecuzione di gac.
 
-## Sommario
+## Indice
 
-- [Risoluzione Problemi](#risoluzione-problemi)
-  - [Sommario](#sommario)
-  - [Problemi di Installazione](#problemi-di-installazione)
-    - [uvx non trovato](#uvx-non-trovato)
-    - [Errore di permessi](#errore-di-permessi)
-    - [Versione Python non supportata](#versione-python-non-supportata)
-  - [Problemi di Configurazione](#problemi-di-configurazione)
-    - [Chiave API non funzionante](#chiave-api-non-funzionante)
-    - [Provider non riconosciuto](#provider-non-riconosciuto)
-    - [Modello non valido](#modello-non-valido)
-  - [Problemi di Esecuzione](#problemi-di-esecuzione)
-    - [Nessuna modifica staged](#nessuna-modifica-staged)
-    - [Messaggio di commit non come previsto](#messaggio-di-commit-non-come-previsto)
-    - [gac è troppo lento](#gac-è-troppo-lento)
-    - [Impossibile modificare o fornire feedback](#impossibile-modificare-o-fornire-feedback-dopo-la-generazione-del-messaggio)
-    - [Errore di rete](#errore-di-rete)
-    - [Timeout dell'API](#timeout-dellapi)
-    - [Messaggio di commit vuoto](#messaggio-di-commit-vuoto)
-  - [Problemi di Output](#problemi-di-output)
-    - [Output in lingua errata](#output-in-lingua-errata)
-    - [Formato non convenzionale](#formato-non-convenzionale)
-    - [Messaggio troppo lungo/corto](#messaggio-troppo-lungocorto)
-  - [Problemi di Git](#problemi-di-git)
-    - [Git non configurato](#git-non-configurato)
-    - [Hook pre-commit falliti](#hook-pre-commit-falliti)
-    - [Repository dirty](#repository-dirty)
-  - [Problemi di Performance](#problemi-di-performance)
-    - [Esecuzione lenta](#esecuzione-lenta)
-    - [Uso elevato della memoria](#uso-elevato-della-memoria)
-  - [Debug e Diagnostica](#debug-e-diagnostica)
-    - [Modalità verbose](#modalità-verbose)
-    - [Mostra prompt](#mostra-prompt)
-    - [Log di debug](#log-di-debug)
+- [Risoluzione problemi gac](#risoluzione-problemi-gac)
+  - [Indice](#indice)
+  - [1. Problemi di installazione](#1-problemi-di-installazione)
+  - [2. Problemi di configurazione](#2-problemi-di-configurazione)
+  - [3. Errori provider/API](#3-errori-providerapi)
+  - [4. Problemi di raggruppamento commit](#4-problemi-di-raggruppamento-commit)
+  - [5. Sicurezza e rilevamento segreti](#5-sicurezza-e-rilevamento-segreti)
+  - [6. Problemi con hook pre-commit e lefthook](#6-problemi-con-hook-pre-commit-e-lefthook)
+  - [7. Problemi comuni di flusso di lavoro](#7-problemi-comuni-di-flusso-di-lavoro)
+  - [8. Debug generale](#8-debug-generale)
+  - [Ancora bloccato?](#ancora-bloccato)
+  - [Dove ottenere ulteriore aiuto](#dove-ottenere-ulteriore-aiuto)
 
-## Problemi di Installazione
+## 1. Problemi di installazione
 
-### uvx non trovato
+**Problema:** Comando `gac` non trovato dopo l'installazione
 
-**Errore**: `command not found: uvx`
+- Assicurati di aver installato con `uvx gac`
+- Assicurati che `uv` sia installato e nel tuo `$PATH`
+- Riavvia il terminale dopo l'installazione
 
-**Soluzione**:
+**Problema:** Permesso negato o impossibile scrivere file
 
-```bash
-# Installa uv (include uvx)
-curl -LsSf https://astral.sh/uv/install.sh | sh
+- Controlla i permessi della directory
+- Prova a eseguire con privilegi appropriati o cambia la proprietà della directory
 
-# Oppure usa pip
-pip install uv
-```
+## 2. Problemi di configurazione
 
-### Errore di permessi
+**Problema:** gac non trova la tua chiave API o il modello
 
-**Errore**: `Permission denied` durante l'installazione
+- Se sei nuovo, esegui `gac init` per configurare interattivamente il tuo provider, modello e chiavi API
+- Assicurati che `.gac.env` o le variabili d'ambiente siano impostate correttamente
+- Esegui `gac --log-level=debug` per vedere quali file di configurazione vengono caricati e risolvere i problemi
+- Controlla eventuali errori di battitura nei nomi delle variabili (es. `GAC_GROQ_API_KEY`)
 
-**Soluzione**:
+**Problema:** Le modifiche a `$HOME/.gac.env` a livello utente non vengono rilevate
 
-```bash
-# Usa ambiente virtuale
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# o
-.venv\Scripts\activate  # Windows
+- Assicurati di modificare il file corretto per il tuo sistema operativo:
+  - Su macOS/Linux: `$HOME/.gac.env` (di solito `/Users/<tuo-username>/.gac.env` o `/home/<tuo-username>/.gac.env`)
+  - Su Windows: `$HOME/.gac.env` (tipicamente `C:\\Users\\<tuo-username>\\.gac.env` o usa `%USERPROFILE%`)
+- Esegui `gac --log-level=debug` per confermare che la configurazione a livello utente venga caricata
+- Riavvia il terminale o ri-esegui la shell per ricaricare le variabili d'ambiente
+- Se ancora non funziona, controlla errori di battitura e permessi dei file
 
-# Installa nell'ambiente virtuale
-pip install gac
-```
+**Problema:** Le modifiche a `.gac.env` a livello di progetto non vengono rilevate
 
-### Versione Python non supportata
+- Assicurati che il progetto contenga un file `.gac.env` nella directory radice (accanto alla cartella `.git`)
+- Esegui `gac --log-level=debug` per confermare che la configurazione a livello di progetto venga caricata
+- Se modifichi `.gac.env`, riavvia il terminale o ri-esegui la shell per ricaricare le variabili d'ambiente
+- Se ancora non funziona, controlla errori di battitura e permessi dei file
 
-**Errore**: `Python 3.10+ is required`
+**Problema:** Impossibile impostare o cambiare la lingua per i messaggi di commit
 
-**Soluzione**:
+- Esegui `gac language` (o `gac lang`) per selezionare interattivamente tra 25+ lingue supportate
+- Usa il flag `-l <lingua>` per sovrascrivere la lingua per un singolo commit (es. `gac -l zh-CN`, `gac -l Italian`)
+- Controlla la configurazione con `gac config show` per vedere l'impostazione della lingua corrente
+- L'impostazione della lingua è memorizzata in `GAC_LANGUAGE` nel tuo file `.gac.env`
 
-```bash
-# Controlla la tua versione
-python --version
+## 3. Errori provider/API
 
-# Installa una versione supportata (3.10+)
-# Su macOS con Homebrew:
-brew install python@3.11
+**Problema:** Errori di autenticazione o API
 
-# Su Ubuntu/Debian:
-sudo apt update
-sudo apt install python3.11
-```
+- Assicurati di aver impostato le chiavi API corrette per il modello scelto (es. `ANTHROPIC_API_KEY`, `GROQ_API_KEY`)
+- Ricontrolla la tua chiave API e lo stato dell'account del provider
+- Per Ollama e LM Studio, conferma che l'URL API corrisponda alla tua istanza locale. Le chiavi API sono necessarie solo se hai abilitato l'autenticazione.
+- **Per scadenza token di Claude Code**: Esegui `gac auth` per ri-autenticarti rapidamente e aggiornare il tuo token. Il browser si aprirà automaticamente per OAuth.
+- **Per scadenza token di ChatGPT OAuth**: Esegui `gac auth chatgpt login` per ri-autenticarti. Il browser si aprirà automaticamente per OAuth.
+- **Per problemi di sessione GitHub Copilot**: Esegui `gac auth copilot login` per ri-autenticarti tramite Device Flow. I token di sessione vengono rinnovati automaticamente dal token OAuth memorizzato nella cache.
+- **Per altri problemi OAuth di Claude Code**, consulta la [guida alla configurazione di Claude Code](CLAUDE_CODE.md) per la risoluzione completa dei problemi.
+- **Per altri problemi OAuth di ChatGPT**, consulta la [guida alla configurazione di ChatGPT OAuth](CHATGPT_OAUTH.md) per la risoluzione completa dei problemi.
+- **Per altri problemi di Copilot**, consulta la [guida alla configurazione di GitHub Copilot](GITHUB_COPILOT.md) per la risoluzione completa dei problemi.
 
-## Problemi di Configurazione
+**Problema:** Modello non disponibile o non supportato
 
-### Chiave API non funzionante
+- Streamlake utilizza ID degli endpoint di inferenza anziché nomi di modello. Assicurati di fornire l'ID endpoint dalla loro console.
+- Verifica che il nome del modello sia corretto e supportato dal tuo provider
+- Consulta la documentazione del provider per i modelli disponibili
 
-**Errore**: `Authentication failed` o `Invalid API key`
+## 4. Problemi di raggruppamento commit
 
-**Soluzione**:
+**Problema:** Flag `--group` non funziona come previsto
 
-1. **Verifica la chiave API**:
+- Il flag `--group` analizza automaticamente le modifiche staged e può creare commit logici multipli
+- L'LLM potrebbe decidere che un singolo commit ha senso per il tuo insieme di modifiche staged, anche con `--group`
+- Questo è un comportamento intenzionale - l'LLM raggruppa le modifiche in base alle relazioni logiche, non solo alla quantità
+- Assicurati di avere più modifiche non correlate in staging (es. correzione bug + aggiunta funzionalità) per ottenere i migliori risultati
+- Usa `gac --show-prompt` per vedere cosa sta elaborando l'LLM
 
-   ```bash
-   echo $OPENAI_API_KEY  # o altra variabile
-   ```
+**Problema:** Commit raggruppati in modo errato o non raggruppati quando previsto
 
-2. **Controlla il formato della variabile d'ambiente**:
+- Il raggruppamento è determinato dall'analisi dell'LLM delle tue modifiche
+- L'LLM potrebbe creare un singolo commit se determina che le modifiche sono logicamente correlate
+- Prova ad aggiungere suggerimenti con `-h "hint"` per guidare la logica di raggruppamento (es. `-h "separa la correzione bug dal refactoring"`)
+- Rivedi i gruppi generati prima di confermare
+- Se il raggruppamento non funziona bene per il tuo caso d'uso, fai commit delle modifiche separatamente
 
-   ```bash
-   # Corretto
-   export OPENAI_API_KEY="sk-..."
+## 5. Sicurezza e rilevamento segreti
 
-   # Errato (spazi extra)
-   export OPENAI_API_KEY=" sk-..."
-   ```
+**Problema:** Falso positivo: la scansione dei segreti rileva non-segreti
 
-3. **Verifica il nome della variabile**:
+- Lo scanner di sicurezza cerca pattern che assomigliano a chiavi API, token e password
+- Se stai facendo commit di codice di esempio, fixture di test o documentazione con chiavi segnaposto, potresti vedere falsi positivi
+- Usa `--skip-secret-scan` per ignorare la scansione se sei certo che le modifiche siano sicure
+- Considera di escludere file di test/esempio dai commit, o usa segnaposto chiaramente contrassegnati
 
-   ```bash
-   # Provider comuni e le loro variabili
-   OPENAI_API_KEY=          # OpenAI
-   ANTHROPIC_API_KEY=       # Anthropic
-   GEMINI_API_KEY=          # Google Gemini
-   GROQ_API_KEY=            # Groq
-   ```
+**Problema:** La scansione dei segreti non rileva segreti effettivi
 
-4. **Testa la chiave API**:
+- Lo scanner utilizza il pattern matching e potrebbe non individuare tutti i tipi di segreti
+- Rivedi sempre le tue modifiche staged con `git diff --staged` prima di fare commit
+- Considera l'uso di strumenti di sicurezza aggiuntivi come `git-secrets` o `gitleaks` per una protezione completa
+- Segnala eventuali pattern mancati come issue per aiutare a migliorare il rilevamento
 
-   ```bash
-   # Per OpenAI
-   curl -H "Authorization: Bearer $OPENAI_API_KEY" \
-        https://api.openai.com/v1/models
-   ```
+**Problema:** Necessità di disabilitare permanentemente la scansione dei segreti
 
-5. **Per scadenza token di Claude Code**: Esegui `gac auth` per autenticarti di nuovo rapidamente e aggiornare il tuo token. Il tuo browser si aprirà automaticamente per OAuth.
-6. **Per scadenza token di ChatGPT OAuth**: Esegui `gac auth chatgpt login` per autenticarti di nuovo. Il tuo browser si aprirà automaticamente per OAuth.
-7. **Per altri problemi OAuth di Claude Code**, consulta la [guida alla configurazione di Claude Code](CLAUDE_CODE.md) per la risoluzione completa dei problemi.
-8. **Per altri problemi OAuth di ChatGPT**, consulta la [guida alla configurazione di ChatGPT OAuth](CHATGPT_OAUTH.md) per la risoluzione completa dei problemi.
-9. **Per token di sessione GitHub Copilot scaduti**: Esegui `gac auth copilot login` per ri-autenticarti tramite Device Flow. I token di sessione vengono rinnovati automaticamente dal token OAuth memorizzato nella cache.
-10. **Per altri problemi di GitHub Copilot**, vedi la [guida setup GitHub Copilot](GITHUB_COPILOT.md) per risoluzione problemi completa.
+- Imposta `GAC_SKIP_SECRET_SCAN=true` nel tuo file `.gac.env`
+- Usa `gac config set GAC_SKIP_SECRET_SCAN true`
+- Nota: disabilita solo se hai altre misure di sicurezza in atto
 
-### Provider non riconosciuto
+## 6. Problemi con hook pre-commit e lefthook
 
-**Errore**: `Unknown provider: xxx`
+**Problema:** Gli hook pre-commit o lefthook falliscono e bloccano i commit
 
-**Soluzione**:
+- Usa `gac --no-verify` per saltare temporaneamente tutti gli hook pre-commit e lefthook
+- Risolvi i problemi sottostanti che causano il fallimento degli hook
+- Considera di modificare la configurazione pre-commit o lefthook se gli hook sono troppo restrittivi
 
-1. **Controlla i provider supportati**:
+**Problema:** Gli hook pre-commit o lefthook richiedono troppo tempo o interferiscono con il flusso di lavoro
 
-   ```bash
-   gac --help
-   ```
+- Usa `gac --no-verify` per saltare temporaneamente tutti gli hook pre-commit e lefthook
+- Considera di configurare gli hook pre-commit in `.pre-commit-config.yaml` o gli hook lefthook in `.lefthook.yml` per renderli meno aggressivi per il tuo flusso di lavoro
+- Rivedi la configurazione degli hook per ottimizzare le prestazioni
 
-2. **Verifica il nome del provider**:
+## 7. Problemi comuni di flusso di lavoro
 
-   ```bash
-   # Nomi corretti
-   gac init  # mostra la lista completa
+**Problema:** Nessuna modifica da sottoporre a commit / nulla in staging
 
-   # Esempi comuni
-   openai
-   anthropic
-   gemini
-   groq
-   ```
+- gac richiede modifiche staged per generare un messaggio di commit
+- Usa `git add <file>` per mettere in staging le modifiche, o usa `gac -a` per mettere in staging tutte le modifiche automaticamente
+- Controlla `git status` per vedere quali file sono stati modificati
+- Usa `gac diff` per vedere una vista filtrata delle tue modifiche
 
-3. **Usa il formato corretto nel modello**:
-
-   ```bash
-   # Corretto
-   export GAC_MODEL="openai:gpt-4"
-
-   # Errato
-   export GAC_MODEL="openai_gpt_4"
-   ```
-
-### Modello non valido
-
-**Errore**: `Invalid model: xxx`
-
-**Soluzione**:
-
-1. **Verifica i modelli disponibili** per il tuo provider:
-
-   ```bash
-   # OpenAI
-   curl -H "Authorization: Bearer $OPENAI_API_KEY" \
-        https://api.openai.com/v1/models
-
-   # Anthropic
-   curl -H "x-api-key: $ANTHROPIC_API_KEY" \
-        https://api.anthropic.com/v1/messages
-   ```
-
-2. **Usa modelli comuni testati**:
-
-   ```bash
-   # OpenAI
-   export GAC_MODEL="openai:gpt-4"
-   export GAC_MODEL="openai:gpt-3.5-turbo"
-
-   # Anthropic
-   export GAC_MODEL="anthropic:claude-3-sonnet-20240229"
-   export GAC_MODEL="anthropic:claude-3-haiku-20240307"
-   ```
-
-## Problemi di Esecuzione
-
-### Nessuna modifica staged
-
-**Errore**: `No staged changes found`
-
-**Soluzione**:
-
-```bash
-# Aggiungi le modifiche
-git add .
-
-# O aggiungi file specifici
-git add file1.py file2.js
-
-# Verifica le modifiche staged
-git status --staged
-```
-
-### Messaggio di commit non come previsto
-
-**Problema**: Il messaggio di commit generato non riflette accuratamente le tue modifiche
-
-**Soluzione**:
+**Problema:** Messaggio di commit non come previsto
 
 - Usa il sistema di feedback interattivo: digita `r` per rigenerare, `e` per modificare (TUI in-place, o editor esterno tramite `GAC_EDITOR`), o fornisci feedback in linguaggio naturale
 - Aggiungi contesto con `-h "il tuo suggerimento"` per guidare l'LLM
 - Usa `-o` per messaggi più semplici su una riga o `-v` per messaggi più dettagliati
 - Usa `--show-prompt` per vedere quali informazioni sta ricevendo l'LLM
 
-### gac è troppo lento
-
-**Problema**: `gac` impiega troppo tempo per generare il messaggio
-
-**Soluzione**:
+**Problema:** gac è troppo lento
 
 - Usa `gac -y` per saltare il prompt di conferma
 - Usa `gac -q` per la modalità silenziosa con meno output
 - Considera l'uso di modelli più veloci/economici per commit di routine
 - Usa `gac --no-verify` per saltare gli hook se ti stanno rallentando
 
-### Impossibile modificare o fornire feedback dopo la generazione del messaggio
-
-**Problema**: Vuoi modificare il messaggio di commit o fornire feedback dopo che è stato generato
-
-**Soluzione**:
+**Problema:** Impossibile modificare o fornire feedback dopo la generazione del messaggio
 
 - Al prompt, digita `e` per entrare in modalità modifica (TUI in-place con keybindings vi/emacs; imposta `GAC_EDITOR` per usare il tuo editor preferito invece)
 - Digita `r` per rigenerare senza feedback
-- O semplicemente digita il tuo feedback direttamente (es. "rendilo più corto", "concentrati sulla correzione del bug")
+- O semplicemente digita il tuo feedback direttamente (es. "rendilo più breve", "concentrati sulla correzione del bug")
 - Premi Invio su input vuoto per vedere nuovamente il prompt
 
-### Errore di rete
-
-**Errore**: `Connection failed` o `Network error`
-
-**Soluzione**:
-
-1. **Verifica la connessione internet**:
-
-   ```bash
-   ping google.com
-   ```
-
-2. **Controlla proxy/firewall**:
-
-   ```bash
-   # Se usi un proxy
-   export HTTP_PROXY="http://proxy.company.com:8080"
-   export HTTPS_PROXY="http://proxy.company.com:8080"
-   ```
-
-3. **Prova un provider diverso**:
-
-   ```bash
-   gac model  # cambia provider
-   ```
-
-### Timeout dell'API
-
-**Errore**: `Request timeout` o `Operation timed out`
-
-**Soluzione**:
-
-1. **Aumenta il timeout** (se supportato):
-
-   ```bash
-   # Alcuni provider permettono timeout personalizzati
-   export GAC_TIMEOUT=120
-   ```
-
-2. **Prova un modello più veloce**:
-
-   ```bash
-   # Da GPT-4 a GPT-3.5-turbo
-   export GAC_MODEL="openai:gpt-3.5-turbo"
-   ```
-
-3. **Riduci la dimensione del diff**:
-
-   ```bash
-   # Fai commit di modifiche più piccole
-   git add file-specifico.py
-   gac
-   ```
-
-### Messaggio di commit vuoto
-
-**Errore**: `Empty commit message generated`
-
-**Soluzione**:
-
-1. **Verifica che ci siano modifiche significative**:
-
-   ```bash
-   git diff --staged
-   ```
-
-2. **Aggiungi contesto con l'opzione -h**:
-
-   ```bash
-   gac -h "correggi bug di autenticazione"
-   ```
-
-3. **Prova un formato diverso**:
-
-   ```bash
-   gac -v  # formato verbose
-   gac -o  # one-liner
-   ```
-
-## Problemi di Output
-
-### Output in lingua errata
-
-**Problema**: Messaggi in inglese invece che in italiano
-
-**Soluzione**:
-
-1. **Configura la lingua**:
-
-   ```bash
-   gac language
-   # Seleziona "Italiano" dalla lista
-   ```
-
-2. **Oppure usa il flag -l**:
-
-   ```bash
-   gac -l it
-   ```
-
-3. **Verifica la configurazione**:
-
-   ```bash
-   gac --show-config
-   ```
-
-### Formato non convenzionale
-
-**Problema**: Output non segue il formato conventional commit
-
-**Soluzione**:
-
-1. **Usa l'opzione -s per scope**:
-
-   ```bash
-   gac -s
-   ```
-
-2. **Aggiungi un hint specifico**:
-
-   ```bash
-   gac -h "usa formato conventional commit"
-   ```
-
-3. **Crea un prompt personalizzato**:
-
-   ```bash
-   # Vedi CUSTOM_SYSTEM_PROMPTS.md
-   echo "Il tuo prompt personalizzato" > ~/.gac-custom-prompt.txt
-   export GAC_CUSTOM_PROMPT="~/.gac-custom-prompt.txt"
-   ```
-
-### Messaggio troppo lungo/corto
-
-**Problema**: Messaggio di dimensioni inappropriate
-
-**Soluzione**:
-
-1. **Per messaggi troppo lunghi**:
-
-   ```bash
-   gac -o  # one-liner
-   gac -h "sii conciso"
-   ```
-
-2. **Per messaggi troppo corti**:
-
-   ```bash
-   gac -v  # verbose
-   gac -h "spiega i dettagli tecnici"
-   ```
-
-3. **Usa feedback interattivo**:
-
-   ```bash
-   gac
-   # Quando richiesto, digita:
-   rendilo più dettagliato
-   # o
-   rendilo più breve
-   ```
-
-## Problemi di Git
-
-### Git non configurato
-
-**Errore**: `Please tell me who you are`
-
-**Soluzione**:
-
-```bash
-git config --global user.name "Il Tuo Nome"
-git config --global user.email "tua.email@example.com"
-```
-
-### Hook pre-commit falliti
-
-**Errore**: `pre-commit hook failed`
-
-**Soluzione**:
-
-1. **Esegui gli hook manualmente**:
-
-   ```bash
-   lefthook run pre-commit
-   ```
-
-2. **Correggi i problemi identificati**:
-
-   ```bash
-   # Esempio: formatta il codice
-   make format
-
-   # Esempio: correggi linting
-   make lint
-   ```
-
-3. **Salta gli hook (solo se necessario)**:
-
-   ```bash
-   gac --skip-hooks
-   # o
-   git commit --no-verify
-   ```
-
-### Repository dirty
-
-**Errore**: `Working directory not clean`
-
-**Soluzione**:
-
-```bash
-# Controlla lo stato
-git status
-
-# Fai commit o stash delle modifiche
-git add .
-git commit -m "commit temporaneo"
-# o
-git stash
-
-# Poi riprova gac
-gac
-```
-
-## Problemi di Performance
-
-### Esecuzione lenta
-
-**Problema**: `gac` impiega molto tempo
-
-**Soluzione**:
-
-1. **Usa un modello più veloce**:
-
-   ```bash
-   export GAC_MODEL="openai:gpt-3.5-turbo"
-   ```
-
-2. **Riduci la dimensione del diff**:
-
-   ```bash
-   # Fai commit più frequenti con meno modifiche
-   git add subset-di-file/
-   gac
-   ```
-
-3. **Usa cache locale (se disponibile)**:
-
-   ```bash
-   # Alcuni provider supportano cache
-   export GAC_CACHE_ENABLED=true
-   ```
-
-### Uso elevato della memoria
-
-**Problema**: `gac` usa troppa memoria
-
-**Soluzione**:
-
-1. **Limita il contesto**:
-
-   ```bash
-   gac --context-lines 50  # riduci le linee di contesto
-   ```
-
-2. **Escludi file grandi**:
-
-   ```bash
-   # Aggiungi a .gitignore se non necessario
-   echo "file-grande.json" >> .gitignore
-   git reset HEAD file-grande.json
-   ```
-
-## Debug e Diagnostica
-
-### Modalità verbose
-
-**Uso**: Mostra informazioni dettagliate sull'esecuzione
-
-```bash
-gac -v
-# o
-gac --verbose
-```
-
-**Mostra**:
-
-- Passaggi di elaborazione
-- Informazioni API
-- Tempo di esecuzione
-
-### Mostra prompt
-
-**Uso**: Vedi cosa viene inviato all'AI
-
-```bash
-gac --show-prompt
-```
-
-**Utile per**:
-
-- Debug del prompt personalizzato
-- Verifica del contesto inviato
-- Understanding del formato
-
-### Log di debug
-
-**Uso**: Abilita logging dettagliato
-
-```bash
-export GAC_DEBUG=true
-gac
-```
-
-**Mostra**:
-
-- Chiamate API
-- Risposte del server
-- Errori dettagliati
-
----
-
-## Ottenere Aiuto Aggiuntivo
-
-Se nessuna di queste soluzioni funziona:
-
-1. **Controlla gli issue su GitHub**: [github.com/cellwebb/gac/issues](https://github.com/cellwebb/gac/issues)
-2. **Crea un nuovo issue** con:
-   - Sistema operativo
-   - Versione di Python e gac
-   - Messaggio di errore completo
-   - Passaggi per riprodurre il problema
-3. **Unisciti alla discussione** su GitHub Discussions
-
----
-
-## Comandi Utili per Diagnostica
-
-```bash
-# Mostra configurazione corrente
-gac --show-config
-
-# Verifica installazione
-gac --version
-
-# Test connessione API (se disponibile)
-gac --test-api
-
-# Mostra provider supportati
-gac --list-providers
-
-# Elenca lingue disponibili
-gac --list-languages
-```
-
-Ricorda: La maggior parte dei problemi sono legati alla configurazione delle chiavi API o alla connessione di rete. Controlla sempre questi aspetti per primi!
+## 8. Debug generale
+
+- Usa `gac init` per ripristinare o aggiornare la tua configurazione interattivamente
+- Usa `gac --log-level=debug` per output di debug dettagliato e logging
+- Usa `gac --show-prompt` per vedere quale prompt viene inviato all'LLM
+- Usa `gac --help` per vedere tutti i flag della riga di comando disponibili
+- Usa `gac config show` per vedere tutti i valori di configurazione correnti
+- Controlla i log per messaggi di errore e tracce dello stack
+- Consulta il [README.md](../README.md) principale per funzionalità, esempi e istruzioni di avvio rapido
+
+## Ancora bloccato?
+
+- Cerca tra le issue esistenti o aprine una nuova sul [repository GitHub](https://github.com/cellwebb/gac)
+- Includi dettagli sul tuo sistema operativo, versione di Python, versione di gac, provider e output degli errori
+- Più dettagli fornisci, più velocemente il tuo problema potrà essere risolto
+
+## Dove ottenere ulteriore aiuto
+
+- Per funzionalità ed esempi di utilizzo, consulta il [README.md](../README.md) principale
+- Per prompt di sistema personalizzati, consulta [CUSTOM_SYSTEM_PROMPTS.md](CUSTOM_SYSTEM_PROMPTS.md)
+- Per le linee guida di contribuzione, consulta [CONTRIBUTING.md](CONTRIBUTING.md)
+- Per informazioni sulla licenza, consulta [../LICENSE](../LICENSE)
