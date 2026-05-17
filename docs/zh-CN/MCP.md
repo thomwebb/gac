@@ -94,8 +94,6 @@ args: ["gac", "serve"]
 transport: stdio
 ```
 
-如果你已经安装了 GAC（通过 `uv tool install gac`），可以直接使用 `gac` 而非 `uvx gac`。
-
 ## 可用工具
 
 服务器公开两个工具：

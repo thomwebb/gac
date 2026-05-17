@@ -94,8 +94,6 @@ args: ["gac", "serve"]
 transport: stdio
 ```
 
-Als u GAC geinstalleerd heeft (via `uv tool install gac`), kunt u `gac` direct gebruiken in plaats van `uvx gac`.
-
 ## Beschikbare tools
 
 De server biedt twee tools:
