@@ -91,8 +91,9 @@ Dat is alles! Beoordeel het gegenereerde bericht en bevestig met `y`.
 
 ```bash
 uvx gac stats               # Overzicht: totale gacs, streaks, dagelijkse/wekelijkse pieken, topprojecten & -modellen
-uvx gac stats models        # Per model: gacs, tokens, latentie, snelheid
-uvx gac stats projects      # Per project: gacs, commits, tokens over alle repo's
+uvx gac stats models        # Per model: gacs, tokens, latentie, snelheid, latentie-per-commit-grafieken
+uvx gac stats projects      # Per project: gacs, commits, tokens, gem. bestanden per gac over alle repo's
+uvx gac stats recent        # Recente gac-geschiedenis: tokens, snelheid, latentie, bestanden per gac (-n 20 voor meer)
 uvx gac stats reset         # Alle statistieken resetten (vraagt om bevestiging)
 uvx gac stats reset model <model-id>  # Alleen statistieken van een specifiek model resetten
 ```

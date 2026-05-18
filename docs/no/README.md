@@ -91,8 +91,9 @@ Det er alt! Gjennomgå den genererte meldingen og bekreft med `y`.
 
 ```bash
 uvx gac stats               # Oversikt: totale gacs, streaks, daglige/ukentlige topper, topprosjekter & -modeller
-uvx gac stats models        # Modelloppdelning: gacs, tokens, latens, hastighet
-uvx gac stats projects      # Prosjektoppdelning: gacs, commits, tokens over alle repoer
+uvx gac stats models        # Modelloppdelning: gacs, tokens, latens, hastighet, latens-per-commit-diagrammer
+uvx gac stats projects      # Prosjektoppdelning: gacs, commits, tokens, snitt filer per gac over alle repoer
+uvx gac stats recent        # Nylig gac-historikk: tokens, hastighet, latens, filer per gac (-n 20 for flere)
 uvx gac stats reset         # Tilbakestill all statistikk (ber om bekreftelse)
 uvx gac stats reset model <model-id>  # Tilbakestill statistikk kun for en spesifikk modell
 ```

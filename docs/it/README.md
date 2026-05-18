@@ -91,8 +91,9 @@ Questo è tutto! Rivedi il messaggio generato e conferma con `y`.
 
 ```bash
 uvx gac stats               # Panoramica: gac totali, serie, picchi giornalieri/settimanali, progetti e modelli principali
-uvx gac stats models        # Dettaglio per modello: gac, token, latenza, velocità
-uvx gac stats projects      # Dettaglio per progetto: gac, commit, token in tutti i repository
+uvx gac stats models        # Dettaglio per modello: gac, token, latenza, velocità, grafici latenza per commit
+uvx gac stats projects      # Dettaglio per progetto: gac, commit, token, file medi per gac in tutti i repository
+uvx gac stats recent        # Cronologia gac recenti: token, velocità, latenza, file per gac (-n 20 per più)
 uvx gac stats reset         # Resetta tutte le statistiche (richiede conferma)
 uvx gac stats reset model <model-id>  # Resetta le statistiche solo per un modello specifico
 ```

@@ -91,8 +91,9 @@ Das ist alles! Überprüfen Sie die generierte Nachricht und bestätigen Sie mit
 
 ```bash
 uvx gac stats               # Übersicht: Gesamt-Gacs, Streaks, tägliche/wöchentliche Spitzen, Top-Projekte & -Modelle
-uvx gac stats models        # Modell-Aufschlüsselung: Gacs, Tokens, Latenz, Geschwindigkeit
-uvx gac stats projects      # Projekt-Aufschlüsselung: Gacs, Commits, Tokens über alle Repos
+uvx gac stats models        # Modell-Aufschlüsselung: Gacs, Tokens, Latenz, Geschwindigkeit, Latenz-pro-Commit-Diagramme
+uvx gac stats projects      # Projekt-Aufschlüsselung: Gacs, Commits, Tokens, Ø Dateien pro Gac über alle Repos
+uvx gac stats recent        # Letzte Gac-Verlauf: Tokens, Geschwindigkeit, Latenz, Dateien pro Gac (-n 20 für mehr)
 uvx gac stats reset         # Alle Statistiken zurücksetzen (bittet um Bestätigung)
 uvx gac stats reset model <model-id>  # Statistiken nur für ein bestimmtes Modell zurücksetzen
 ```

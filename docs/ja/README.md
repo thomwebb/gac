@@ -91,8 +91,9 @@ uvx gac  # LLMで生成してコミット
 
 ```bash
 uvx gac stats               # 概要：合計 gac 数、ストリーク、毎日/毎週のピーク、トッププロジェクトとモデル
-uvx gac stats models        # モデル別内訳：gac 数、トークン、レイテンシ、速度
-uvx gac stats projects      # プロジェクト別内訳：全リポジトリの gac 数、コミット数、トークン数
+uvx gac stats models        # モデル別内訳：gac 数、トークン、レイテンシ、速度、コミット別レイテンシチャート
+uvx gac stats projects      # プロジェクト別内訳：全リポジトリの gac 数、コミット数、トークン数、gac あたり平均ファイル数
+uvx gac stats recent        # 最近の gac 履歴：gac あたりのトークン、速度、レイテンシ、ファイル数（-n 20 で更多）
 uvx gac stats reset         # 全統計をリセット（確認あり）
 uvx gac stats reset model <model-id>  # 特定モデルの統計のみリセット
 ```

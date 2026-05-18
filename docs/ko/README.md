@@ -91,8 +91,9 @@ uvx gac  # LLM으로 생성 및 커밋
 
 ```bash
 uvx gac stats               # 개요: 총 gac 수, 연속 기록, 일일/주간 피크, 상위 프로젝트 및 모델
-uvx gac stats models        # 모델별 세부 정보: gac 수, 토큰, 지연 시간, 속도
-uvx gac stats projects      # 프로젝트별 세부 정보: 모든 저장소의 gac 수, 커밋 수, 토큰 수
+uvx gac stats models        # 모델별 세부 정보: gac 수, 토큰, 지연 시간, 속도, 커밋당 지연 시간 차트
+uvx gac stats projects      # 프로젝트별 세부 정보: 모든 저장소의 gac 수, 커밋 수, 토큰 수, gac당 평균 파일 수
+uvx gac stats recent        # 최근 gac 기록: gac당 토큰, 속도, 지연 시간, 파일 수 (-n 20으로 더 보기)
 uvx gac stats reset         # 모든 통계 초기화 (확인 필요)
 uvx gac stats reset model <model-id>  # 특정 모델의 통계만 초기화
 ```

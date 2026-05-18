@@ -91,8 +91,9 @@ uvx gac  # LLM के साथ जेनरेट और कमिट करे
 
 ```bash
 uvx gac stats               # अवलोकन: कुल gac, स्ट्रीक, दैनिक/साप्ताहिक पीक, शीर्ष प्रोजेक्ट और मॉडल
-uvx gac stats models        # मॉडल विवरण: gac, टोकन, विलंबता, गति
-uvx gac stats projects      # प्रोजेक्ट विवरण: सभी रेपो में gac, कमिट, टोकन
+uvx gac stats models        # मॉडल विवरण: gac, टोकन, विलंबता, गति, प्रति-कमिट विलंबता चार्ट
+uvx gac stats projects      # प्रोजेक्ट विवरण: सभी रेपो में gac, कमिट, टोकन, प्रति gac औसत फ़ाइलें
+uvx gac stats recent        # हालिया gac इतिहास: प्रति-gac टोकन, गति, विलंबता, फ़ाइलें (-n 20 अधिक के लिए)
 uvx gac stats reset         # सभी आँकड़े रीसेट करें (पुष्टि आवश्यक)
 uvx gac stats reset model <model-id>  # केवल एक विशिष्ट मॉडल के आँकड़े रीसेट करें
 ```

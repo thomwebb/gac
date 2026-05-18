@@ -91,8 +91,9 @@ uvx gac  # 使用 LLM 生成并提交
 
 ```bash
 uvx gac stats               # 概览：总 gac 数、连续使用、每日/每周峰值、热门项目和模型
-uvx gac stats models        # 按模型细分：gac 数、令牌、延迟、速度
-uvx gac stats projects      # 按项目细分：所有仓库的 gac 数、提交数、令牌数
+uvx gac stats models        # 按模型细分：gac 数、令牌、延迟、速度、每次提交延迟图表
+uvx gac stats projects      # 按项目细分：所有仓库的 gac 数、提交数、令牌数、每次 gac 平均文件数
+uvx gac stats recent        # 最近的 gac 历史：每次 gac 的令牌、速度、延迟、文件数（-n 20 查看更多）
 uvx gac stats reset         # 重置所有统计数据（需确认）
 uvx gac stats reset model <model-id>  # 仅重置特定模型的统计数据
 ```

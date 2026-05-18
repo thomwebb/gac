@@ -91,8 +91,9 @@ uvx gac  # Gere e envie commit com LLM
 
 ```bash
 uvx gac stats               # Visão geral: gacs totais, sequências, picos diários/semanais, projetos e modelos principais
-uvx gac stats models        # Detalhamento por modelo: gacs, tokens, latência, velocidade
-uvx gac stats projects      # Detalhamento por projeto: gacs, commits, tokens em todos os repositórios
+uvx gac stats models        # Detalhamento por modelo: gacs, tokens, latência, velocidade, gráficos latência por commit
+uvx gac stats projects      # Detalhamento por projeto: gacs, commits, tokens, arquivos médios por gac em todos os repositórios
+uvx gac stats recent        # Histórico recente de gacs: tokens, velocidade, latência, arquivos por gac (-n 20 para mais)
 uvx gac stats reset         # Redefinir todas as estatísticas (solicita confirmação)
 uvx gac stats reset model <model-id>  # Redefinir estatísticas apenas para um modelo específico
 ```

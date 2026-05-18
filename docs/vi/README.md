@@ -91,8 +91,9 @@ Chỉ vậy thôi! Xem lại thông điệp đã tạo và xác nhận bằng `y
 
 ```bash
 uvx gac stats               # Tổng quan: tổng gac, chuỗi, đỉnh hàng ngày/hàng tuần, dự án và mô hình hàng đầu
-uvx gac stats models        # Chi tiết theo mô hình: gac, token, độ trễ, tốc độ
-uvx gac stats projects      # Chi tiết theo dự án: gac, commit, token trên tất cả repo
+uvx gac stats models        # Chi tiết theo mô hình: gac, token, độ trễ, tốc độ, biểu đồ độ trễ theo commit
+uvx gac stats projects      # Chi tiết theo dự án: gac, commit, token, tệp trung bình mỗi gac trên tất cả repo
+uvx gac stats recent        # Lịch sử gac gần đây: token, tốc độ, độ trễ, tệp mỗi gac (-n 20 cho thêm)
 uvx gac stats reset         # Đặt lại tất cả thống kê (yêu cầu xác nhận)
 uvx gac stats reset model <model-id>  # Chỉ đặt lại thống kê cho một mô hình cụ thể
 ```
