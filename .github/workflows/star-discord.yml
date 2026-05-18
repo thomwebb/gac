@@ -1,0 +1,41 @@
+name: Star Notification
+
+on:
+  watch:
+    types: [started]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          STARER: ${{ github.actor }}
+          REPO: ${{ github.repository }}
+          STARS: ${{ github.event.repository.stargazers_count }}
+        run: |
+          curl -sS -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "embeds": [{
+                "title": "⭐ New star on '"$REPO"'",
+                "description": "**'"$STARER"' just starred ['"$REPO"'](https://github.com/'"$REPO"')!**",
+                "color": 16763904,
+                "fields": [
+                  {
+                    "name": "Total Stars",
+                    "value": "'"$STARS"'",
+                    "inline": true
+                  },
+                  {
+                    "name": "Stargazer",
+                    "value": "[='"$STARER"'](https://github.com/'"$STARER"')",
+                    "inline": true
+                  }
+                ],
+                "footer": {
+                  "text": "GitHub ⭐ Notification"
+                }
+              }]
+            }'
