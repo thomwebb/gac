@@ -297,7 +297,7 @@ uvx gac --no-verify  # Omitir todos los hooks pre-commit y lefthook
 
 ### Escaneo de Seguridad
 
-uvx gac incluye escaneo de seguridad incorporado que detecta automáticamente posibles secretos y claves API en tus cambios staged antes de hacer commit. Esto ayuda a prevenir accidentalmente comprometer información sensible.
+uvx gac incluye escaneo de seguridad incorporado que detecta automáticamente posibles secretos y claves API en tus cambios staged **antes de que se realice cualquier llamada a la API de IA**. Si se detecta un secreto, el flujo de trabajo se aborta inmediatamente — no se realiza ninguna llamada a la API. Esto asegura que tus datos sensibles nunca se envíen a ningún modelo de IA. El escáner usa **coincidencia de patrones basada en regex**, no LLMs, por lo que el escaneo es rápido y se ejecuta completamente de forma local.
 
 **Omitir escaneos de seguridad:**
 
@@ -313,7 +313,7 @@ uvx gac --skip-secret-scan  # Omitir escaneo de seguridad para este commit
 - Trabajando con fixtures de prueba que contienen credenciales dummy
 - Cuando has verificado que los cambios son seguros
 
-**Nota:** El escáner usa coincidencia de patrones para detectar formatos comunes de secretos. Siempre revisa tus cambios staged antes de hacer commit.
+**Nota:** El escáner usa coincidencia de patrones basada en regex (no LLMs) para detectar formatos comunes de secretos. Se ejecuta antes de cualquier llamada a la API de IA — si se encuentra un secreto, no se realiza ninguna llamada a la API. Siempre revisa tus cambios staged antes de hacer commit.
 
 ### Verificación de Certificado SSL
 

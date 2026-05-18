@@ -99,16 +99,18 @@ Denna guide täcker vanliga problem och lösningar för installation, konfigurat
 
 ## 5. Säkerhet och hemlighetdetektering
 
+**Viktigt:** Hemlighetsskanning körs **innan något AI API-anrop görs**. Om en hemlighet upptäcks avbryts arbetsflödet omedelbart och inget API-anrop utförs. Scannern använder **regex-baserad mönstermatchning** (inte LLM:er), så skanning är snabb och körs helt lokalt — din kod skickas aldrig till en AI-modell för hemlighetdetektering.
+
 **Problem:** Falskt positivt: hemlighetsskanningen upptäcker icke-hemligheter
 
-- Säkerhetsscanner söker efter mönster som liknar API-nycklar, tokens och lösenord
+- Säkerhetsscanner söker efter regex-mönster som liknar API-nycklar, tokens och lösenord
 - Om du committar exempelkod, testfixtures eller dokumentation med platshållarnycklar, kan du se falska positiva resultat
 - Använd `--skip-secret-scan` för att förbigå skanningen om du är säker på att ändringarna är säkra
 - Överväg att exkludera test-/exempelfiler från commits, eller använd tydligt markerade platshållare
 
 **Problem:** Hemlighetsskanning upptäcker inte faktiska hemligheter
 
-- Scannern använder mönstermatching och kanske inte fångar alla hemlighetstyper
+- Scannern använder regex-baserad mönstermatchning (inte LLM:er) och kanske inte fångar alla hemlighetstyper
 - Granska alltid dina stageade ändringar med `git diff --staged` innan du committar
 - Överväg att använda ytterligare säkerhetsverktyg som `git-secrets` eller `gitleaks` för omfattande skydd
 - Rapportera saknade mönster som ärenden för att hjälpa till att förbättra upptäckt

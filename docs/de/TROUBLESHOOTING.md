@@ -99,16 +99,18 @@ Dieser Leitfaden behandelt häufige Probleme und Lösungen für die Installation
 
 ## 5. Sicherheit und Geheimnis-Erkennung
 
+**Wichtig:** Geheimnis-Scanning wird ausgeführt, **bevor ein AI-API-Aufruf erfolgt**. Wenn ein Geheimnis erkannt wird, wird der Workflow sofort abgebrochen und es erfolgt kein API-Aufruf. Der Scanner verwendet **regex-basiertes Pattern-Matching** (keine LLMs), sodass das Scannen schnell ist und vollständig lokal ausgeführt wird — Ihr Code wird niemals an ein KI-Modell zur Geheimnis-Erkennung gesendet.
+
 **Problem:** Falsch positiv: Geheimnis-Scan erkennt Nicht-Geheimnisse
 
-- Der Sicherheits-Scanner sucht nach Mustern, die API-Schlüssel, Tokens und Passwörter ähneln
+- Der Sicherheits-Scanner sucht nach Regex-Mustern, die API-Schlüsseln, Tokens und Passwörtern ähneln
 - Wenn Sie Beispielcode, Test-Fixtures oder Dokumentation mit Platzhalter-Schlüsseln committen, sehen Sie möglicherweise falsch positive Ergebnisse
 - Verwenden Sie `--skip-secret-scan`, um den Scan zu umgehen, wenn Sie sicher sind, dass die Änderungen sicher sind
 - Erwägen Sie, Test/Beispieldateien von Commits auszuschließen oder verwenden Sie deutlich markierte Platzhalter
 
 **Problem:** Geheimnis-Scan erkennt tatsächliche Geheimnisse nicht
 
-- Der Scanner verwendet Pattern-Matching und kann nicht alle Geheimnis-Typen erfassen
+- Der Scanner verwendet regex-basiertes Pattern-Matching (keine LLMs) und kann nicht alle Geheimnis-Typen erfassen
 - Überprüfen Sie immer Ihre gestageten Änderungen mit `git diff --staged` vor dem Committen
 - Erwägen Sie die Verwendung zusätzlicher Sicherheitswerkzeuge wie `git-secrets` oder `gitleaks` für umfassenden Schutz
 - Melden Sie verpasste Muster als Probleme, um die Erkennung zu verbessern

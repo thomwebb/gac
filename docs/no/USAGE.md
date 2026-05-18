@@ -248,7 +248,7 @@ uvx gac --no-verify  # Hopp over alle pre-commit og lefthook hooks
 
 ### Sikkerhetsskanning
 
-uvx gac inkluderer innebygd sikkerhetsskanning som automatisk oppdager potensielle hemmeligheter og API-nøkler i dine staged endringer før commit. Dette hjelper med å forhindre utilsiktet commit av sensitiv informasjon.
+uvx gac inkluderer innebygd sikkerhetsskanning som automatisk oppdager potensielle hemmeligheter og API-nøkler i dine staged endringer **før noen AI API-kall blir gjort**. Hvis en hemmelighet oppdages, avbrytes arbeidsflyten umiddelbart — ingen API-kall blir utført. Dette sikrer at dine sensitive data aldri sendes til noen AI-modell. Skanneren bruker **regex-basert mønstergjenkjenning**, ikke LLM-er, så skanning er rask og kjøres helt lokalt.
 
 **Hoppe over sikkerhetsskanninger:**
 
@@ -264,7 +264,7 @@ uvx gac --skip-secret-scan  # Hopp over sikkerhetsskanning for denne commit
 - Arbeide med test fixtures som inneholder dummy-credentials
 - Når du har verifisert at endringene er trygge
 
-**Merknad:** Skanneren bruker pattern matching for å oppdage vanlige hemmelighetsformater. Gjennomgå alltid dine staged endringer før commit.
+**Merknad:** Skanneren bruker regex-basert mønstergjenkjenning (ikke LLM-er) for å oppdage vanlige hemmelighetsformater. Den kjøres før ethvert AI API-kall — hvis en hemmelighet blir funnet, utføres ingen API-kall. Gjennomgå alltid dine staged endringer før commit.
 
 ### SSL-sertifikatverifisering
 

@@ -99,16 +99,18 @@ Ce guide couvre les problèmes courants et solutions pour installer, configurer 
 
 ## 5. Sécurité et détection de secrets
 
+**Important :** L'analyse de secrets s'exécute **avant tout appel à une API d'IA**. Si un secret est détecté, le workflow est immédiatement abandonné et aucun appel API n'est effectué. L'analyseur utilise la **correspondance de motifs basée sur des regex** (pas des LLM), l'analyse est donc rapide et s'exécute entièrement en local — votre code n'est jamais envoyé à un modèle d'IA pour la détection de secrets.
+
 **Problème :** Faux positif : l'analyse de secrets détecte des non-secrets
 
-- L'analyseur de sécurité recherche des motifs qui ressemblent à des clés API, jetons et mots de passe
+- L'analyseur de sécurité recherche des motifs regex qui ressemblent à des clés API, jetons et mots de passe
 - Si vous commitez du code d'exemple, des fixtures de test, ou de la documentation avec des clés de remplacement, vous pouvez voir des faux positifs
 - Utilisez `--skip-secret-scan` pour contourner l'analyse si vous êtes certain que les changements sont sûrs
 - Envisagez d'exclure les fichiers d'exemple/test des commits, ou utilisez des remplacements clairement marqués
 
 **Problème :** L'analyse de secrets ne détecte pas de vrais secrets
 
-- L'analyseur utilise des motifs et peut ne pas attraper tous les types de secrets
+- L'analyseur utilise la correspondance de motifs basée sur des regex (pas des LLM) et peut ne pas attraper tous les types de secrets
 - Revoyez toujours vos changements indexés avec `git diff --staged` avant de commiter
 - Envisagez d'utiliser des outils de sécurité supplémentaires comme `git-secrets` ou `gitleaks` pour une protection complète
 - Signalez tous les motifs manqués comme des problèmes pour aider à améliorer la détection

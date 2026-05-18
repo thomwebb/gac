@@ -293,7 +293,7 @@ uvx gac --no-verify  # Skip all pre-commit and lefthook hooks
 
 ### Security Scanning
 
-uvx gac includes built-in security scanning that automatically detects potential secrets and API keys in your staged changes before committing. This helps prevent accidentally committing sensitive information.
+uvx gac includes built-in security scanning that automatically detects potential secrets and API keys in your staged changes **before any AI API calls are made**. If a secret is detected, the workflow aborts immediately — no API call occurs. This ensures your sensitive data is never sent to any AI model. The scanner uses **regex-based pattern matching**, not LLMs, so scanning is fast and runs entirely locally.
 
 **Skipping security scans:**
 
@@ -309,7 +309,7 @@ uvx gac --skip-secret-scan  # Skip security scan for this commit
 - Working with test fixtures that contain dummy credentials
 - When you've verified the changes are safe
 
-**Note:** The scanner uses pattern matching to detect common secret formats. Always review your staged changes before committing.
+**Note:** The scanner uses regex-based pattern matching (not LLMs) to detect common secret formats. It runs before any AI API call — if a secret is found, no API call occurs. Always review your staged changes before committing.
 
 ### SSL Certificate Verification
 

@@ -99,16 +99,18 @@ This guide covers common issues and solutions for installing, configuring, and r
 
 ## 5. Security and Secret Detection
 
+**Important:** Secret scanning runs **before any AI API call** is made. If a secret is detected, the workflow aborts immediately and no API call occurs. The scanner uses **regex-based pattern matching** (not LLMs), so scanning is fast and runs entirely locally — your code is never sent to an AI model for secret detection.
+
 **Problem:** False positive: secret scan detects non-secrets
 
-- The security scanner looks for patterns that resemble API keys, tokens, and passwords
+- The security scanner uses regex patterns to look for strings that resemble API keys, tokens, and passwords
 - If you're committing example code, test fixtures, or documentation with placeholder keys, you may see false positives
 - Use `--skip-secret-scan` to bypass the scan if you're certain the changes are safe
 - Consider excluding test/example files from commits, or use clearly marked placeholders
 
 **Problem:** Secret scan not detecting actual secrets
 
-- The scanner uses pattern matching and may not catch all secret types
+- The scanner uses regex-based pattern matching (not LLMs) and may not catch all secret types
 - Always review your staged changes with `git diff --staged` before committing
 - Consider using additional security tools like `git-secrets` or `gitleaks` for comprehensive protection
 - Report any missed patterns as issues to help improve detection

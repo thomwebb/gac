@@ -297,7 +297,7 @@ uvx gac --no-verify  # Ignorar todos os hooks pre-commit e lefthook
 
 ### Varredura de Segurança
 
-uvx gac inclui varredura de segurança integrada que detecta automaticamente segredos potenciais e chaves de API nas suas alterações em stage antes do commit. Isso ajuda a prevenir o commit acidental de informações sensíveis.
+uvx gac inclui varredura de segurança integrada que detecta automaticamente segredos potenciais e chaves de API nas suas alterações em stage **antes de qualquer chamada à API de IA**. Se um segredo for detectado, o fluxo de trabalho é interrompido imediatamente — nenhuma chamada à API é feita. Isso garante que seus dados sensíveis nunca sejam enviados a nenhum modelo de IA. O varredor usa **correspondência de padrões baseada em regex**, não LLMs, portanto a varredura é rápida e executada inteiramente localmente.
 
 **Ignorando varreduras de segurança:**
 
@@ -313,7 +313,7 @@ uvx gac --skip-secret-scan  # Ignorar varredura de segurança para este commit
 - Trabalhando com fixtures de teste que contêm credenciais falsas
 - Quando você verificou que as alterações são seguras
 
-**Nota:** O varredor usa correspondência de padrões para detectar formatos comuns de segredos. Sempre revise suas alterações em stage antes do commit.
+**Nota:** O varredor usa correspondência de padrões baseada em regex (não LLMs) para detectar formatos comuns de segredos. Ele é executado antes de qualquer chamada à API de IA — se um segredo for encontrado, nenhuma chamada à API é feita. Sempre revise suas alterações em stage antes do commit.
 
 ### Verificação de Certificado SSL
 

@@ -99,16 +99,18 @@ Hướng dẫn này bao gồm các vấn đề phổ biến và giải pháp cho
 
 ## 5. Bảo Mật và Phát Hiện Bí Mật
 
+**Quan trọng:** Quét bí mật chạy **trước khi bất kỳ lệnh gọi AI API nào được thực hiện**. Nếu một bí mật được phát hiện, quy trình làm việc bị hủy ngay lập tức và không có lệnh gọi API nào xảy ra. Trình quét sử dụng **khớp mẫu dựa trên regex** (không phải LLM), do đó quét nhanh và chạy hoàn toàn cục bộ — mã của bạn không bao giờ được gửi đến mô hình AI để phát hiện bí mật.
+
 **Vấn đề:** Dương tính giả: quét bí mật phát hiện các phi bí mật
 
-- Trình quét bảo mật tìm kiếm các mẫu tương tự như khóa API, token và mật khẩu
+- Trình quét bảo mật tìm kiếm các mẫu regex tương tự như khóa API, token và mật khẩu
 - Nếu bạn đang commit mã ví dụ, test fixtures hoặc tài liệu với khóa giữ chỗ, bạn có thể thấy các dương tính giả
 - Sử dụng `--skip-secret-scan` để bỏ qua quét nếu bạn chắc chắn các thay đổi an toàn
 - Cân nhắc loại trừ các tệp ví dụ/test khỏi các commit, hoặc sử dụng các giữ chỗ được đánh dấu rõ ràng
 
 **Vấn đề:** Quét bí mật không phát hiện các bí mật thực tế
 
-- Trình quét sử dụng khớp mẫu và có thể không bắt được tất cả các loại bí mật
+- Trình quét sử dụng khớp mẫu dựa trên regex (không phải LLM) và có thể không bắt được tất cả các loại bí mật
 - Luôn xem lại các thay đổi đã staged của bạn với `git diff --staged` trước khi commit
 - Cân nhắc sử dụng các công cụ bảo mật bổ sung như `git-secrets` hoặc `gitleaks` để bảo vệ toàn diện
 - Báo cáo các mẫu bị bỏ lỡ dưới dạng vấn đề để giúp cải thiện phát hiện

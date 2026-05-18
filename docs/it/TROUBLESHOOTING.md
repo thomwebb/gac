@@ -99,16 +99,18 @@ Questa guida illustra i problemi comuni e le soluzioni per l'installazione, la c
 
 ## 5. Sicurezza e rilevamento segreti
 
+**Importante:** La scansione dei segreti viene eseguita **prima di qualsiasi chiamata API di IA**. Se viene rilevato un segreto, il workflow viene interrotto immediatamente e nessuna chiamata API viene effettuata. Lo scanner usa **pattern matching basato su regex** (non LLM), quindi la scansione è veloce e viene eseguita interamente in locale — il tuo codice non viene mai inviato a un modello di IA per il rilevamento dei segreti.
+
 **Problema:** Falso positivo: la scansione dei segreti rileva non-segreti
 
-- Lo scanner di sicurezza cerca pattern che assomigliano a chiavi API, token e password
+- Lo scanner di sicurezza cerca pattern regex che assomigliano a chiavi API, token e password
 - Se stai facendo commit di codice di esempio, fixture di test o documentazione con chiavi segnaposto, potresti vedere falsi positivi
 - Usa `--skip-secret-scan` per ignorare la scansione se sei certo che le modifiche siano sicure
 - Considera di escludere file di test/esempio dai commit, o usa segnaposto chiaramente contrassegnati
 
 **Problema:** La scansione dei segreti non rileva segreti effettivi
 
-- Lo scanner utilizza il pattern matching e potrebbe non individuare tutti i tipi di segreti
+- Lo scanner utilizza il pattern matching basato su regex (non LLM) e potrebbe non individuare tutti i tipi di segreti
 - Rivedi sempre le tue modifiche staged con `git diff --staged` prima di fare commit
 - Considera l'uso di strumenti di sicurezza aggiuntivi come `git-secrets` o `gitleaks` per una protezione completa
 - Segnala eventuali pattern mancati come issue per aiutare a migliorare il rilevamento

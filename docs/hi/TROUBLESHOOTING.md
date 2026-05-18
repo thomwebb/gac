@@ -99,16 +99,18 @@
 
 ## 5. Security and Secret Detection
 
+**महत्वपूर्ण:** सीक्रेट स्कैनिंग **किसी भी AI API कॉल से पहले** चलती है। यदि सीक्रेट पाया जाता है, तो वर्कफ़्लो तुरंत रुक जाता है और कोई API कॉल नहीं होता। स्कैनर **regex-आधारित पैटर्न मिलान** (LLM नहीं) का उपयोग करता है, इसलिए स्कैनिंग तेज़ है और पूरी तरह से लोकल चलती है — सीक्रेट डिटेक्शन के लिए आपका कोड कभी AI मॉडल को नहीं भेजा जाता।
+
 **Problem:** False positive: secret scan detects non-secrets
 
-- Security scanner patterns की तलाश करता है जो API keys, tokens, और passwords से मिलते-जुलते हैं
+- Security scanner regex पैटर्न की तलाश करता है जो API keys, tokens, और passwords से मिलते-जुलते हैं
 - यदि आप placeholder keys के साथ example code, test fixtures, या documentation कमिट कर रहे हैं, तो आपको false positives दिखाई दे सकते हैं
 - स्कैन को बायपास करने के लिए `--skip-secret-scan` का उपयोग करें यदि आप निश्चित हैं कि changes सुरक्षित हैं
 - Test/example files को commits से बाहर करने पर विचार करें, या स्पष्ट रूप से चिह्नित placeholders का उपयोग करें
 
 **Problem:** Secret scan not detecting actual secrets
 
-- Scanner pattern matching का उपयोग करता है और सभी secret types को पकड़ नहीं सकता है
+- Scanner regex-आधारित पैटर्न मिलान (LLM नहीं) का उपयोग करता है और सभी secret types को पकड़ नहीं सकता है
 - हमेशा कमिट करने से पहले `git diff --staged` के साथ अपने staged changes की समीक्षा करें
 - व्यापक सुरक्षा के लिए `git-secrets` या `gitleaks` जैसे अतिरिक्त security tools का उपयोग करने पर विचार करें
 - Detection में सुधार करने में मदद करने के लिए कोई भी missed patterns को issues के रूप में रिपोर्ट करें

@@ -248,7 +248,7 @@ uvx gac --no-verify  # Bỏ qua tất cả các hook pre-commit và lefthook
 
 ### Quét Bảo Mật
 
-uvx gac bao gồm quét bảo mật tích hợp tự động phát hiện các bí mật và khóa API tiềm tàng trong các thay đổi đã staged của bạn trước khi commit. Điều này giúp ngăn ngừa vô tình commit thông tin nhạy cảm.
+uvx gac bao gồm quét bảo mật tích hợp tự động phát hiện các bí mật và khóa API tiềm tàng trong các thay đổi đã staged của bạn **trước khi bất kỳ lệnh gọi AI API nào được thực hiện**. Nếu một bí mật được phát hiện, quy trình làm việc bị hủy ngay lập tức — không có lệnh gọi API nào xảy ra. Điều này đảm bảo dữ liệu nhạy cảm của bạn không bao giờ được gửi đến bất kỳ mô hình AI nào. Trình quét sử dụng **khớp mẫu dựa trên regex**, không phải LLM, do đó quét nhanh và chạy hoàn toàn cục bộ.
 
 **Bỏ qua quét bảo mật:**
 
@@ -264,7 +264,7 @@ uvx gac --skip-secret-scan  # Bỏ qua quét bảo mật cho commit này
 - Làm việc với test fixtures chứa thông tin xác thực giả
 - Khi bạn đã xác nhận các thay đổi an toàn
 
-**Lưu ý:** Trình quét sử dụng khớp mẫu để phát hiện các định dạng bí mật phổ biến. Luôn xem lại các thay đổi đã staged của bạn trước khi commit.
+**Lưu ý:** Trình quét sử dụng khớp mẫu dựa trên regex (không phải LLM) để phát hiện các định dạng bí mật phổ biến. Nó chạy trước bất kỳ lệnh gọi AI API nào — nếu một bí mật được tìm thấy, không có lệnh gọi API nào xảy ra. Luôn xem lại các thay đổi đã staged của bạn trước khi commit.
 
 ### Xác Minh Chứng Chỉ SSL
 

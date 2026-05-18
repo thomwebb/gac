@@ -99,16 +99,18 @@ Deze gids behandelt veelvoorkomende problemen en oplossingen voor het installere
 
 ## 5. Beveiliging en Geheim Detectie
 
+**Belangrijk:** Geheim scannen wordt uitgevoerd **voordat enige AI API-aanroep wordt gedaan**. Als een geheim wordt gedetecteerd, wordt de workflow onmiddellijk afgebroken en wordt geen API-aanroep uitgevoerd. De scanner gebruikt **regex-gebaseerde patroonmatching** (geen LLM's), dus scannen is snel en wordt volledig lokaal uitgevoerd — uw code wordt nooit naar een AI-model gestuurd voor geheimdetectie.
+
 **Probleem:** Valse positief: geheim scan detecteert niet-geheimen
 
-- De security scanner zoekt naar patronen die lijken op API sleutels, tokens en wachtwoorden
+- De security scanner zoekt naar regex-patronen die lijken op API sleutels, tokens en wachtwoorden
 - Als u voorbeeldcode, test fixtures of documentatie met placeholder sleutels commit, kunt u valse positieven zien
 - Gebruik `--skip-secret-scan` om de scan te omzeilen als u zeker weet dat de wijzigingen veilig zijn
 - Overweeg om test/voorbeeld bestanden uit te sluiten van commits, of gebruik duidelijk gemarkeerde placeholders
 
 **Probleem:** Geheim scan detecteert geen daadwerkelijke geheimen
 
-- De scanner gebruikt patroon matching en kan niet alle geheime typen vangen
+- De scanner gebruikt regex-gebaseerde patroonmatching (geen LLM's) en kan niet alle geheime typen vangen
 - Bekijk altijd uw staged wijzigingen met `git diff --staged` voordat u commit
 - Overweeg om extra beveiligingstools te gebruiken zoals `git-secrets` of `gitleaks` voor uitgebreide bescherming
 - Rapporteer gemiste patronen als issues om detectie te helpen verbeteren

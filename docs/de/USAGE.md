@@ -297,7 +297,7 @@ uvx gac --no-verify  # Alle pre-commit und lefthook Hooks überspringen
 
 ### Sicherheits-Scanning
 
-uvx gac enthält integriertes Sicherheits-Scanning, das automatisch potenzielle Geheimnisse und API-Schlüssel in Ihren gestageten Änderungen vor dem Committen erkennt. Dies hilft, versehentliches Committen sensibler Informationen zu verhindern.
+uvx gac enthält integriertes Sicherheits-Scanning, das automatisch potenzielle Geheimnisse und API-Schlüssel in Ihren gestageten Änderungen erkennt, **bevor ein AI-API-Aufruf erfolgt**. Wenn ein Geheimnis erkannt wird, wird der Workflow sofort abgebrochen — es erfolgt kein API-Aufruf. Dadurch werden Ihre sensiblen Daten niemals an ein KI-Modell gesendet. Der Scanner verwendet **regex-basiertes Pattern-Matching**, keine LLMs, sodass das Scannen schnell ist und vollständig lokal ausgeführt wird.
 
 **Sicherheits-Scans überspringen:**
 
@@ -313,7 +313,7 @@ uvx gac --skip-secret-scan  # Sicherheits-Scan für diesen Commit überspringen
 - Arbeiten mit Test-Fixtures, die Dummy-Anmeldeinformationen enthalten
 - Wenn Sie überprüft haben, dass die Änderungen sicher sind
 
-**Hinweis:** Der Scanner verwendet Pattern-Matching, um gängige Geheimnisformate zu erkennen. Überprüfen Sie immer Ihre gestageten Änderungen vor dem Committen.
+**Hinweis:** Der Scanner verwendet regex-basiertes Pattern-Matching (keine LLMs), um gängige Geheimnisformate zu erkennen. Er wird vor jedem AI-API-Aufruf ausgeführt — wenn ein Geheimnis gefunden wird, erfolgt kein API-Aufruf. Überprüfen Sie immer Ihre gestageten Änderungen vor dem Committen.
 
 ### SSL-Zertifikatüberprüfung
 

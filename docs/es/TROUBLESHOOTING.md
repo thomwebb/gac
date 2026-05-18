@@ -99,16 +99,18 @@ Esta guía cubre problemas comunes y soluciones para instalar, configurar y ejec
 
 ## 5. Seguridad y Detección de Secretos
 
+**Importante:** El escaneo de secretos se ejecuta **antes de que se realice cualquier llamada a la API de IA**. Si se detecta un secreto, el flujo de trabajo se aborta inmediatamente y no se realiza ninguna llamada a la API. El escáner usa **coincidencia de patrones basada en regex** (no LLMs), por lo que el escaneo es rápido y se ejecuta completamente de forma local — tu código nunca se envía a un modelo de IA para la detección de secretos.
+
 **Problema:** Falso positivo: el escaneo de secretos detecta no-secretos
 
-- El escáner de seguridad busca patrones que se parezcan a claves API, tokens y contraseñas
+- El escáner de seguridad busca patrones regex que se parezcan a claves API, tokens y contraseñas
 - Si estás confirmando código de ejemplo, fixtures de prueba o documentación con claves de marcador de posición, puedes ver falsos positivos
 - Usa `--skip-secret-scan` para omitir el escaneo si estás seguro de que los cambios son seguros
 - Considera excluir archivos de prueba/ejemplo de los commits, o usa marcadores de posición claramente etiquetados
 
 **Problema:** El escaneo de secretos no detecta secretos reales
 
-- El escáner usa coincidencia de patrones y puede no capturar todos los tipos de secretos
+- El escáner usa coincidencia de patrones basada en regex (no LLMs) y puede no capturar todos los tipos de secretos
 - Siempre revisa tus cambios en staging con `git diff --staged` antes de confirmar
 - Considera usar herramientas de seguridad adicionales como `git-secrets` o `gitleaks` para protección completa
 - Reporta cualquier patrón omitido como problemas para ayudar a mejorar la detección

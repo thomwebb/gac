@@ -297,7 +297,7 @@ uvx gac --no-verify  # Sauter tous les hooks pre-commit et lefthook
 
 ### Analyse de sécurité
 
-uvx gac inclut une analyse de sécurité intégrée qui détecte automatiquement les secrets potentiels et clés API dans vos changements indexés avant le commit. Cela aide à prévenir le commit accidentel d'informations sensibles.
+uvx gac inclut une analyse de sécurité intégrée qui détecte automatiquement les secrets potentiels et clés API dans vos changements indexés **avant tout appel à une API d'IA**. Si un secret est détecté, le workflow est immédiatement abandonné — aucun appel API n'est effectué. Cela garantit que vos données sensibles ne sont jamais envoyées à un modèle d'IA. L'analyseur utilise la **correspondance de motifs basée sur des regex**, pas des LLM, l'analyse est donc rapide et s'exécute entièrement en local.
 
 **Sauter les analyses de sécurité :**
 
@@ -313,7 +313,7 @@ uvx gac --skip-secret-scan  # Sauter l'analyse de sécurité pour ce commit
 - Travailler avec des fixtures de test qui contiennent des identifiants factices
 - Lorsque vous avez vérifié que les changements sont sûrs
 
-**Note :** L'analyseur utilise des motifs pour détecter les formats de secrets courants. Revoyez toujours vos changements indexés avant de commiter.
+**Note :** L'analyseur utilise la correspondance de motifs basée sur des regex (pas des LLM) pour détecter les formats de secrets courants. Il s'exécute avant tout appel à une API d'IA — si un secret est trouvé, aucun appel API n'est effectué. Revoyez toujours vos changements indexés avant de commiter.
 
 ### Vérification des certificats SSL
 

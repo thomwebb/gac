@@ -99,16 +99,18 @@ Este guia cobre problemas comuns e soluções para instalar, configurar e execut
 
 ## 5. Segurança e Detecção de Segredos
 
+**Importante:** A verificação de segredos é executada **antes de qualquer chamada à API de IA**. Se um segredo for detectado, o fluxo de trabalho é interrompido imediatamente e nenhuma chamada à API é feita. O varredor usa **correspondência de padrões baseada em regex** (não LLMs), portanto a varredura é rápida e executada inteiramente localmente — seu código nunca é enviado a um modelo de IA para detecção de segredos.
+
 **Problema:** Falso positivo: verificação de segredos detecta não-segredos
 
-- O verificador de segurança procura padrões que se assemelham a chaves de API, tokens e senhas
+- O verificador de segurança procura padrões regex que se assemelham a chaves de API, tokens e senhas
 - Se você está fazendo commit de código de exemplo, fixtures de teste ou documentação com chaves de placeholder, você pode ver falsos positivos
 - Use `--skip-secret-scan` para ignorar a verificação se tiver certeza de que as alterações são seguras
 - Considere excluir arquivos de teste/exemplo dos commits, ou use placeholders claramente marcados
 
 **Problema:** Verificação de segredos não detectando segredos reais
 
-- O verificador usa correspondência de padrões e pode não pegar todos os tipos de segredos
+- O verificador usa correspondência de padrões baseada em regex (não LLMs) e pode não pegar todos os tipos de segredos
 - Sempre revise suas alterações em staging com `git diff --staged` antes de fazer commit
 - Considere usar ferramentas de segurança adicionais como `git-secrets` ou `gitleaks` para proteção abrangente
 - Relate quaisquer padrões perdidos como issues para ajudar a melhorar a detecção
