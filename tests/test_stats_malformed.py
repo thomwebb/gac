@@ -326,6 +326,8 @@ class TestMalformedStats:
         enriched = _enrich_models_with_speed(models)
         # (500 + 1500) / 2.0 = 1000 tps
         assert enriched[0][1]["avg_tps"] == 1000
+        # No history provided, so no recent stats
+        assert enriched[0][1]["recent_tps"] is None
 
     def test_speed_uses_zero_reasoning_when_absent(self):
         """Old stats files without timed_reasoning_tokens default to 0."""

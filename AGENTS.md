@@ -10,7 +10,8 @@ This provides essential guidance for AI coding agents working on this repository
 
 **NEVER touch user data files during development or testing. This includes:**
 
-- `~/.gac_stats.json` — Statistics file
+- `~/.gac/stats.json` — Statistics file
+- `~/.gac_stats.json` — Legacy stats file (pre-v4, auto-migrated to `~/.gac/stats.json`)
 - `~/.gac.env` — Configuration/environment file
 - `~/.gac/oauth/*.json` — OAuth tokens directory
 - Any file in the user's home directory matching `~/.gac*`
@@ -19,8 +20,19 @@ This provides essential guidance for AI coding agents working on this repository
 
 1. **ALWAYS use `tmp_path` or `tmp_path_factory` fixtures** to create temporary test files
 2. **ALWAYS mock the file path** using `patch("gac.stats.store.STATS_FILE", tmp_path / "test_stats.json")`
-3. **NEVER call functions that modify real user files** like `reset_stats()`, `save_stats()`, etc. without mocking the file path first
-4. **NEVER use `python -c` one-liners to "clean up" test data** — you might accidentally wipe real data
+3. **ALWAYS mock the legacy path** using `patch("gac.stats.store._LEGACY_STATS_FILE", tmp_path / "test_legacy.json")` when testing migration logic
+4. **NEVER call functions that modify real user files** like `reset_stats()`, `save_stats()`, etc. without mocking the file path first
+5. **NEVER use `python -c` one-liners to "clean up" test data** — you might accidentally wipe real data
+
+### When Running Tests That May Touch Stats
+
+The test suite uses a session-scoped `isolate_stats_file` fixture (in `tests/conftest.py`) that redirects both `STATS_FILE` and `_LEGACY_STATS_FILE` to temp directories. **If you run any test outside of pytest** (e.g. via `uv run python`), this fixture is NOT active. In that case:
+
+1. **Back up the stats file first**: `cp ~/.gac/stats.json ~/.gac/stats.json.bak`
+2. **Also back up the legacy file if it exists**: `cp ~/.gac_stats.json ~/.gac_stats.json.bak 2>/dev/null || true`
+3. Run your test
+4. **Restore after**: `mv ~/.gac/stats.json.bak ~/.gac/stats.json` (and similarly for the legacy file)
+5. **Clean up any test artifacts**: `rm -f ~/.gac/stats.json` if the test created a fresh one
 
 ### Example: Safe Stats Testing
 

@@ -68,28 +68,28 @@ class TestProjectSubcommand:
 
     def test_projects_not_in_git_repo(self, runner):
         """Test projects subcommand when stats are empty."""
-        with patch("gac.stats_cli.load_stats", return_value={"projects": {}}):
+        with patch("gac.stats.commands.load_stats", return_value={"projects": {}}):
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
             assert "No project usage yet" in result.output
 
     def test_projects_no_activity(self, runner):
         """Test projects subcommand when no projects exist."""
-        with patch("gac.stats_cli.load_stats", return_value={"projects": {}}):
+        with patch("gac.stats.commands.load_stats", return_value={"projects": {}}):
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
             assert "No project usage yet" in result.output
 
     def test_projects_no_data_at_all(self, runner):
         """Test projects subcommand when no projects in stats."""
-        with patch("gac.stats_cli.load_stats", return_value={"projects": {}}):
+        with patch("gac.stats.commands.load_stats", return_value={"projects": {}}):
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
             assert "No project usage yet" in result.output
 
     def test_projects_with_multiple_projects(self, runner):
         """Test projects subcommand with multiple projects."""
-        with patch("gac.stats_cli.load_stats") as mock_load:
+        with patch("gac.stats.commands.load_stats") as mock_load:
             mock_load.return_value = {
                 "projects": {
                     "active-proj": {
@@ -110,13 +110,13 @@ class TestProjectSubcommand:
             }
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
-            assert "All Projects" in result.output
+            assert "Projects" in result.output
             assert "active-proj" in result.output
             assert "other-proj" in result.output
 
     def test_projects_singular_project(self, runner):
         """Test projects subcommand with a single project."""
-        with patch("gac.stats_cli.load_stats") as mock_load:
+        with patch("gac.stats.commands.load_stats") as mock_load:
             mock_load.return_value = {
                 "projects": {
                     "solo-proj": {
@@ -134,7 +134,7 @@ class TestProjectSubcommand:
 
     def test_projects_zero_tokens(self, runner):
         """Test projects subcommand when project has gacs but no tokens."""
-        with patch("gac.stats_cli.load_stats") as mock_load:
+        with patch("gac.stats.commands.load_stats") as mock_load:
             mock_load.return_value = {
                 "projects": {
                     "notok-proj": {
@@ -149,6 +149,249 @@ class TestProjectSubcommand:
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
             assert "notok-proj" in result.output
+
+    def test_projects_shows_rank_medals(self, runner):
+        """Test that top 3 projects get medal emojis."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 20,
+                "total_commits": 30,
+                "total_prompt_tokens": 10000,
+                "total_output_tokens": 3000,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "gold": {
+                        "gacs": 10,
+                        "commits": 15,
+                        "prompt_tokens": 5000,
+                        "output_tokens": 1500,
+                        "reasoning_tokens": 0,
+                    },
+                    "silver": {
+                        "gacs": 6,
+                        "commits": 8,
+                        "prompt_tokens": 3000,
+                        "output_tokens": 800,
+                        "reasoning_tokens": 0,
+                    },
+                    "bronze": {
+                        "gacs": 3,
+                        "commits": 5,
+                        "prompt_tokens": 1500,
+                        "output_tokens": 500,
+                        "reasoning_tokens": 0,
+                    },
+                    "plain": {
+                        "gacs": 1,
+                        "commits": 2,
+                        "prompt_tokens": 500,
+                        "output_tokens": 200,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "🥇" in result.output
+            assert "🥈" in result.output
+            assert "🥉" in result.output
+            # 4th project should NOT have a medal
+            assert "plain" in result.output
+
+    def test_projects_shows_bar_charts(self, runner):
+        """Test that activity and token bar charts are rendered."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 10,
+                "total_commits": 15,
+                "total_prompt_tokens": 5000,
+                "total_output_tokens": 1000,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "big-proj": {
+                        "gacs": 7,
+                        "commits": 10,
+                        "prompt_tokens": 3500,
+                        "output_tokens": 700,
+                        "reasoning_tokens": 0,
+                    },
+                    "small-proj": {
+                        "gacs": 3,
+                        "commits": 5,
+                        "prompt_tokens": 1500,
+                        "output_tokens": 300,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "Activity" in result.output
+            assert "Token Usage" in result.output
+            # Bar chart blocks should be present
+            assert "█" in result.output
+
+    def test_projects_shares_column(self, runner):
+        """Test that share percentage column is displayed."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 10,
+                "total_commits": 15,
+                "total_prompt_tokens": 5000,
+                "total_output_tokens": 1000,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "dominant": {
+                        "gacs": 8,
+                        "commits": 12,
+                        "prompt_tokens": 4000,
+                        "output_tokens": 800,
+                        "reasoning_tokens": 0,
+                    },
+                    "minor": {
+                        "gacs": 2,
+                        "commits": 3,
+                        "prompt_tokens": 1000,
+                        "output_tokens": 200,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "80%" in result.output
+            assert "20%" in result.output
+            assert "Share" in result.output
+
+    def test_projects_commit_efficiency_column(self, runner):
+        """Test that C/G (commits per gac) column is displayed."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 10,
+                "total_commits": 25,
+                "total_prompt_tokens": 5000,
+                "total_output_tokens": 1000,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "efficient": {
+                        "gacs": 5,
+                        "commits": 18,
+                        "prompt_tokens": 2500,
+                        "output_tokens": 500,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "C/G" in result.output
+            # 18/5 = 3.6 — fractional ratio displayed
+            assert "3.6" in result.output
+
+    def test_projects_fun_facts_dominant(self, runner):
+        """Test fun fact when a project dominates (>50% of gacs)."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 20,
+                "total_commits": 30,
+                "total_prompt_tokens": 10000,
+                "total_output_tokens": 3000,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "king": {
+                        "gacs": 12,
+                        "commits": 18,
+                        "prompt_tokens": 6000,
+                        "output_tokens": 1800,
+                        "reasoning_tokens": 0,
+                    },
+                    "peasant": {
+                        "gacs": 8,
+                        "commits": 12,
+                        "prompt_tokens": 4000,
+                        "output_tokens": 1200,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "🏆" in result.output
+            assert "60%" in result.output
+
+    def test_projects_fun_facts_spread(self, runner):
+        """Test fun fact when no project dominates (<30% of gacs)."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 20,
+                "total_commits": 24,
+                "total_prompt_tokens": 10000,
+                "total_output_tokens": 2000,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "a": {"gacs": 5, "commits": 6, "prompt_tokens": 2500, "output_tokens": 500, "reasoning_tokens": 0},
+                    "b": {"gacs": 5, "commits": 6, "prompt_tokens": 2500, "output_tokens": 500, "reasoning_tokens": 0},
+                    "c": {"gacs": 5, "commits": 6, "prompt_tokens": 2500, "output_tokens": 500, "reasoning_tokens": 0},
+                    "d": {"gacs": 5, "commits": 6, "prompt_tokens": 2500, "output_tokens": 500, "reasoning_tokens": 0},
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            # Each project is 25% — below the 30% threshold → "spread" message
+            assert "spread" in result.output.lower()
+
+    def test_projects_panel_header(self, runner):
+        """Test that the project panel header shows correct count."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 5,
+                "total_commits": 8,
+                "total_prompt_tokens": 2000,
+                "total_output_tokens": 500,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "proj1": {
+                        "gacs": 3,
+                        "commits": 5,
+                        "prompt_tokens": 1200,
+                        "output_tokens": 300,
+                        "reasoning_tokens": 0,
+                    },
+                    "proj2": {
+                        "gacs": 2,
+                        "commits": 3,
+                        "prompt_tokens": 800,
+                        "output_tokens": 200,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "2 projects" in result.output
+
+    def test_projects_single_project_singular_label(self, runner):
+        """Test singular 'project' label when there's only one project."""
+        with patch("gac.stats.commands.load_stats") as mock_load:
+            mock_load.return_value = {
+                "total_gacs": 1,
+                "total_commits": 1,
+                "total_prompt_tokens": 100,
+                "total_output_tokens": 50,
+                "total_reasoning_tokens": 0,
+                "projects": {
+                    "lonely": {
+                        "gacs": 1,
+                        "commits": 1,
+                        "prompt_tokens": 100,
+                        "output_tokens": 50,
+                        "reasoning_tokens": 0,
+                    },
+                },
+            }
+            result = runner.invoke(cli, ["stats", "projects"])
+            assert result.exit_code == 0
+            assert "1 project!" in result.output
 
 
 class TestTopModelsAndProjects:
@@ -198,7 +441,7 @@ class TestTopModelsAndProjects:
         """Test that top models table is rendered with speed info."""
         with (
             patch("gac.stats_cli.get_stats_summary") as mock_summary,
-            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats.commands.load_stats") as mock_load,
         ):
             mock_summary.return_value = _base_summary(
                 top_models=[
@@ -220,13 +463,13 @@ class TestTopModelsAndProjects:
             assert result.exit_code == 0
             assert "Top Models" in result.output
             assert "openai:gpt-4" in result.output
-            assert "42 tps" in result.output
+            assert "42.0 tps" in result.output
 
     def test_stats_show_with_model_no_speed(self, runner):
         """Test models table when avg_tps is None (no duration data)."""
         with (
             patch("gac.stats_cli.get_stats_summary") as mock_summary,
-            patch("gac.stats_cli.load_stats") as mock_load,
+            patch("gac.stats.commands.load_stats") as mock_load,
         ):
             mock_summary.return_value = _base_summary(
                 top_models=[

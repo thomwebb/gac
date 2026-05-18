@@ -111,7 +111,10 @@ def get_stats_summary() -> dict[str, Any]:
     top_projects = sorted(projects.items(), key=store.project_activity, reverse=True)
 
     models = stats.get("models", {})
-    top_models = store._enrich_models_with_speed(sorted(models.items(), key=store.model_activity, reverse=True))
+    history = stats.get("history", [])
+    top_models = store._enrich_models_with_speed(
+        sorted(models.items(), key=store.model_activity, reverse=True), history=history
+    )
 
     # Calculate peak single-day stats
     peak_daily_gacs: int = max(daily_gacs.values()) if daily_gacs else 0

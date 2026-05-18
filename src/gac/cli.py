@@ -243,6 +243,10 @@ cli.add_command(reasoning_cli)
 cli.add_command(report_cli)
 cli.add_command(stats_cli)
 
+# Register subcommands defined in gac.stats.commands on the stats group.
+# Side-effect import: the module decorates @stats.command() at load time.
+import gac.stats.commands  # noqa: F401,E402
+
 
 @click.command(context_settings=language_cli.context_settings)
 @click.pass_context

@@ -222,7 +222,7 @@ class TestStatsCLI:
     def test_stats_projects_with_token_only_history(self, runner):
         """Test stats projects renders all projects including one that has only token usage
         (no recorded commits or gacs yet)."""
-        with patch("gac.stats_cli.load_stats") as mock_load:
+        with patch("gac.stats.commands.load_stats") as mock_load:
             mock_load.return_value = {
                 "projects": {
                     "my-proj": {
@@ -236,7 +236,7 @@ class TestStatsCLI:
             }
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
-            assert "All Projects" in result.output
+            assert "Projects" in result.output
             # Total = 800 + 150 + 0 = 950
             assert "950" in result.output
 
@@ -649,7 +649,7 @@ class TestStatsModelsCommand:
                 },
             ),
             patch("gac.stats_cli.stats_enabled", return_value=True),
-            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x: x),
+            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x, **kw: x),
             patch("gac.stats_cli.load_config", return_value={"model": "openai:gpt-4"}),
         ):
             result = runner.invoke(cli, ["stats", "models"])
@@ -674,8 +674,8 @@ class TestStatsModelsCommand:
                     }
                 },
             ),
-            patch("gac.stats_cli.stats_enabled", return_value=True),
-            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x: x),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
+            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x, **kw: x),
             patch("gac.stats_cli.load_config", return_value={"model": None}),
         ):
             result = runner.invoke(cli, ["stats", "models"])
@@ -700,8 +700,8 @@ class TestStatsModelsCommand:
                     }
                 },
             ),
-            patch("gac.stats_cli.stats_enabled", return_value=True),
-            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x: x),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
+            patch("gac.stats.store._enrich_models_with_speed", side_effect=lambda x, **kw: x),
             patch("gac.stats_cli.load_config", return_value={"model": "anthropic:claude-4"}),
         ):
             result = runner.invoke(cli, ["stats", "models"])
@@ -717,7 +717,7 @@ class TestStatsModelsCommand:
             assert "disabled" in result.output.lower()
 
     def test_models_with_speed_data(self, runner) -> None:
-        def enrich(data):
+        def enrich(data, **kw):
             result = []
             for name, d in data:
                 d_copy = dict(d)
@@ -740,7 +740,7 @@ class TestStatsModelsCommand:
                     }
                 },
             ),
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
             patch("gac.stats.store._enrich_models_with_speed", side_effect=enrich),
             patch("gac.stats_cli.load_config", return_value={"model": None}),
         ):
@@ -759,8 +759,8 @@ class TestStatsProjectsCommand:
 
     def test_projects_no_data(self, runner) -> None:
         with (
-            patch("gac.stats_cli.load_stats", return_value={"projects": {}}),
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.load_stats", return_value={"projects": {}}),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
@@ -769,7 +769,7 @@ class TestStatsProjectsCommand:
     def test_projects_with_data(self, runner) -> None:
         with (
             patch(
-                "gac.stats_cli.load_stats",
+                "gac.stats.commands.load_stats",
                 return_value={
                     "projects": {
                         "my-app": {
@@ -789,37 +789,37 @@ class TestStatsProjectsCommand:
                     }
                 },
             ),
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
-            assert "All Projects" in result.output
+            assert "Projects" in result.output
             assert "my-app" in result.output
 
     def test_projects_disabled(self, runner) -> None:
-        with patch("gac.stats_cli.stats_enabled", return_value=False):
+        with patch("gac.stats.commands.stats_enabled", return_value=False):
             result = runner.invoke(cli, ["stats", "projects"])
             assert result.exit_code == 0
             assert "disabled" in result.output.lower()
 
 
 class TestFormatLatency:
-    """Tests for the _format_latency helper."""
+    """Tests for the format_latency helper."""
 
     def test_milliseconds(self) -> None:
-        from gac.stats_cli import _format_latency
+        from gac.stats.charts import format_latency
 
-        assert _format_latency(420) == "420ms"
+        assert format_latency(420) == "420ms"
 
     def test_seconds(self) -> None:
-        from gac.stats_cli import _format_latency
+        from gac.stats.charts import format_latency
 
-        assert _format_latency(2500) == "2.5s"
+        assert format_latency(2500) == "2.5s"
 
     def test_exactly_one_second(self) -> None:
-        from gac.stats_cli import _format_latency
+        from gac.stats.charts import format_latency
 
-        assert _format_latency(1000) == "1.0s"
+        assert format_latency(1000) == "1.0s"
 
 
 class TestMarkCurrentModel:
@@ -847,22 +847,26 @@ class TestMarkCurrentModel:
 
 
 class TestBuildBarChart:
-    """Tests for the _build_bar_chart helper."""
+    """Tests for the build_bar_chart helper."""
 
     def test_basic_chart(self) -> None:
-        from gac.stats_cli import _build_bar_chart
+        from gac.stats.charts import build_bar_chart
 
         models_data = [("model-a", {"avg_tps": 50}), ("model-b", {"avg_tps": 25})]
-        table = _build_bar_chart(models_data, value_key="avg_tps", max_value=50, label_fmt=lambda v: f"{v} tps")
+        table = build_bar_chart(models_data, value_key="avg_tps", max_value=50, label_fmt=lambda v: f"{v} tps")
         # Table should have rows
         assert table.row_count == 2
 
-    def test_chart_marks_current_model(self) -> None:
-        from gac.stats_cli import _build_bar_chart
+    def test_chart_item_label_fmt(self) -> None:
+        from gac.stats.charts import build_bar_chart
 
         models_data = [("model-a", {"avg_tps": 50}), ("model-b", {"avg_tps": 25})]
-        table = _build_bar_chart(
-            models_data, value_key="avg_tps", max_value=50, label_fmt=lambda v: f"{v} tps", current_model="model-a"
+        table = build_bar_chart(
+            models_data,
+            value_key="avg_tps",
+            max_value=50,
+            label_fmt=lambda v: f"{v} tps",
+            item_label_fmt=lambda name, _d, _r: f"* {name}" if name == "model-a" else name,
         )
         # First row should have the * marker
         first_row_model = table.columns[0]._cells[0]  # type: ignore[attr-defined]
@@ -872,16 +876,16 @@ class TestBuildBarChart:
         assert "model-b" == second_row_model
 
     def test_empty_data(self) -> None:
-        from gac.stats_cli import _build_bar_chart
+        from gac.stats.charts import build_bar_chart
 
-        table = _build_bar_chart([], value_key="avg_tps", max_value=100, label_fmt=lambda v: str(v))
+        table = build_bar_chart([], value_key="avg_tps", max_value=100, label_fmt=lambda v: str(v))
         assert table.row_count == 0
 
     def test_latency_chart_lower_is_better(self) -> None:
-        from gac.stats_cli import _build_bar_chart
+        from gac.stats.charts import build_bar_chart
 
         models_data = [("fast", {"avg_latency_ms": 100}), ("slow", {"avg_latency_ms": 500})]
-        table = _build_bar_chart(
+        table = build_bar_chart(
             models_data,
             value_key="avg_latency_ms",
             max_value=500,
@@ -892,7 +896,7 @@ class TestBuildBarChart:
 
     def test_latency_all_speed_tiers(self) -> None:
         """Hit all color tier branches for latency (lower is better)."""
-        from gac.stats_cli import _build_bar_chart
+        from gac.stats.charts import build_bar_chart
 
         # 500 max, test 0.25 (125), 0.5 (250), 0.75 (375), and above
         models_data = [
@@ -901,7 +905,7 @@ class TestBuildBarChart:
             ("moderate", {"lat": 350}),  # <= 0.75 ratio
             ("slow", {"lat": 450}),  # > 0.75 ratio
         ]
-        table = _build_bar_chart(
+        table = build_bar_chart(
             models_data,
             value_key="lat",
             max_value=500,
@@ -912,7 +916,7 @@ class TestBuildBarChart:
 
     def test_speed_all_tiers(self) -> None:
         """Hit all color tier branches for speed (higher is better)."""
-        from gac.stats_cli import _build_bar_chart
+        from gac.stats.charts import build_bar_chart
 
         models_data = [
             ("fastest", {"tps": 100}),  # >= 0.75 ratio
@@ -920,7 +924,7 @@ class TestBuildBarChart:
             ("medium", {"tps": 30}),  # >= 0.25 ratio
             ("slow", {"tps": 10}),  # < 0.25 ratio
         ]
-        table = _build_bar_chart(
+        table = build_bar_chart(
             models_data,
             value_key="tps",
             max_value=100,
@@ -931,10 +935,10 @@ class TestBuildBarChart:
 
     def test_zero_max_value(self) -> None:
         """Handle max_value=0 gracefully."""
-        from gac.stats_cli import _build_bar_chart
+        from gac.stats.charts import build_bar_chart
 
         models_data = [("zero", {"tps": 0})]
-        table = _build_bar_chart(
+        table = build_bar_chart(
             models_data,
             value_key="tps",
             max_value=0,
@@ -955,7 +959,7 @@ class TestStatsResetModelCommand:
         with (
             patch("gac.stats_cli.load_stats") as mock_load,
             patch("gac.stats_cli.reset_model_stats") as mock_reset,
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             mock_load.return_value = {
                 "models": {
@@ -979,7 +983,7 @@ class TestStatsResetModelCommand:
         with (
             patch("gac.stats_cli.load_stats") as mock_load,
             patch("gac.stats_cli.reset_model_stats") as mock_reset,
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             mock_load.return_value = {
                 "models": {
@@ -1002,7 +1006,7 @@ class TestStatsResetModelCommand:
         with (
             patch("gac.stats_cli.load_stats") as mock_load,
             patch("gac.stats_cli.reset_model_stats") as mock_reset,
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             mock_load.return_value = {
                 "models": {
@@ -1027,7 +1031,7 @@ class TestStatsResetModelCommand:
         """Test reset model with non-existent model shows available models."""
         with (
             patch("gac.stats_cli.load_stats") as mock_load,
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             mock_load.return_value = {
                 "models": {
@@ -1047,7 +1051,7 @@ class TestStatsResetModelCommand:
         """Test reset model with empty models dict."""
         with (
             patch("gac.stats_cli.load_stats", return_value={"models": {}}),
-            patch("gac.stats_cli.stats_enabled", return_value=True),
+            patch("gac.stats.commands.stats_enabled", return_value=True),
         ):
             result = runner.invoke(cli, ["stats", "reset", "model", "any:model"])
             assert result.exit_code == 0

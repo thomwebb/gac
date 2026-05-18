@@ -91,16 +91,21 @@ def _disable_stats_with_history_prompt(existing_env: dict[str, str], env_path: P
     click.echo("Set GAC_DISABLE_STATS='true'. Stats disabled.")
 
     from gac.stats import STATS_FILE
+    from gac.stats.store import _LEGACY_STATS_FILE
 
-    if STATS_FILE.exists():
+    candidates = [p for p in (STATS_FILE, _LEGACY_STATS_FILE) if p.exists()]
+    if not candidates:
+        return
+
+    for path in candidates:
         delete = questionary.confirm(
-            f"Delete existing stats history at {STATS_FILE}?",
+            f"Delete existing stats history at {path}?",
             default=False,
         ).ask()
         if delete:
             try:
-                STATS_FILE.unlink()
-                click.echo(f"Deleted {STATS_FILE}.")
+                path.unlink()
+                click.echo(f"Deleted {path}.")
             except OSError as e:
                 click.echo(f"Could not delete stats file: {e}")
         else:
@@ -118,7 +123,8 @@ def _configure_stats(existing_env: dict[str, str], env_path: Path = GAC_ENV_PATH
         "GAC can track local usage statistics — total gacs, commits, tokens, streaks,\n"
         "and per-project / per-model breakdowns. View them anytime with `uvx gac stats`."
     )
-    click.echo(f"Data stays on your machine in {Path.home() / '.gac_stats.json'}.")
+    click.echo(f"Data stays on your machine in {Path.home() / '.gac' / 'stats.json'}.")
+    click.echo("[dim]If you previously used gac, ~/.gac_stats.json is migrated automatically on first load.[/dim]")
     click.echo("Nothing is uploaded. There is no telemetry.")
 
     raw = existing_env.get("GAC_DISABLE_STATS")

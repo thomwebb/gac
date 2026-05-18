@@ -264,7 +264,7 @@ def test_configure_stats_disable_from_default():
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = Path(tmpdir) / ".gac.env"
         env_path.touch()
-        stats_file = Path(tmpdir) / ".gac_stats.json"  # non-existent
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"  # non-existent
         with _patch_env_paths(env_path):
             with (
                 mock.patch("gac.stats.store.STATS_FILE", stats_file),
@@ -333,7 +333,7 @@ def test_configure_stats_disable_when_explicitly_enabled():
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = Path(tmpdir) / ".gac.env"
         env_path.write_text("GAC_DISABLE_STATS='false'\n")
-        stats_file = Path(tmpdir) / ".gac_stats.json"  # non-existent
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"  # non-existent
         with _patch_env_paths(env_path):
             with (
                 mock.patch("gac.stats.store.STATS_FILE", stats_file),
@@ -385,7 +385,8 @@ def test_configure_stats_disable_offers_to_delete_existing_history():
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = Path(tmpdir) / ".gac.env"
         env_path.touch()
-        stats_file = Path(tmpdir) / ".gac_stats.json"
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"
+        stats_file.parent.mkdir(parents=True, exist_ok=True)
         stats_file.write_text("{}")
 
         with _patch_env_paths(env_path):
@@ -405,7 +406,8 @@ def test_configure_stats_disable_keeps_existing_history_when_user_declines():
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = Path(tmpdir) / ".gac.env"
         env_path.touch()
-        stats_file = Path(tmpdir) / ".gac_stats.json"
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"
+        stats_file.parent.mkdir(parents=True, exist_ok=True)
         stats_file.write_text('{"total_gacs": 5}')
 
         with _patch_env_paths(env_path):
@@ -426,7 +428,7 @@ def test_configure_stats_disable_no_prompt_when_no_history():
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = Path(tmpdir) / ".gac.env"
         env_path.touch()
-        stats_file = Path(tmpdir) / ".gac_stats.json"  # never created
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"  # never created
 
         with _patch_env_paths(env_path):
             with (
@@ -446,7 +448,7 @@ def test_init_cli_language_action_cancelled(monkeypatch):
     runner = CliRunner()
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = _setup_env_file(tmpdir)
-        stats_file = Path(tmpdir) / ".gac_stats.json"  # non-existent
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"  # non-existent
         with _patch_env_paths(env_path):
             with (
                 mock.patch("gac.stats.store.STATS_FILE", stats_file),
@@ -492,7 +494,8 @@ def test_disable_stats_with_history_prompt_oserror():
     with tempfile.TemporaryDirectory() as tmpdir:
         env_path = Path(tmpdir) / ".gac.env"
         env_path.touch()
-        stats_file = Path(tmpdir) / ".gac_stats.json"
+        stats_file = Path(tmpdir) / ".gac" / "stats.json"
+        stats_file.parent.mkdir(parents=True, exist_ok=True)
         stats_file.write_text("{}")
 
         with (
