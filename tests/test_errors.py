@@ -177,39 +177,35 @@ class TestErrors(unittest.TestCase):
         error = AIError.authentication_error("Invalid API key")
         message = format_error_for_user(error)
         self.assertIn("Invalid API key", message)
-        self.assertIn("check your API key", message)
-        self.assertIn("ensure it is valid", message)
+        self.assertIn("uvx gac init", message)
 
     def test_format_error_connection(self):
         """Test formatting of connection errors."""
         error = AIError.connection_error("Network unreachable")
         message = format_error_for_user(error)
         self.assertIn("Network unreachable", message)
-        self.assertIn("check your internet connection", message)
-        self.assertIn("try again", message)
+        self.assertIn("internet connection", message)
 
     def test_format_error_rate_limit(self):
         """Test formatting of rate limit errors."""
         error = AIError.rate_limit_error("Too many requests")
         message = format_error_for_user(error)
         self.assertIn("Too many requests", message)
-        self.assertIn("rate limit", message)
-        self.assertIn("wait", message)
+        self.assertIn("Wait", message)
 
     def test_format_error_timeout(self):
         """Test formatting of timeout errors."""
         error = AIError.timeout_error("Request timed out")
         message = format_error_for_user(error)
         self.assertIn("Request timed out", message)
-        self.assertIn("timed out", message)
-        self.assertIn("try again", message)
+        self.assertIn("try again", message.lower())
 
     def test_format_error_model(self):
         """Test formatting of model errors."""
         error = AIError.model_error("Model not found")
         message = format_error_for_user(error)
         self.assertIn("Model not found", message)
-        self.assertIn("check that the specified model exists", message)
+        self.assertIn("model list", message)
 
     def test_unknown_error_factory(self):
         """Test AIError.unknown_error factory method."""
@@ -413,3 +409,111 @@ class TestErrors(unittest.TestCase):
         self.assertIn("Something went terribly wrong", message)
         # Should include the fallback remediation advice
         self.assertIn("please report it as a bug", message.lower())
+
+    def test_format_error_for_user_uses_suggestion_when_present(self):
+        """Test format_error_for_user prefers error.suggestion over generic remediation."""
+        error = AIError.authentication_error(
+            "API key is wrong",
+            suggestion="Check your ~/.gac.env or run 'uvx gac init'.",
+        )
+        message = format_error_for_user(error)
+        self.assertIn("API key is wrong", message)
+        self.assertIn("uvx gac init", message)
+        # Should NOT include the generic fallback
+        self.assertNotIn("Please check your API key and ensure it is valid", message)
+
+    def test_format_error_for_user_gac_error_suggestion(self):
+        """Test format_error_for_user uses suggestion from GacError base class."""
+        error = GitError(
+            "Not in a git repository",
+            suggestion="Run 'git init' to create one.",
+        )
+        message = format_error_for_user(error)
+        self.assertIn("Not in a git repository", message)
+        self.assertIn("git init", message)
+
+    def test_ai_error_factory_default_suggestions(self):
+        """Test that AIError factory methods provide default suggestions."""
+        auth = AIError.authentication_error("bad key")
+        self.assertIn("uvx gac init", auth.suggestion)
+
+        conn = AIError.connection_error("no network")
+        self.assertIn("internet connection", conn.suggestion.lower())
+
+        rate = AIError.rate_limit_error("too fast")
+        self.assertIn("wait", rate.suggestion.lower())
+
+        timeout = AIError.timeout_error("too slow")
+        self.assertIn("try again", timeout.suggestion.lower())
+
+        model = AIError.model_error("bad model")
+        self.assertIn("model list", model.suggestion)
+
+    def test_ai_error_factory_custom_suggestion(self):
+        """Test that AIError factory methods accept custom suggestions."""
+        error = AIError.authentication_error(
+            "key expired",
+            suggestion="Run 'uvx gac auth openai login' to refresh.",
+        )
+        self.assertEqual(error.suggestion, "Run 'uvx gac auth openai login' to refresh.")
+
+    def test_ai_error_unknown_no_default_suggestion(self):
+        """Test that unknown_error has no default suggestion (None)."""
+        error = AIError.unknown_error("mystery")
+        self.assertIsNone(error.suggestion)
+
+    @patch("gac.errors.logger")
+    def test_handle_error_displays_rich_output(self, mock_logger):
+        """Test that handle_error shows Rich console output with suggestion."""
+        error = AIError.authentication_error(
+            "API key invalid",
+            suggestion="Run 'uvx gac init' to reconfigure.",
+        )
+        # Should not raise
+        handle_error(error, exit_program=False, quiet=False)
+
+    @patch("gac.errors.logger")
+    def test_handle_error_quiet_suppresses_rich_output(self, mock_logger):
+        """Test that quiet mode suppresses Rich console output."""
+        error = AIError.authentication_error("bad key")
+        # Should not raise and should not print to console
+        handle_error(error, exit_program=False, quiet=True)
+
+    @patch("gac.errors.logger")
+    def test_handle_error_rich_output_fallback(self, mock_logger):
+        """Test Rich display is best-effort and never masks original error."""
+        # A plain ValueError without suggestion or exit_code should still work
+        error = ValueError("something broke")
+        handle_error(error, exit_program=False, quiet=False)
+
+    def test_error_display_name_hook_error(self):
+        """Test that _error_display_name returns 'Hook Error' for HookError."""
+        from gac.errors import HookError, _error_display_name
+
+        error = HookError("pre-commit hook failed")
+        self.assertEqual(_error_display_name(error), "Hook Error")
+
+    def test_error_display_name_all_types(self):
+        """Test _error_display_name covers all GacError subclasses."""
+        from gac.errors import HookError, _error_display_name
+
+        cases = [
+            (AIError.authentication_error("x"), "Authentication Error"),
+            (AIError.connection_error("x"), "Connection Error"),
+            (AIError.rate_limit_error("x"), "Rate Limit"),
+            (AIError.timeout_error("x"), "Timeout"),
+            (AIError.model_error("x"), "Model Error"),
+            (AIError.unknown_error("x"), "AI Error"),
+            (ConfigError("x"), "Configuration Error"),
+            (GitError("x"), "Git Error"),
+            (SecurityError("x"), "Security Error"),
+            (FormattingError("x"), "Formatting Error"),
+            (HookError("x"), "Hook Error"),
+            (ValueError("x"), "Error"),
+        ]
+        for error, expected in cases:
+            self.assertEqual(
+                _error_display_name(error),
+                expected,
+                f"{_error_display_name(error)} != {expected} for {type(error).__name__}",
+            )

@@ -38,7 +38,7 @@ class TestClaudeCodeAPIKeyValidation:
                 call_claude_code_api("claude-haiku-4-5", [], 0.7, 1000)
 
             assert exc_info.value.error_type == "authentication"
-            assert "gac auth claude-code login" in str(exc_info.value)
+            assert "uvx gac auth claude-code login" in str(exc_info.value.suggestion)
 
 
 class TestClaudeCodeProviderMocked(BaseProviderTest):

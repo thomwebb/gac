@@ -255,3 +255,39 @@ class TestOAuthRetry:
 
             # Verify the retry workflow was called with ctx and config
             mock_retry.assert_called_once_with(ctx, {})
+
+    def test_handle_oauth_retry_shows_suggestion(self):
+        """Test that handle_oauth_retry shows suggestion from AIError."""
+        error = AIError.authentication_error(
+            "API key invalid",
+            suggestion="Run 'uvx gac init' to reconfigure.",
+        )
+
+        ctx = Mock()
+        ctx.model = "openai:gpt-4"
+        ctx.quiet = False
+
+        with patch("gac.oauth_retry.console") as mock_console, patch("gac.oauth_retry.logger"):
+            result = handle_oauth_retry(error, ctx, {})
+            assert result == 1
+
+            # Should show the suggestion
+            suggestion_calls = [call for call in mock_console.print.call_args_list if "uvx gac init" in str(call)]
+            assert len(suggestion_calls) > 0
+
+    def test_handle_oauth_retry_no_suggestion_when_absent(self):
+        """Test that handle_oauth_retry doesn't show suggestion when not set."""
+        error = AIError("Generic error")
+        error.error_type = "model"
+
+        ctx = Mock()
+        ctx.model = "openai:gpt-4"
+        ctx.quiet = False
+
+        with patch("gac.oauth_retry.console") as mock_console, patch("gac.oauth_retry.logger"):
+            result = handle_oauth_retry(error, ctx, {})
+            assert result == 1
+
+            # Should NOT show any 💡 suggestion lines
+            suggestion_calls = [call for call in mock_console.print.call_args_list if "💡" in str(call)]
+            assert len(suggestion_calls) == 0
