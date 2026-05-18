@@ -30,7 +30,7 @@ jobs:
                   },
                   {
                     "name": "Stargazer",
-                    "value": "[='"$STARER"'](https://github.com/'"$STARER"')",
+                    "value": "['"$STARER"'](https://github.com/'"$STARER"')",
                     "inline": true
                   }
                 ],
