@@ -22,6 +22,7 @@ from .copilot import CopilotProvider
 from .crof import CrofProvider
 from .custom_anthropic import CustomAnthropicProvider
 from .custom_openai import CustomOpenAIProvider
+from .deepinfra import DeepInfraProvider
 from .deepseek import DeepSeekProvider
 from .fireworks import FireworksProvider
 from .gemini import GeminiProvider
@@ -59,6 +60,7 @@ register_provider("claude-code", ClaudeCodeProvider)
 register_provider("crof", CrofProvider)
 register_provider("custom-anthropic", CustomAnthropicProvider)
 register_provider("custom-openai", CustomOpenAIProvider)
+register_provider("deepinfra", DeepInfraProvider)
 register_provider("deepseek", DeepSeekProvider)
 register_provider("fireworks", FireworksProvider)
 register_provider("gemini", GeminiProvider)

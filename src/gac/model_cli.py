@@ -91,6 +91,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("Crof.ai", "kimi-k2.5-lightning"),
         ("Custom (Anthropic)", ""),
         ("Custom (OpenAI)", ""),
+        ("DeepInfra", "Qwen/Qwen3.6-35B-A3B"),
         ("DeepSeek", "deepseek-chat"),
         ("Fireworks", "fireworks/glm-5p1"),
         ("Gemini", "gemini-3.1-flash-lite-preview"),

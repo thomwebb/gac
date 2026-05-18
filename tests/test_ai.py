@@ -550,6 +550,7 @@ class TestProviderRegistry:
             "crof",
             "custom-anthropic",
             "custom-openai",
+            "deepinfra",
             "deepseek",
             "fireworks",
             "gemini",
