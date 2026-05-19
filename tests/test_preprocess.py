@@ -2,21 +2,23 @@
 
 from unittest.mock import patch
 
-from gac.preprocess import (
+from gac.diff_scoring import (
     analyze_code_patterns,
     calculate_section_importance,
+    get_extension_score,
+    score_sections,
+    smart_truncate_diff,
+)
+from gac.preprocess import (
     extract_binary_file_summary,
     extract_filtered_file_summary,
     filter_binary_and_minified,
-    get_extension_score,
     is_lockfile_or_generated,
     is_minified_content,
     preprocess_diff,
     process_section,
     process_sections_parallel,
-    score_sections,
     should_filter_section,
-    smart_truncate_diff,
     split_diff_into_sections,
 )
 
@@ -189,7 +191,7 @@ index 2345678..bcdef01 234567
         simple_code = "+x = 1\n+y = 2\n+z = x + y"
         assert analyze_code_patterns(simple_code) < 1.0
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff(self, mock_count_tokens):
         """Test smart truncation of diffs to fit token limits."""
         # Create some sections with scores
@@ -263,7 +265,7 @@ index 1234567..abcdef0 123456
         assert "file1.py" in result
         assert "Added comment" in result
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_preprocess_diff_large(self, mock_count_tokens):
         """Test preprocessing of large diffs that need truncation."""
         # First call (initial check) must return > token_limit * 0.8 to
@@ -308,7 +310,7 @@ diff --git a/README.md b/README.md
                 mock_process.return_value = sections
 
                 # Mock score_sections to return scored sections
-                with patch("gac.preprocess.score_sections") as mock_score:
+                with patch("gac.diff_scoring.score_sections") as mock_score:
                     scored_sections = [
                         (sections[0], 5.0),
                         (sections[1], 3.0),

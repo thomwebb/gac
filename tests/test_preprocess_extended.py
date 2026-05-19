@@ -5,18 +5,20 @@ This focuses on the missing coverage areas identified in the coverage report.
 
 from unittest.mock import patch
 
-from gac.preprocess import (
+from gac.diff_scoring import (
     calculate_section_importance,
+    get_extension_score,
+    score_sections,
+    smart_truncate_diff,
+)
+from gac.preprocess import (
     extract_filtered_file_summary,
     filter_binary_and_minified,
-    get_extension_score,
     is_lockfile_or_generated,
     is_minified_content,
     preprocess_diff,
     process_sections_parallel,
-    score_sections,
     should_filter_section,
-    smart_truncate_diff,
     split_diff_into_sections,
 )
 
@@ -308,7 +310,7 @@ class TestScoringAndPrioritization:
 class TestSmartTruncationEdgeCases:
     """Test smart truncation logic and missing coverage."""
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_high_token_limit(self, mock_count):
         """Test truncation with high token limit — all sections fit, count_tokens called."""
         sections = [
@@ -326,14 +328,14 @@ class TestSmartTruncationEdgeCases:
         # count_tokens should be called (no more sentinel bypass)
         assert mock_count.called
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_empty_sections(self, mock_count):
         """Test truncation with empty sections list."""
         result = smart_truncate_diff([], token_limit=100, model="test:model")
         assert result == ""
         mock_count.assert_not_called()
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_duplicate_files(self, mock_count):
         """Test truncation when duplicate files appear."""
         sections = [
@@ -353,7 +355,7 @@ class TestSmartTruncationEdgeCases:
         assert "content3" in result  # other.py
         mock_count.assert_called()
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_token_limit_reached(self, mock_count):
         """Test truncation when token limit is reached — section gets truncated, not dropped."""
         sections = [
@@ -374,7 +376,7 @@ class TestSmartTruncationEdgeCases:
         assert "less_important.py" in result
         mock_count.assert_called()
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_summary_included(self, mock_count):
         """Test summary inclusion when space permits."""
         sections = [("diff --git a/file.py b/file.py\n+content", 5.0)]
@@ -387,7 +389,7 @@ class TestSmartTruncationEdgeCases:
         assert "file.py" in result
         mock_count.assert_called()
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_no_room_for_summary(self, mock_count):
         """Test when there's no room for summary."""
         sections = [("diff --git a/large.py b/large.py\n" + "x" * 300, 5.0)]
@@ -400,7 +402,7 @@ class TestSmartTruncationEdgeCases:
         assert "Showing" not in result
         mock_count.assert_called()
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_smart_truncate_diff_many_skipped_files(self, mock_count):
         """Test many truncated files scenario."""
         # Create a few sections
@@ -539,7 +541,7 @@ class TestFilterBinaryAndMinifiedRealPaths:
 class TestSmartTruncateDiffSkippedSummaries:
     """Test smart_truncate_diff visibility-summary paths."""
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_visibility_summary_when_truncation_occurs(self, mock_count):
         """When sections are truncated, a visibility summary should appear if room permits."""
         scored_sections = [
@@ -566,7 +568,7 @@ class TestSmartTruncateDiffSkippedSummaries:
         if "Visibility summary" in result:
             assert "truncated" in result.lower()
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_many_files_truncated_or_summarised(self, mock_count):
         """When files get truncated, every file still appears (header at minimum)."""
         sections = [(f"diff --git a/file{i}.py b/file{i}.py\n+change{i}", float(i)) for i in range(8)]
@@ -590,7 +592,7 @@ class TestSmartTruncateDiffSkippedSummaries:
         # Now they appear with truncation markers.
         assert "[Truncated" in result
 
-    @patch("gac.preprocess.count_tokens")
+    @patch("gac.diff_scoring.count_tokens")
     def test_summary_when_all_fit(self, mock_count):
         """Visibility summary should appear when room permits."""
         scored_sections = [

@@ -27,11 +27,11 @@ import sys
 import click
 
 from gac.config import _parse_diff_context_lines_env
+from gac.diff_scoring import smart_truncate_diff
 from gac.errors import GitError, with_error_handling
 from gac.git import get_diff, get_staged_files
 from gac.preprocess import (
     filter_binary_and_minified,
-    smart_truncate_diff,
     split_diff_into_sections,
 )
 from gac.utils import print_message, setup_logging

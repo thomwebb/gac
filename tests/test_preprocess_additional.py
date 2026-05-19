@@ -3,18 +3,20 @@
 from collections.abc import Callable
 from unittest import mock
 
-from gac.preprocess import (
+from gac.diff_scoring import (
     analyze_code_patterns,
     calculate_section_importance,
-    extract_filtered_file_summary,
     get_extension_score,
+    smart_truncate_diff,
+)
+from gac.preprocess import (
+    extract_filtered_file_summary,
     is_lockfile_or_generated,
     is_minified_content,
     preprocess_diff,
     process_section,
     process_sections_parallel,
     should_filter_section,
-    smart_truncate_diff,
     split_diff_into_sections,
 )
 
@@ -295,13 +297,13 @@ deleted file mode 100644
 
     def test_get_extension_score_pattern_match(self):
         """Test get_extension_score with pattern match (not extension)."""
-        with mock.patch("gac.preprocess.FileTypeImportance.EXTENSIONS", {"test": 2.0}):
+        with mock.patch("gac.diff_scoring.FileTypeImportance.EXTENSIONS", {"test": 2.0}):
             result = get_extension_score("test_file")
             assert result == 2.0
 
     def test_get_extension_score_no_extension(self):
         """Test get_extension_score with no extension."""
-        with mock.patch("gac.preprocess.FileTypeImportance.EXTENSIONS", {}):
+        with mock.patch("gac.diff_scoring.FileTypeImportance.EXTENSIONS", {}):
             result = get_extension_score("README")
             assert result == 1.0
 
@@ -309,7 +311,7 @@ deleted file mode 100644
         """Test analyze_code_patterns with no patterns found (line 421)."""
         section = "regular code without patterns"
 
-        with mock.patch("gac.preprocess.CodePatternImportance.PATTERNS", {}):
+        with mock.patch("gac.diff_scoring.CodePatternImportance.PATTERNS", {}):
             result = analyze_code_patterns(section)
             assert result == 0.9  # Should be reduced when no patterns found
 
@@ -324,7 +326,7 @@ deleted file mode 100644
             r"enum ": 1.4,
         }
 
-        with mock.patch("gac.preprocess.CodePatternImportance.PATTERNS", patterns):
+        with mock.patch("gac.diff_scoring.CodePatternImportance.PATTERNS", patterns):
             result = analyze_code_patterns(section)
             expected = 1.716  # Based on actual implementation behavior
             assert abs(result - expected) < 0.01
@@ -364,7 +366,7 @@ deleted file mode 100644
             ("diff --git a/file.py b/file.py\n+content2", 2.0),
         ]
 
-        with mock.patch("gac.preprocess.count_tokens", return_value=50):
+        with mock.patch("gac.diff_scoring.count_tokens", return_value=50):
             result = smart_truncate_diff(sections, 100, "test-model")
             # Should only include the first occurrence of each file
             # Check that the first occurrence is included but not the second
@@ -381,7 +383,7 @@ deleted file mode 100644
 
         # The function should handle token limits gracefully
         # Just verify it doesn't crash and returns a string result
-        with mock.patch("gac.preprocess.count_tokens", return_value=50):
+        with mock.patch("gac.diff_scoring.count_tokens", return_value=50):
             result = smart_truncate_diff(sections, 100, "test-model")
 
             # Should return a string result
@@ -395,7 +397,7 @@ deleted file mode 100644
             ("diff --git a/large.py b/large.py\n+{'content' * 1000}", 1.0),
         ]
 
-        with mock.patch("gac.preprocess.count_tokens", return_value=150):
+        with mock.patch("gac.diff_scoring.count_tokens", return_value=150):
             result = smart_truncate_diff(sections, 100, "test-model")
             # Regression fix: never silently drop a file section — return at least
             # a header snippet plus a truncation marker.
@@ -449,7 +451,7 @@ class TestSmartTruncateDiffRegression:
 
         return counter
 
-    @mock.patch("gac.preprocess.count_tokens")
+    @mock.patch("gac.diff_scoring.count_tokens")
     def test_large_section_not_silently_dropped(self, mock_count):
         """A single file section larger than the budget is truncated, not dropped."""
         large_section = "diff --git a/big_file.py b/big_file.py\n@@ -1,50 +1,100 @@\n" + "+x" * 500
@@ -468,7 +470,7 @@ class TestSmartTruncateDiffRegression:
         assert "big_file.py" in result
         assert "[Truncated" in result
 
-    @mock.patch("gac.preprocess.count_tokens")
+    @mock.patch("gac.diff_scoring.count_tokens")
     def test_lockfile_stub_always_survives(self, mock_count):
         """A lockfile/generated stub (compact summary) is never dropped, even under tiny budget."""
         stub = (
@@ -492,7 +494,7 @@ class TestSmartTruncateDiffRegression:
         assert "main.py" in result
         assert "[Truncated" in result
 
-    @mock.patch("gac.preprocess.count_tokens")
+    @mock.patch("gac.diff_scoring.count_tokens")
     def test_truncation_marker_present_when_truncated(self, mock_count):
         """When any section is truncated, the marker [Truncated due to token limits] appears."""
         section = "diff --git a/medium.py b/medium.py\n@@ -1,10 +1,20 @@\n" + "+code" * 50
@@ -506,7 +508,7 @@ class TestSmartTruncateDiffRegression:
         assert "medium.py" in result
         assert "[Truncated due to token limits]" in result
 
-    @mock.patch("gac.preprocess.count_tokens")
+    @mock.patch("gac.diff_scoring.count_tokens")
     def test_visibility_summary_counts_files(self, mock_count):
         """The visibility summary reports correct counts of included/truncated/summarized."""
         full1 = "diff --git a/full1.py b/full1.py\n+code1"
