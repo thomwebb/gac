@@ -12,17 +12,22 @@ jobs:
       - name: Fetch PyPI stats
         id: stats
         run: |
-          OVERALL=$(curl -s "https://pypistats.org/api/packages/gac/overall")
+          STATS=$(curl -s -X POST 'https://sql-clickhouse.clickhouse.com:8443/?user=demo' \
+            --data-binary "SELECT
+              sumIf(count, date >= today() - 1) AS last_day,
+              sumIf(count, date >= today() - 7) AS last_week,
+              sumIf(count, date >= today() - 30) AS last_month,
+              sum(count) AS total
+            FROM pypi.pypi_downloads_per_day
+            WHERE project = 'gac'
+            FORMAT JSONEachRow")
 
-          LAST_DAY=$(echo "$OVERALL" | jq '[.data[] | select(.category == "with_mirrors")] | sort_by(.date) | reverse | .[0].downloads')
-          LAST_WEEK=$(echo "$OVERALL" | jq '[.data[] | select(.category == "with_mirrors")] | sort_by(.date) | reverse | .[0:7] | [.[].downloads] | add')
-          LAST_MONTH=$(echo "$OVERALL" | jq '[.data[] | select(.category == "with_mirrors")] | sort_by(.date) | reverse | .[0:30] | [.[].downloads] | add')
-          TOTAL=$(echo "$OVERALL" | jq '[.data[] | select(.category == "with_mirrors") | .downloads] | add')
+          fmt() { LC_ALL=en_US.UTF-8 printf "%'d" "$1"; }
 
-          echo "last_day=$LAST_DAY" >> $GITHUB_OUTPUT
-          echo "last_week=$LAST_WEEK" >> $GITHUB_OUTPUT
-          echo "last_month=$LAST_MONTH" >> $GITHUB_OUTPUT
-          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "last_day=$(fmt "$(echo "$STATS" | jq -r '.last_day')")" >> $GITHUB_OUTPUT
+          echo "last_week=$(fmt "$(echo "$STATS" | jq -r '.last_week')")" >> $GITHUB_OUTPUT
+          echo "last_month=$(fmt "$(echo "$STATS" | jq -r '.last_month')")" >> $GITHUB_OUTPUT
+          echo "total=$(fmt "$(echo "$STATS" | jq -r '.total')")" >> $GITHUB_OUTPUT
 
       - name: Send Discord notification
         env:
@@ -58,7 +63,7 @@ jobs:
                   }
                 ],
                 "footer": {
-                  "text": "pypistats.org • with mirrors"
+                  "text": "clickpy.clickhouse.com"
                 }
               }]
             }'
