@@ -2,13 +2,11 @@
 
 Tracks how many times users have made commits with gac.
 
-This package is split into three sub-modules:
-    - store: Persistence layer (load/save/reset, migration, TypedDict)
+This package is split into four sub-modules:
+    - store: Persistence layer (load/save/reset, TypedDict, query helpers)
+    - migration: Schema migrations (version-to-version upgrades)
     - recorder: Recording functions (record_gac, record_commit, record_tokens)
     - summary: Computation and formatting (get_stats_summary, helpers)
-Backward compatibility (read):
-    All public names are re-exported here, so ``from gac.stats import X``
-    continues to work as before.
 
 STATS_FILE — compatibility note:
     The stats file lives at ``~/.gac/stats.json`` (migrated from
@@ -27,8 +25,7 @@ STATS_FILE — compatibility note:
 from pathlib import Path
 
 import gac.stats.store as _store
-
-# Re-export everything that was previously available from gac.stats
+from gac.stats.migration import _CURRENT_STATS_VERSION, HISTORY_CAP, _migrate_v1_to_v2
 from gac.stats.recorder import (
     record_commit,
     record_gac,
@@ -36,13 +33,10 @@ from gac.stats.recorder import (
     reset_gac_token_accumulator,
 )
 from gac.stats.store import (
-    _CURRENT_STATS_VERSION,
     _DURATION_DEFAULTS,
     _FALSY_VALUES,
-    HISTORY_CAP,
     GACStats,
     _enrich_models_with_speed,
-    _migrate_v1_to_v2,
     _normalize_models,
     _safe_format_date,
     append_history,

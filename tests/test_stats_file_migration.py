@@ -3,7 +3,8 @@
 from pathlib import Path
 from unittest.mock import patch
 
-from gac.stats.store import _LEGACY_STATS_FILE, _migrate_stats_file_location
+from gac.stats.migration import _migrate_stats_file_location
+from gac.stats.store import _LEGACY_STATS_FILE
 
 
 class TestMigrateStatsFileLocation:
@@ -12,13 +13,9 @@ class TestMigrateStatsFileLocation:
     def test_no_legacy_file(self, tmp_path: Path) -> None:
         """If legacy file doesn't exist, migration is a no-op."""
         new_path = tmp_path / ".gac" / "stats.json"
-        with (
-            patch("gac.stats.store._LEGACY_STATS_FILE", tmp_path / "nope.json"),
-            patch("gac.stats.store.STATS_FILE", new_path),
-        ):
-            _migrate_stats_file_location()
-            # New path should NOT have been created
-            assert not new_path.exists()
+        _migrate_stats_file_location(stats_file=new_path, legacy_file=tmp_path / "nope.json")
+        # New path should NOT have been created
+        assert not new_path.exists()
 
     def test_migrate_moves_file(self, tmp_path: Path) -> None:
         """If legacy exists and new doesn't, legacy is moved to new location."""
@@ -26,11 +23,7 @@ class TestMigrateStatsFileLocation:
         legacy.write_text('{"total_gacs": 42, "_version": 4}')
         new_path = tmp_path / ".gac" / "stats.json"
 
-        with (
-            patch("gac.stats.store._LEGACY_STATS_FILE", legacy),
-            patch("gac.stats.store.STATS_FILE", new_path),
-        ):
-            _migrate_stats_file_location()
+        _migrate_stats_file_location(stats_file=new_path, legacy_file=legacy)
 
         # Legacy should be gone, new should exist with the same content
         assert not legacy.exists()
@@ -45,11 +38,7 @@ class TestMigrateStatsFileLocation:
         new_path.parent.mkdir(parents=True, exist_ok=True)
         new_path.write_text('{"total_gacs": 99}')
 
-        with (
-            patch("gac.stats.store._LEGACY_STATS_FILE", legacy),
-            patch("gac.stats.store.STATS_FILE", new_path),
-        ):
-            _migrate_stats_file_location()
+        _migrate_stats_file_location(stats_file=new_path, legacy_file=legacy)
 
         # Both should still exist, new should be untouched
         assert legacy.exists()
@@ -61,11 +50,7 @@ class TestMigrateStatsFileLocation:
         legacy.write_text('{"total_gacs": 5}')
         new_path = tmp_path / "nested" / "dir" / "stats.json"
 
-        with (
-            patch("gac.stats.store._LEGACY_STATS_FILE", legacy),
-            patch("gac.stats.store.STATS_FILE", new_path),
-        ):
-            _migrate_stats_file_location()
+        _migrate_stats_file_location(stats_file=new_path, legacy_file=legacy)
 
         assert not legacy.exists()
         assert new_path.exists()
@@ -81,12 +66,8 @@ class TestMigrateStatsFileLocation:
         blocker.touch()
         new_path = blocker / "stats.json"  # blocker is a file, not a dir
 
-        with (
-            patch("gac.stats.store._LEGACY_STATS_FILE", legacy),
-            patch("gac.stats.store.STATS_FILE", new_path),
-        ):
-            # Should not raise — OSError caught internally
-            _migrate_stats_file_location()
+        # Should not raise — OSError caught internally
+        _migrate_stats_file_location(stats_file=new_path, legacy_file=legacy)
 
         # Legacy should still exist (rename didn't happen)
         assert legacy.exists()

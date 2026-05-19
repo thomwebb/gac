@@ -148,7 +148,7 @@ class TestMalformedStats:
 
     def test_migration_v1_to_v2_subtracts_reasoning_from_completion(self, tmp_path):
         """V1 stats (inclusive completion) are migrated to V2 (exclusive)."""
-        from gac.stats import _migrate_v1_to_v2
+        from gac.stats.migration import _migrate_v1_to_v2
 
         v1_data = {
             "total_prompt_tokens": 1000,
@@ -202,7 +202,7 @@ class TestMalformedStats:
 
     def test_migration_idempotent(self, tmp_path):
         """Running migration on already-v2 data is a no-op."""
-        from gac.stats import _migrate_v1_to_v2
+        from gac.stats.migration import _migrate_v1_to_v2
 
         v2_data = {
             "_version": 2,
@@ -222,7 +222,7 @@ class TestMalformedStats:
 
     def test_migration_no_reasoning_is_noop(self):
         """Data with zero reasoning tokens is not changed by migration."""
-        from gac.stats import _migrate_v1_to_v2
+        from gac.stats.migration import _migrate_v1_to_v2
 
         v1_data = {
             "total_completion_tokens": 800,
@@ -241,7 +241,7 @@ class TestMalformedStats:
     def test_migration_model_reasoning_without_total_resets_biggest(self):
         """Legacy stats with per-model reasoning but no total_reasoning_tokens
         still get biggest_gac_tokens reset."""
-        from gac.stats import _migrate_v1_to_v2
+        from gac.stats.migration import _migrate_v1_to_v2
 
         v1_data = {
             "total_completion_tokens": 80,
@@ -274,7 +274,7 @@ class TestMalformedStats:
         timed_reasoning_tokens at 0, causing speed = (450+0)/3s = 150 tps
         instead of the original 600/3s = 200 tps.
         """
-        from gac.stats import _migrate_v1_to_v2
+        from gac.stats.migration import _migrate_v1_to_v2
 
         v1_data = {
             "total_prompt_tokens": 1000,

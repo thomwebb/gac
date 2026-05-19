@@ -7,8 +7,9 @@ import pytest
 from click.testing import CliRunner
 
 from gac.cli import cli
+from gac.stats.migration import HISTORY_CAP
 from gac.stats.recorder import TokenAccumulator
-from gac.stats.store import HISTORY_CAP, _empty_stats, append_history
+from gac.stats.store import _empty_stats, append_history
 
 
 class TestTokenAccumulatorExtended:
@@ -101,7 +102,7 @@ class TestSchemaV4Migration:
     """Tests for v3→v4 migration (adds empty history)."""
 
     def test_v3_to_v4_adds_history(self) -> None:
-        from gac.stats.store import _migrate_v3_to_v4
+        from gac.stats.migration import _migrate_v3_to_v4
 
         v3_data = {"_version": 3, "total_gacs": 5}
         result = _migrate_v3_to_v4(v3_data)
@@ -110,7 +111,7 @@ class TestSchemaV4Migration:
         assert result["history"] == []
 
     def test_v4_idempotent(self) -> None:
-        from gac.stats.store import _migrate_v3_to_v4
+        from gac.stats.migration import _migrate_v3_to_v4
 
         v4_data = {"_version": 4, "history": [{"ts": "existing"}]}
         result = _migrate_v3_to_v4(v4_data)
