@@ -24,6 +24,10 @@ class TestStatsCLI:
                 "total_commits": 0,
                 "biggest_gac_tokens": 0,
                 "biggest_gac_date": None,
+                "biggest_gac_commits": 0,
+                "biggest_gac_commits_date": None,
+                "biggest_gac_files": 0,
+                "biggest_gac_files_date": None,
                 "first_used": "Never",
                 "last_used": "Never",
                 "today_gacs": 0,
@@ -61,6 +65,10 @@ class TestStatsCLI:
                 "total_commits": 42,
                 "biggest_gac_tokens": 5000,
                 "biggest_gac_date": "2024-06-15",
+                "biggest_gac_commits": 3,
+                "biggest_gac_commits_date": "2024-06-15",
+                "biggest_gac_files": 10,
+                "biggest_gac_files_date": "2024-06-15",
                 "first_used": "2024-01-01",
                 "last_used": "2024-06-15",
                 "today_gacs": 2,
@@ -253,6 +261,10 @@ class TestStatsCLI:
                 "total_tokens": 50000,
                 "biggest_gac_tokens": 12000,
                 "biggest_gac_date": "2025-05-20",
+                "biggest_gac_commits": 5,
+                "biggest_gac_commits_date": "2025-05-20",
+                "biggest_gac_files": 10,
+                "biggest_gac_files_date": "2025-05-20",
                 "first_used": "2024-01-01",
                 "last_used": "2025-05-20",
                 "today_gacs": 3,
@@ -287,8 +299,8 @@ class TestStatsCLI:
             mock_load.return_value = {"projects": {}, "models": {}}
             result = runner.invoke(cli, ["stats", "show"])
             assert result.exit_code == 0
-            # Should show biggest gac in the details table
-            assert "Biggest gac" in result.output
+            # Should show biggest gacs in the Biggest Gacs section
+            assert "Biggest Gacs" in result.output
             assert "12,000" in result.output
 
     def test_stats_show_new_biggest_gac_celebration(self, runner):

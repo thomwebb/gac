@@ -70,6 +70,10 @@ def show() -> None:
     longest_streak = summary.get("longest_streak", 0)
     biggest_gac_tokens = summary.get("biggest_gac_tokens", 0)
     biggest_gac_date = summary.get("biggest_gac_date")
+    biggest_gac_commits = summary.get("biggest_gac_commits", 0)
+    biggest_gac_commits_date = summary.get("biggest_gac_commits_date")
+    biggest_gac_files = summary.get("biggest_gac_files", 0)
+    biggest_gac_files_date = summary.get("biggest_gac_files_date")
     peak_daily_gacs = summary.get("peak_daily_gacs", 0)
     peak_daily_commits = summary.get("peak_daily_commits", 0)
     peak_daily_tokens = summary.get("peak_daily_tokens", 0)
@@ -117,6 +121,8 @@ def show() -> None:
 
     # Detect if today set a new biggest-gac record
     new_biggest_gac = biggest_gac_tokens > 0 and biggest_gac_date == today_str
+    new_biggest_gac_commits = biggest_gac_commits > 0 and biggest_gac_commits_date == today_str
+    new_biggest_gac_files = biggest_gac_files > 0 and biggest_gac_files_date == today_str
 
     console.print()
 
@@ -149,14 +155,6 @@ def show() -> None:
     last_used = "[dim]/[/]".join(f"[bold cyan]{p}[/bold cyan]" for p in summary["last_used"].split("-"))
     table.add_row("First gac", first_used)
     table.add_row("Last gac", last_used)
-    if biggest_gac_tokens > 0:
-        token_part = f"[bold cyan]{format_tokens(biggest_gac_tokens)}[/bold cyan] [cyan]tokens[/cyan]"
-        if biggest_gac_date:
-            date_part = "[dim]/[/]".join(f"[bold cyan]{p}[/bold cyan]" for p in biggest_gac_date.split("-"))
-            display = f"{token_part}  ({date_part})"
-        else:
-            display = f"{token_part}"
-        table.add_row("Biggest gac", display)
     streak_emoji = (
         " 🔥🏆" if new_streak_record and streak >= 5 else " 🏆" if new_streak_record else " 🔥" if streak >= 5 else ""
     )
@@ -170,6 +168,48 @@ def show() -> None:
     )
 
     console.print(table)
+
+    # Biggest gacs section
+    has_any_biggest = biggest_gac_tokens > 0 or biggest_gac_commits > 0 or biggest_gac_files > 0
+    if has_any_biggest:
+        console.print()
+        console.print("[bold]Biggest Gacs:[/bold]")
+        biggest_table = Table(show_header=True, box=None)
+        biggest_table.add_column("Dimension", style="bold magenta")
+        biggest_table.add_column("Record", style="bold cyan", justify="right")
+        biggest_table.add_column("Date", style="bold cyan")
+
+        if biggest_gac_tokens > 0:
+            date_str = (
+                "[dim]/[/]".join(f"[bold cyan]{p}[/bold cyan]" for p in biggest_gac_date.split("-"))
+                if biggest_gac_date
+                else "—"
+            )
+            biggest_table.add_row("Tokens", format_tokens(biggest_gac_tokens), date_str)
+        if biggest_gac_commits > 0:
+            date_str = (
+                "[dim]/[/]".join(f"[bold cyan]{p}[/bold cyan]" for p in biggest_gac_commits_date.split("-"))
+                if biggest_gac_commits_date
+                else "—"
+            )
+            biggest_table.add_row(
+                "Commits",
+                str(biggest_gac_commits),
+                date_str,
+            )
+        if biggest_gac_files > 0:
+            date_str = (
+                "[dim]/[/]".join(f"[bold cyan]{p}[/bold cyan]" for p in biggest_gac_files_date.split("-"))
+                if biggest_gac_files_date
+                else "—"
+            )
+            biggest_table.add_row(
+                "Files",
+                str(biggest_gac_files),
+                date_str,
+            )
+
+        console.print(biggest_table)
 
     # Activity summary table (today vs peak)
     console.print()
@@ -276,6 +316,8 @@ def show() -> None:
         or new_peak_weekly_tokens
         or new_streak_record
         or new_biggest_gac
+        or new_biggest_gac_commits
+        or new_biggest_gac_files
     )
     any_tie = (
         tied_peak_gacs
@@ -290,6 +332,10 @@ def show() -> None:
     if today_gacs > 0 or any_trophy or any_tie:
         if new_biggest_gac:
             console.print("[bold yellow]🏆 New biggest gac record![/bold yellow]")
+        if new_biggest_gac_commits:
+            console.print("[bold yellow]🏆 New record for most commits in a gac![/bold yellow]")
+        if new_biggest_gac_files:
+            console.print("[bold yellow]🏆 New record for most files in a gac![/bold yellow]")
         if new_streak_record:
             console.print("[bold yellow]🏆 New longest streak record![/bold yellow]")
         elif tied_streak_record:  # pragma: no cover — mathematically unreachable with current prev_longest logic

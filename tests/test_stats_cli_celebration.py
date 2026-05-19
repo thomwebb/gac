@@ -24,6 +24,10 @@ def _base_summary(**overrides):
         "total_reasoning_tokens": 5000,
         "biggest_gac_tokens": 50000,
         "biggest_gac_date": "2024-01-01",
+        "biggest_gac_commits": 3,
+        "biggest_gac_commits_date": "2024-01-01",
+        "biggest_gac_files": 10,
+        "biggest_gac_files_date": "2024-01-01",
         "first_used": "2024-01-01",
         "last_used": "2024-06-15",
         "today_gacs": 2,
@@ -447,3 +451,185 @@ class TestCelebrationMessages:
             result = runner.invoke(cli, ["stats", "show"])
             assert result.exit_code == 0
             assert "Don't break that streak" in result.output
+
+
+class TestBiggestGacCelebrations:
+    """Tests for new biggest_gac_commits and biggest_gac_files celebration messages."""
+
+    @pytest.fixture
+    def runner(self):
+        return CliRunner()
+
+    def test_new_biggest_commits_record_today(self, runner):
+        """Test celebration when today sets a new biggest_gac_commits record."""
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_commits=5,
+                biggest_gac_commits_date=today_str,
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "most commits in a gac" in result.output
+
+    def test_new_biggest_files_record_today(self, runner):
+        """Test celebration when today sets a new biggest_gac_files record."""
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_files=50,
+                biggest_gac_files_date=today_str,
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "most files in a gac" in result.output
+
+    def test_no_biggest_commits_celebration_when_old_record(self, runner):
+        """No celebration when biggest_gac_commits date is in the past."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_commits=5,
+                biggest_gac_commits_date="2024-01-01",
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "most commits in a gac" not in result.output
+
+    def test_no_biggest_files_celebration_when_old_record(self, runner):
+        """No celebration when biggest_gac_files date is in the past."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_files=50,
+                biggest_gac_files_date="2024-01-01",
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "most files in a gac" not in result.output
+
+    def test_biggest_gacs_section_shows_commits(self, runner):
+        """Test that 'Commits' row appears in Biggest Gacs section."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_commits=4,
+                biggest_gac_commits_date="2024-03-15",
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "Biggest Gacs" in result.output
+            assert "Commits" in result.output
+            assert "4" in result.output
+
+    def test_biggest_gacs_section_shows_files(self, runner):
+        """Test that 'Files' row appears in Biggest Gacs section."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_files=25,
+                biggest_gac_files_date="2024-03-15",
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "Biggest Gacs" in result.output
+            assert "Files" in result.output
+            assert "25" in result.output
+
+    def test_biggest_gacs_section_shows_tokens(self, runner):
+        """Test that 'Tokens' row appears in Biggest Gacs section."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary()
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "Biggest Gacs" in result.output
+            assert "Tokens" in result.output
+
+    def test_biggest_gacs_section_hidden_when_no_records(self, runner):
+        """Biggest Gacs section is hidden when all records are 0."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_tokens=0,
+                biggest_gac_date=None,
+                biggest_gac_commits=0,
+                biggest_gac_commits_date=None,
+                biggest_gac_files=0,
+                biggest_gac_files_date=None,
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "Biggest Gacs" not in result.output
+
+    def test_biggest_gacs_before_activity_summary(self, runner):
+        """Biggest Gacs section appears before Activity Summary."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary()
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            biggest_pos = result.output.find("Biggest Gacs")
+            activity_pos = result.output.find("Activity Summary")
+            assert biggest_pos > 0
+            assert activity_pos > 0
+            assert biggest_pos < activity_pos
+
+    def test_biggest_commits_value_display(self, runner):
+        """Test numeric commit value appears in Biggest Gacs section."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_commits=1,
+                biggest_gac_commits_date="2024-03-15",
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "1" in result.output
+
+    def test_biggest_files_value_display(self, runner):
+        """Test numeric files value appears in Biggest Gacs section."""
+        with (
+            patch("gac.stats_cli.get_stats_summary") as mock_summary,
+            patch("gac.stats_cli.load_stats") as mock_load,
+        ):
+            mock_summary.return_value = _base_summary(
+                biggest_gac_files=1,
+                biggest_gac_files_date="2024-03-15",
+            )
+            mock_load.return_value = {"projects": {}, "models": {}}
+            result = runner.invoke(cli, ["stats", "show"])
+            assert result.exit_code == 0
+            assert "1" in result.output

@@ -24,6 +24,10 @@ def _base_summary(**overrides):
         "total_reasoning_tokens": 5000,
         "biggest_gac_tokens": 50000,
         "biggest_gac_date": "2024-01-01",
+        "biggest_gac_commits": 3,
+        "biggest_gac_commits_date": "2024-01-01",
+        "biggest_gac_files": 10,
+        "biggest_gac_files_date": "2024-01-01",
         "first_used": "2024-01-01",
         "last_used": "2024-06-15",
         "today_gacs": 2,
@@ -121,7 +125,7 @@ class TestEdgeCases:
             mock_load.return_value = {"projects": {}, "models": {}}
             result = runner.invoke(cli, ["stats", "show"])
             assert result.exit_code == 0
-            assert "Biggest gac" in result.output
+            assert "Biggest Gacs" in result.output
             assert "8,000" in result.output
 
     def test_no_today_activity_zero_streak(self, runner):
