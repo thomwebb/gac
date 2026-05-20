@@ -633,6 +633,30 @@ When disabled, gac skips all stats recording — no file reads or writes occur. 
 
 ---
 
+## Discord Webhook Notifications
+
+gac can ping a Discord channel every time you land a commit, using a webhook URL from your channel's integration settings.
+
+### Setup
+
+Run `uvx gac init` and the flow will offer to configure a Discord webhook. You can replace or remove it on any subsequent run.
+
+Alternatively, set the variable directly in `$HOME/.gac.env` (or `./.gac.env`):
+
+```bash
+GAC_DISCORD_WEBHOOK_URL='https://discord.com/api/webhooks/XXXX/YYYY'
+```
+
+### Behavior
+
+- Fires after each successful commit (single and grouped workflows). Skipped on `--dry-run` and `--message-only`.
+- Message format: `**repo** · `branch` · `short-sha`` followed by the commit message in a code block. Long messages are truncated to fit Discord's 2000-character limit.
+- Uses the gac avatar and the username `gac`.
+- Webhook failures are logged at WARNING and **never** block your commit.
+- Leave `GAC_DISCORD_WEBHOOK_URL` unset (or blank) to disable.
+
+---
+
 ## Getting Help
 
 - For MCP server setup (AI agent integration), see [docs/MCP.md](MCP.md)
