@@ -15,6 +15,7 @@ import logging
 import subprocess
 from typing import Any, NamedTuple
 
+from gac.discord_webhook import notify_commit as notify_commit_discord
 from gac.errors import AIError, ConfigError, GitError
 from gac.git import detect_rename_mappings, get_staged_files, run_git_command
 from gac.postprocess import clean_commit_message
@@ -88,6 +89,7 @@ def execute_grouped_commits(
                     )
                     execute_commit(cleaned_message, no_verify, hook_timeout, signoff)
                     record_commit(model=model)
+                    notify_commit_discord(cleaned_message)
                     console.print(f"[green]✓ Commit {idx}/{num_commits} created[/green]")
                 except (AIError, ConfigError, GitError, subprocess.SubprocessError, OSError) as e:
                     restore_needed = True

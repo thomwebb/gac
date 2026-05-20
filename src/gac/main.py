@@ -9,6 +9,7 @@ from gac.ai import generate_commit_message
 from gac.ai_utils import count_tokens
 from gac.commit_executor import CommitExecutor
 from gac.config import GACConfig
+from gac.discord_webhook import notify_commit as notify_commit_discord
 from gac.errors import AIError, ConfigError, handle_error
 from gac.git import run_lefthook_hooks, run_pre_commit_hooks
 from gac.git_state_validator import GitStateValidator
@@ -134,6 +135,7 @@ def _execute_single_commit_workflow(ctx: WorkflowContext, config: GACConfig) -> 
     if not ctx.flags.dry_run:
         record_commit(model=ctx.model)
         record_gac(model=ctx.model, files=len(ctx.git_state.staged_files))
+        notify_commit_discord(commit_message)
 
     # Push if requested
     if ctx.flags.push:
