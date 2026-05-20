@@ -127,7 +127,7 @@ def test_init_cli_complete_workflow_with_english_language(monkeypatch):
                 mselect.return_value.ask.side_effect = ["OpenAI", "Skip (use model default)", "English"]
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["openai-key"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 assert result.exit_code == 0
@@ -154,7 +154,7 @@ def test_init_cli_complete_workflow_simple(monkeypatch):
                 mselect.return_value.ask.side_effect = ["OpenAI", "Skip (use model default)", "English"]
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["openai-key"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 assert result.exit_code == 0
@@ -185,7 +185,7 @@ def test_init_cli_existing_language_keep(monkeypatch):
                     "Keep existing language",
                 ]
                 mtext.return_value.ask.side_effect = ["gpt-4"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 assert result.exit_code == 0
@@ -215,7 +215,7 @@ def test_init_cli_existing_configuration_workflow(monkeypatch):
                     "English",
                 ]
                 mtext.return_value.ask.side_effect = ["gpt-5"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 assert result.exit_code == 0
@@ -464,7 +464,7 @@ def test_init_cli_language_action_cancelled(monkeypatch):
                 ]  # Cancels at language step
                 mtext.return_value.ask.side_effect = ["gpt-4"]
                 mpass.return_value.ask.side_effect = ["openai-key"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 # Should complete model config but cancel language part

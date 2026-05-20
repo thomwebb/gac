@@ -30,7 +30,7 @@ def test_init_cli_creates_new_gac_env_file(clean_env_state):
                 mselect.return_value.ask.side_effect = ["Anthropic", "Skip (use model default)", "English"]
                 mtext.return_value.ask.side_effect = ["claude-sonnet-4-5"]
                 mpass.return_value.ask.side_effect = ["test-key"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 assert result.exit_code == 0
@@ -61,7 +61,7 @@ def test_init_cli_complete_workflow_with_model_and_language(clean_env_state):
                 mselect.return_value.ask.side_effect = ["Anthropic", "Skip (use model default)", "English"]
                 mtext.return_value.ask.side_effect = ["claude-sonnet-4-5"]
                 mpass.return_value.ask.side_effect = ["test-key"]
-                mconfirm.return_value.ask.side_effect = [True]  # enable stats
+                mconfirm.return_value.ask.side_effect = [True, False]  # enable stats; decline discord
 
                 result = runner.invoke(init)
                 assert result.exit_code == 0
