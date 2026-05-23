@@ -635,11 +635,18 @@ When disabled, gac skips all stats recording — no file reads or writes occur. 
 
 ## Discord Webhook Notifications
 
-gac can ping a Discord channel every time you land a commit, using a webhook URL from your channel's integration settings.
+gac can ping a Discord channel every time you land a commit, using a webhook URL from your channel's integration settings. The integration is **opt-in**: it does nothing until you explicitly configure a webhook URL.
 
 ### Setup
 
-Run `uvx gac init` and the flow will offer to configure a Discord webhook. You can replace or remove it on any subsequent run.
+Use the dedicated `discord` subcommand group:
+
+```bash
+uvx gac discord setup     # interactively configure a webhook URL
+uvx gac discord show      # show whether a webhook is configured (URL masked)
+uvx gac discord test      # send a test notification to the configured webhook
+uvx gac discord remove    # remove the configured webhook URL
+```
 
 Alternatively, set the variable directly in `$HOME/.gac.env` (or `./.gac.env`):
 
@@ -650,10 +657,10 @@ GAC_DISCORD_WEBHOOK_URL='https://discord.com/api/webhooks/XXXX/YYYY'
 ### Behavior
 
 - Fires after each successful commit (single and grouped workflows). Skipped on `--dry-run` and `--message-only`.
-- Message format: `**repo** · `branch` · `short-sha`` followed by the commit message in a code block. Long messages are truncated to fit Discord's 2000-character limit.
+- Posts a GitHub-style **embed** with a green stripe, repo + branch as the author row, the commit subject as the title, the commit body as the description, and the short SHA in the footer.
 - Uses the gac avatar and the username `gac`.
 - Webhook failures are logged at WARNING and **never** block your commit.
-- Leave `GAC_DISCORD_WEBHOOK_URL` unset (or blank) to disable.
+- Leave `GAC_DISCORD_WEBHOOK_URL` unset (or blank) to disable. `gac init` is unaffected — Discord setup lives only under `gac discord`.
 
 ---
 

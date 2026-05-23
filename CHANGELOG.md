@@ -6,7 +6,8 @@
 
 ### Added
 
-- Discord webhook notifications: configure `GAC_DISCORD_WEBHOOK_URL` via `uvx gac init` and gac will post a notification (repo · branch · short hash + commit message) to your Discord channel after every successful commit. Works for both single and grouped commit workflows. Webhook failures are logged but never block your commit.
+- Discord webhook notifications: configure `GAC_DISCORD_WEBHOOK_URL` and gac posts a GitHub-style embed to your Discord channel after every successful commit. Works for both single and grouped commit workflows. Webhook failures are logged but never block your commit.
+- New `gac discord` subcommand group: `gac discord setup`, `gac discord show`, `gac discord test`, and `gac discord remove`. `gac init` is unchanged — Discord setup lives only under `gac discord`.
 
 ## [v3.26.0] - 2026-05-06
 

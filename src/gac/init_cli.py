@@ -7,7 +7,6 @@ import click
 import questionary
 from dotenv import dotenv_values, set_key, unset_key
 
-from gac.discord_webhook import ENV_KEY as DISCORD_WEBHOOK_ENV_KEY
 from gac.editor_cli import configure_editor_init_workflow
 from gac.language_cli import configure_language_init_workflow
 from gac.model_cli import _configure_model
@@ -179,64 +178,6 @@ def _configure_stats(existing_env: dict[str, str], env_path: Path = GAC_ENV_PATH
             _disable_stats_with_history_prompt(existing_env, env_path)
 
 
-def _configure_discord_webhook(existing_env: dict[str, str], env_path: Path = GAC_ENV_PATH) -> None:
-    """Optionally configure a Discord webhook URL for commit notifications.
-
-    Stores (or clears) the URL in ``GAC_DISCORD_WEBHOOK_URL`` inside the env
-    file. Existing values are shown (masked) and can be kept, replaced, or
-    removed.
-    """
-    click.echo("\nDiscord Webhook (optional)")
-    click.echo(
-        "gac can ping a Discord channel every time you make a commit, using a\n"
-        "webhook URL from your channel's integration settings."
-    )
-
-    current = existing_env.get(DISCORD_WEBHOOK_ENV_KEY, "").strip()
-
-    if current:
-        masked = current[:30] + "…" if len(current) > 30 else current
-        choice = questionary.select(
-            f"A Discord webhook is already configured ({masked}). What now?",
-            choices=[
-                "Keep current webhook",
-                "Replace with a new webhook URL",
-                "Remove the webhook",
-            ],
-            use_shortcuts=True,
-            use_arrow_keys=True,
-            use_jk_keys=False,
-        ).ask()
-
-        if choice is None or choice.startswith("Keep"):
-            click.echo("Keeping existing Discord webhook.")
-            return
-        if choice.startswith("Remove"):
-            unset_key(str(env_path), DISCORD_WEBHOOK_ENV_KEY)
-            existing_env.pop(DISCORD_WEBHOOK_ENV_KEY, None)
-            click.echo("Removed Discord webhook.")
-            return
-        # Falls through to prompt for a new URL.
-    else:
-        enable = questionary.confirm("Configure a Discord webhook now?", default=False).ask()
-        if not enable:
-            click.echo("Skipping Discord webhook configuration.")
-            return
-
-    url = _prompt_required_text("Discord webhook URL:")
-    if url is None:
-        click.echo("Discord webhook configuration cancelled.")
-        return
-
-    if not url.startswith(("http://", "https://")):
-        click.echo("That doesn't look like a URL. Skipping.")
-        return
-
-    set_key(str(env_path), DISCORD_WEBHOOK_ENV_KEY, url)
-    existing_env[DISCORD_WEBHOOK_ENV_KEY] = url
-    click.echo("Discord webhook saved.")
-
-
 @click.command()
 def init() -> None:
     """Interactively set up $HOME/.gac.env for gac."""
@@ -255,8 +196,6 @@ def init() -> None:
     _configure_editor(existing_env)
 
     _configure_stats(existing_env)
-
-    _configure_discord_webhook(existing_env)
 
     click.echo("\ngac environment setup complete.")
     click.echo("Configuration saved to:")
