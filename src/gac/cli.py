@@ -17,6 +17,7 @@ from gac.auth_cli import auth as auth_cli
 from gac.config_cli import config as config_cli
 from gac.constants import Languages, Logging
 from gac.diff_cli import diff as diff_cli
+from gac.discord_cli import discord as discord_cli
 from gac.editor_cli import editor as editor_cli
 from gac.errors import handle_error
 from gac.init_cli import init as init_cli
@@ -234,6 +235,7 @@ def cli(
 cli.add_command(auth_cli)
 cli.add_command(config_cli)
 cli.add_command(diff_cli)
+cli.add_command(discord_cli)
 cli.add_command(init_cli)
 cli.add_command(editor_cli)
 cli.add_command(language_cli)
