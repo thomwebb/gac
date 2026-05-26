@@ -556,6 +556,7 @@ class TestProviderRegistry:
             "gemini",
             "groq",
             "kimi-coding",
+            "lilac",
             "lm-studio",
             "minimax",
             "mistral",
