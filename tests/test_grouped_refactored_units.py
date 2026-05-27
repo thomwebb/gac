@@ -13,8 +13,45 @@ from unittest.mock import patch
 
 import pytest
 
-from gac.grouped_response_parser import parse_json_response, validate_file_coverage
+from gac.grouped_response_parser import _strip_code_fences, parse_json_response, validate_file_coverage
 from gac.grouped_retry_loop import should_exit_or_retry
+
+# ── _strip_code_fences ──────────────────────────────────────────────────
+
+
+class TestStripCodeFences:
+    """Unit tests for _strip_code_fences helper."""
+
+    def test_single_json_fence(self):
+        """Single ```json fence is stripped, contents returned."""
+        text = '```json\n{"key": true}\n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_single_json_fence_no_newlines(self):
+        """Single ```json{...}`` without newlines is stripped."""
+        text = '```json{"key": true}```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_single_plain_fence(self):
+        """Single ``` fence (no lang) is stripped."""
+        text = '```\n{"key": true}\n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_fence_with_whitespace(self):
+        """Whitespace around fence content is stripped."""
+        text = '```json\n  {"key": true}  \n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_multiple_fences_returns_original(self):
+        """Multiple fences → return original (let brace fallback handle it)."""
+        text = '```json\n{"a": 1}\n```\n```\n{"b": 2}\n```'
+        assert _strip_code_fences(text) == text
+
+    def test_no_fence_returns_original(self):
+        """No fences at all → return original."""
+        text = '{"key": true}'
+        assert _strip_code_fences(text) == text
+
 
 # ── parse_json_response ────────────────────────────────────────────────────
 
@@ -30,8 +67,58 @@ class TestParseJsonResponse:
         assert result["commits"][0]["files"] == ["a.py"]
 
     def test_json_embedded_in_markdown(self):
-        """JSON wrapped in markdown fences is extracted correctly."""
+        """JSON wrapped in ```json fences is extracted correctly."""
         raw = '```json\n{"commits": [{"files": ["a.py"], "message": "fix: bug"}]}\n```'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_json_in_plain_code_fence(self):
+        """JSON wrapped in ``` (no language tag) fences is extracted."""
+        raw = '```\n{"commits": [{"files": ["a.py"], "message": "fix: bug"}]}\n```'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_code_fence_with_trailing_braces(self):
+        """Fence stripping prevents trailing } outside the fence from breaking parsing."""
+        raw = '```json\n{"commits": [{"files": ["a.py"], "message": "fix"}]}\n```\n\nSee format: {}'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_code_fence_with_preamble_text(self):
+        """Fence stripping ignores preamble text with braces."""
+        raw = 'Here is your output {}\n\n```json\n{"commits": [{"files": ["a.py"], "message": "fix"}]}\n```'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_multiple_code_fences_falls_back_to_braces(self):
+        """When multiple fences exist, brace-based fallback kicks in."""
+        raw = '```json\n{"commits": [{"files": ["a.py"], "message": "fix"}]}\n```\n```\nsome other block\n```'
+        # Multiple fences → _strip_code_fences returns original → brace fallback
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_no_code_fence_uses_brace_fallback(self):
+        """Plain JSON without fences works via brace-based extraction."""
+        raw = 'Here is the response: {"commits": [{"files": ["a.py"], "message": "fix"}]}'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_code_fence_json_no_language_tag(self):
+        """Fence with no language tag still strips correctly."""
+        raw = '```\n{"commits": [{"files": ["b.py"], "message": "feat: add"}]}\n```'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+        assert result["commits"][0]["files"] == ["b.py"]
+
+    def test_json_fenced_no_newlines(self):
+        """```json{...}``` without newlines is parsed correctly."""
+        raw = '```json{"commits": [{"files": ["a.py"], "message": "fix: bug"}]}```'
+        result = parse_json_response(raw)
+        assert len(result["commits"]) == 1
+
+    def test_plain_fence_no_newlines(self):
+        """```{...}``` without newlines is parsed correctly."""
+        raw = '```{"commits": [{"files": ["a.py"], "message": "fix"}]}```'
         result = parse_json_response(raw)
         assert len(result["commits"]) == 1
 

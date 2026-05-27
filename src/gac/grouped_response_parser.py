@@ -15,17 +15,35 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from collections import Counter
 from typing import Any
 
 logger = logging.getLogger(__name__)
 
+# Matches ```json\n...\n``` or ```json{...}```.
+_CODE_FENCE_RE = re.compile(r"```(?:json)?\s*\n?(.*?)\n?\s*```", re.DOTALL)
+
+
+def _strip_code_fences(text: str) -> str:
+    """Remove markdown code fences (```json ... ``` or ``` ... ```) from text.
+
+    If exactly one fenced block is found, returns its contents.
+    Otherwise returns the original text unchanged, letting the
+    brace-based fallback handle extraction.
+    """
+    matches = list(_CODE_FENCE_RE.finditer(text))
+    if len(matches) == 1:
+        return matches[0].group(1).strip()
+    return text
+
 
 def parse_json_response(raw_response: str) -> dict[str, Any]:
     """Parse a raw AI response into a validated grouped-commits dict.
 
-    Extracts the first ``{…}`` block from the response, parses it as
-    JSON, and validates the required structure.
+    First strips markdown code fences (triple-backtick ````json```` blocks) if present,
+    then falls back to extracting the first ``{…}`` block.
+    Parses the result as JSON and validates the required structure.
 
     Returns:
         Parsed dict with a ``"commits"`` key containing a non-empty list.
@@ -34,11 +52,13 @@ def parse_json_response(raw_response: str) -> dict[str, Any]:
         ValueError: If the response is not valid JSON or is structurally
             invalid (missing keys, wrong types, empty lists/messages).
     """
-    extract = raw_response
-    first_brace = raw_response.find("{")
-    last_brace = raw_response.rfind("}")
+    extract = _strip_code_fences(raw_response)
+
+    # Brace-based fallback: extract the first {…} block.
+    first_brace = extract.find("{")
+    last_brace = extract.rfind("}")
     if first_brace != -1 and last_brace != -1 and first_brace < last_brace:
-        extract = raw_response[first_brace : last_brace + 1]
+        extract = extract[first_brace : last_brace + 1]
 
     try:
         parsed: dict[str, Any] = json.loads(extract)
