@@ -177,7 +177,7 @@ def show() -> None:
         biggest_table = Table(show_header=True, box=None)
         biggest_table.add_column("Dimension", style="bold magenta")
         biggest_table.add_column("Record", style="bold cyan", justify="right")
-        biggest_table.add_column("Date", style="bold cyan")
+        biggest_table.add_column("Date", style="bold")
 
         if biggest_gac_tokens > 0:
             date_str = (
