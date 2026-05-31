@@ -205,7 +205,7 @@ class TestErrors(unittest.TestCase):
         error = AIError.model_error("Model not found")
         message = format_error_for_user(error)
         self.assertIn("Model not found", message)
-        self.assertIn("model list", message)
+        self.assertIn("uvx gac model", message)
 
     def test_unknown_error_factory(self):
         """Test AIError.unknown_error factory method."""
@@ -447,7 +447,7 @@ class TestErrors(unittest.TestCase):
         self.assertIn("try again", timeout.suggestion.lower())
 
         model = AIError.model_error("bad model")
-        self.assertIn("model list", model.suggestion)
+        self.assertIn("gac model", model.suggestion)
 
     def test_ai_error_factory_custom_suggestion(self):
         """Test that AIError factory methods accept custom suggestions."""
