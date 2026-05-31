@@ -112,7 +112,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("Qwen Cloud (INTL API)", "qwen3.5-flash"),
         ("Replicate", "openai/gpt-oss-120b"),
         ("Streamlake", ""),
-        ("Synthetic.new", "hf:zai-org/GLM-4.7-Flash"),
+        ("Synthetic.new", "syn:small:text"),
         ("Together AI", "openai/gpt-oss-120B"),
         ("Wafer.ai", "Qwen3.5-397B-A17B"),
         ("Z.AI", "glm-5.1"),

@@ -110,7 +110,7 @@ class AIError(GacError):
     def model_error(cls, message: str, *, suggestion: str | None = None) -> "AIError":
         """Create a model error."""
         return cls(
-            message, error_type="model", suggestion=suggestion or "Run 'uvx gac model list' to see available models."
+            message, error_type="model", suggestion=suggestion or "Run 'uvx gac model' to configure a valid model."
         )
 
     @classmethod

@@ -38,12 +38,7 @@ class SyntheticProvider(OpenAICompatibleProvider):
         **kwargs: Any,
     ) -> dict[str, Any]:
         """Build request body with model name preprocessing and max_completion_tokens."""
-        # Auto-add hf: prefix if not present
-        if not model.startswith("hf:"):
-            model = f"hf:{model}"
 
         data = super()._build_request_body(messages, temperature, max_tokens, model, **kwargs)
         data["max_completion_tokens"] = data.pop("max_tokens")
-        # Ensure the prefixed model is used
-        data["model"] = model
         return data
