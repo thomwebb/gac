@@ -381,7 +381,6 @@ Order the commits in a logical sequence considering dependencies, natural progre
 
 YOUR RESPONSE FORMAT:
 Respond with valid JSON following this structure:
-```json
 {
   "commits": [
     {
@@ -398,7 +397,6 @@ Respond with valid JSON following this structure:
     }
   ]
 }
-```
 
 ☝️ Notice how EVERY file path in the example above appears exactly ONCE across all commits. "src/auth/login.ts" appears once. "tests/auth.test.ts" appears once. No file is repeated.
 
