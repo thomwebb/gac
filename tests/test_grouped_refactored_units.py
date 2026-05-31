@@ -52,6 +52,26 @@ class TestStripCodeFences:
         text = '{"key": true}'
         assert _strip_code_fences(text) == text
 
+    def test_kimi_standalone_json_keyword(self):
+        """Kimi-style: 'json\n```json\n{...}\n```' is handled correctly."""
+        text = 'json\n```json\n{"key": true}\n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_kimi_json_keyword_with_space(self):
+        """'json ```json\n{...}\n```' (space instead of newline) is handled."""
+        text = 'json ```json\n{"key": true}\n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_json_keyword_case_insensitive(self):
+        """'JSON\n```json\n{...}\n```' (uppercase) is handled."""
+        text = 'JSON\n```json\n{"key": true}\n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
+    def test_json_keyword_with_plain_fence(self):
+        """'json\n```\n{...}\n```' (plain fence) is handled."""
+        text = 'json\n```\n{"key": true}\n```'
+        assert _strip_code_fences(text) == '{"key": true}'
+
 
 # ── parse_json_response ────────────────────────────────────────────────────
 

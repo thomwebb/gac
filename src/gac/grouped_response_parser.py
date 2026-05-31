@@ -28,10 +28,17 @@ _CODE_FENCE_RE = re.compile(r"```(?:json)?\s*\n?(.*?)\n?\s*```", re.DOTALL)
 def _strip_code_fences(text: str) -> str:
     """Remove markdown code fences (```json ... ``` or ``` ... ```) from text.
 
+    Also handles cases where models prepend a standalone "json" keyword
+    before the code fence (e.g., Kimi: "json\n```json\n{...}\n```").
+
     If exactly one fenced block is found, returns its contents.
     Otherwise returns the original text unchanged, letting the
     brace-based fallback handle extraction.
     """
+    # Strip standalone "json" keyword that some models (like Kimi) prepend
+    # e.g., "json\n```json\n{...}\n```" or "json ```json\n{...}\n```"
+    text = re.sub(r"^json\s*[\n\r]", "", text, flags=re.IGNORECASE)
+
     matches = list(_CODE_FENCE_RE.finditer(text))
     if len(matches) == 1:
         return matches[0].group(1).strip()
