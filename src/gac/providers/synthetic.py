@@ -37,7 +37,7 @@ class SyntheticProvider(OpenAICompatibleProvider):
         reasoning_effort: str | None = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
-        """Build request body with model name preprocessing and max_completion_tokens."""
+        """Build request body with max_completion_tokens."""
 
         data = super()._build_request_body(messages, temperature, max_tokens, model, **kwargs)
         data["max_completion_tokens"] = data.pop("max_tokens")
