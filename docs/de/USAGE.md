@@ -635,6 +635,37 @@ Wenn deaktiviert, überspringt gac die gesamte Statistikerfassung — es finden 
 
 ---
 
+## Discord-Webhook-Benachrichtigungen
+
+gac kann einen Discord-Kanal jedes Mal anpingen, wenn du einen Commit landest, unter Verwendung einer Webhook-URL aus den Integrationseinstellungen deines Kanals. Die Integration ist **opt-in**: Sie tut nichts, bis du explizit eine Webhook-URL konfigurierst.
+
+### Einrichtung
+
+Verwende die dedizierte `discord`-Subcommand-Gruppe:
+
+```bash
+uvx gac discord setup     # interaktive Konfiguration einer Webhook-URL
+uvx gac discord show      # zeigt an, ob ein Webhook konfiguriert ist (URL maskiert)
+uvx gac discord test      # sendet eine Testbenachrichtigung an den konfigurierten Webhook
+uvx gac discord remove    # entfernt die konfigurierte Webhook-URL
+```
+
+Alternativ kannst du die Variable direkt in `$HOME/.gac.env` (oder `./.gac.env`) setzen:
+
+```bash
+GAC_DISCORD_WEBHOOK_URL='https://discord.com/api/webhooks/XXXX/YYYY'
+```
+
+### Verhalten
+
+- Feuert nach jedem erfolgreichen Commit (einzelne und gruppierte Workflows). Wird bei `--dry-run` und `--message-only` übersprungen.
+- Postet ein **Embed** im GitHub-Stil mit einem grünen Streifen, Repo + Branch als Autorenzeile, der Commit-Betreff als Titel, der Commit-Body als Beschreibung und der kurze SHA im Footer.
+- Verwendet den gac-Avatar und den Benutzernamen `gac`.
+- Webhook-Fehler werden auf WARNING geloggt und blockieren **niemals** deinen Commit.
+- Lass `GAC_DISCORD_WEBHOOK_URL` ungesetzt (oder leer) um zu deaktivieren. `gac init` ist davon nicht betroffen — Discord-Einrichtung lebt nur unter `gac discord`.
+
+---
+
 ## Hilfe erhalten
 
 - Für MCP-Server-Setup (KI-Agenten-Integration) siehe [docs/MCP.md](MCP.md)
