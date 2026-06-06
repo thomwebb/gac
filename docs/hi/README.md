@@ -48,13 +48,13 @@ uvx gac  # LLM के साथ जेनरेट और कमिट करे
 
 ## मुख्य विशेषताएं
 
-### 🌐 **30+ समर्थित प्रदाता**
+### **32+ समर्थित प्रदाता**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
 - **Crof.ai** • **DeepInfra** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot (OAuth)** • **Groq**
 - **Kimi for Coding** • **Lilac** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI** • **Neuralwatt** • **Ollama**
-- **OpenAI** • **OpenCode Go** • **OpenRouter** • **Qwen Cloud (CN & INTL)** • **Replicate** • **Streamlake/Vanchin**
-- **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
+- **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)** • **Replicate**
+- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
 - **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **स्मार्ट LLM विश्लेषण**
