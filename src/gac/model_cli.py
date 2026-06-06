@@ -108,6 +108,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("OpenAI", "gpt-5.4-mini"),
         ("OpenCode Go", "deepseek-v4-flash"),
         ("OpenRouter", "openrouter/auto"),
+        ("Plexus Gateway", ""),
         ("Qwen Cloud (CN API)", "qwen3.5-flash"),
         ("Qwen Cloud (INTL API)", "qwen3.5-flash"),
         ("Replicate", "openai/gpt-oss-120b"),
@@ -142,6 +143,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
     is_custom_openai = provider_key == "custom-openai"
     is_lmstudio = provider_key == "lm-studio"
     is_ollama = provider_key == "ollama"
+    is_plexus = provider_key == "plexus-gateway"
     is_qwen_api = provider_key in ("qwen-cloud-api-intl", "qwen-cloud-api-cn")
     is_streamlake = provider_key == "streamlake"
     is_zai = provider_key in ("zai", "zai-coding")
@@ -161,6 +163,8 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         provider_key = "minimax"
     elif provider_key == "moonshot-ai":
         provider_key = "moonshot"
+    elif provider_key == "plexus-gateway":
+        provider_key = "plexus"
     elif provider_key == "qwen-cloud-intl-api":
         provider_key = "qwen-api"
     elif provider_key == "qwen-cloud-cn-api":
@@ -303,6 +307,45 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         url_to_save = url.strip() if url.strip() else url_default
         set_key(str(GAC_ENV_PATH), "LMSTUDIO_API_URL", url_to_save)
         click.echo(f"Set LMSTUDIO_API_URL={url_to_save}")
+    elif is_plexus:
+        # Check for existing Plexus base URL
+        existing_plexus_url = existing_env.get("PLEXUS_BASE_URL")
+        if existing_plexus_url:
+            click.echo(f"\nPlexus server URL is already configured: {existing_plexus_url}")
+            url_action = questionary.select(
+                "What would you like to do?",
+                choices=[
+                    "Keep existing URL",
+                    "Enter new URL",
+                ],
+                use_shortcuts=True,
+                use_arrow_keys=True,
+                use_jk_keys=False,
+            ).ask()
+
+            if url_action == "Enter new URL":
+                url_default = "http://localhost:4000"
+                url = questionary.text(
+                    f"Enter the Plexus server URL (default: {url_default}):", default=url_default
+                ).ask()
+                if url is None:
+                    click.echo("Plexus URL entry cancelled. Exiting.")
+                    return False
+                url_to_save = url.strip() if url.strip() else url_default
+                set_key(str(GAC_ENV_PATH), "PLEXUS_BASE_URL", url_to_save)
+                click.echo(f"Set PLEXUS_BASE_URL={url_to_save}")
+            else:
+                url_to_save = existing_plexus_url
+                click.echo(f"Keeping existing PLEXUS_BASE_URL={url_to_save}")
+        else:
+            url_default = "http://localhost:4000"
+            url = questionary.text(f"Enter the Plexus server URL (default: {url_default}):", default=url_default).ask()
+            if url is None:
+                click.echo("Plexus URL entry cancelled. Exiting.")
+                return False
+            url_to_save = url.strip() if url.strip() else url_default
+            set_key(str(GAC_ENV_PATH), "PLEXUS_BASE_URL", url_to_save)
+            click.echo(f"Set PLEXUS_BASE_URL={url_to_save}")
 
     # Handle Copilot OAuth separately (Device Flow — no API key needed)
     if is_copilot_oauth:
