@@ -566,6 +566,7 @@ class TestProviderRegistry:
             "openai",
             "opencode-go",
             "openrouter",
+            "plexus",
             "qwen",
             "qwen-api",
             "qwen-api-cn",

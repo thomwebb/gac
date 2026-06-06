@@ -293,6 +293,127 @@ def test_configure_model_openrouter_success(tmp_path):
             assert mock_set_key.call_count >= 2
 
 
+def test_configure_model_plexus_success(tmp_path):
+    """Test successful Plexus Gateway provider configuration."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("questionary.password") as mpass,
+            patch("gac.model_cli.set_key") as mock_set_key,
+        ):
+            # Select Plexus Gateway provider
+            mselect.return_value.ask.return_value = "Plexus Gateway"
+            # First call is for model, second call is for base URL
+            mtext.return_value.ask.side_effect = ["fast-model", "http://localhost:4000"]
+            mpass.return_value.ask.return_value = "sk-plexus-test-key"
+
+            result = _configure_model({})
+
+            assert result is True
+            # Should have set_key calls for model, base URL, and API key
+            assert mock_set_key.call_count >= 3
+
+
+def test_configure_model_plexus_keep_existing_url(tmp_path):
+    """Test Plexus Gateway provider configuration keeping existing base URL."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    existing_env = {"PLEXUS_BASE_URL": "http://localhost:4000"}
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("questionary.password") as mpass,
+            patch("gac.model_cli.set_key") as mock_set_key,
+            patch("gac.model_cli.click.echo") as mock_echo,
+        ):
+            # Select Plexus Gateway provider
+            mselect.return_value.ask.side_effect = [
+                "Plexus Gateway",  # Provider selection
+                "Keep existing URL",  # URL action (keep existing)
+            ]
+            # Only model needed (URL kept)
+            mtext.return_value.ask.return_value = "fast-model"
+            mpass.return_value.ask.return_value = "sk-plexus-test-key"
+
+            result = _configure_model(existing_env)
+
+            assert result is True
+            # Should have set_key calls for model and API key only (URL kept)
+            assert mock_set_key.call_count >= 2
+            # Check that the keep echo was called at some point
+            mock_echo.assert_any_call("Keeping existing PLEXUS_BASE_URL=http://localhost:4000")
+
+
+def test_configure_model_plexus_new_url(tmp_path):
+    """Test Plexus Gateway provider configuration entering new URL when existing."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    existing_env = {"PLEXUS_BASE_URL": "http://old-plexus.example.com"}
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("questionary.password") as mpass,
+            patch("gac.model_cli.set_key") as mock_set_key,
+        ):
+            # Select Plexus Gateway provider
+            mselect.return_value.ask.side_effect = [
+                "Plexus Gateway",  # Provider selection
+                "Enter new URL",  # URL action (enter new)
+            ]
+            # Model, then new URL
+            mtext.return_value.ask.side_effect = [
+                "fast-model",
+                "http://new-plexus.example.com",
+            ]
+            mpass.return_value.ask.return_value = "sk-plexus-test-key"
+
+            result = _configure_model(existing_env)
+
+            assert result is True
+            # Should have set_key calls for model, URL, and API key
+            assert mock_set_key.call_count >= 3
+
+
+def test_configure_model_plexus_new_url_cancellation(tmp_path):
+    """Test Plexus Gateway provider cancelling new URL entry."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    existing_env = {"PLEXUS_BASE_URL": "http://old-plexus.example.com"}
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("gac.model_cli.click.echo") as mock_echo,
+        ):
+            # Select Plexus Gateway provider
+            mselect.return_value.ask.side_effect = [
+                "Plexus Gateway",  # Provider selection
+                "Enter new URL",  # URL action
+            ]
+            # Model, then cancel URL
+            mtext.return_value.ask.side_effect = [
+                "fast-model",
+                None,  # cancel URL
+            ]
+
+            result = _configure_model(existing_env)
+
+            assert result is False
+            mock_echo.assert_called_with("Plexus URL entry cancelled. Exiting.")
+
+
 def test_configureModel_replicate_success(tmp_path):
     """Test successful Replicate provider configuration."""
     env_path = tmp_path / ".gac.env"
