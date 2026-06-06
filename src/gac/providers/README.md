@@ -68,7 +68,7 @@ Specialized base class for OpenAI-compatible APIs (standard format).
 **Providers Using This Base:**
 
 - OpenAI, DeepSeek, Together, Fireworks, Cerebras, Mistral, Minimax, Moonshot, Groq, OpenRouter
-- Custom OpenAI, Azure OpenAI, LM Studio
+- Custom OpenAI, Azure OpenAI, LM Studio, Plexus
 - Kimi Coding, Streamlake, Synthetic, Z.AI
 
 ### AnthropicCompatibleProvider

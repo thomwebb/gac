@@ -38,6 +38,7 @@ from .ollama import OllamaProvider
 from .openai import OpenAIProvider
 from .opencode_go import OpenCodeGoProvider
 from .openrouter import OpenRouterProvider
+from .plexus import PlexusProvider
 from .qwen import QwenAPICNProvider, QwenAPIProvider, QwenProvider
 from .registry import (
     PROVIDER_REGISTRY,
@@ -77,6 +78,7 @@ register_provider("ollama", OllamaProvider)
 register_provider("openai", OpenAIProvider)
 register_provider("opencode-go", OpenCodeGoProvider)
 register_provider("openrouter", OpenRouterProvider)
+register_provider("plexus", PlexusProvider)
 register_provider("qwen", QwenProvider)
 register_provider("qwen-api", QwenAPIProvider)
 register_provider("qwen-api-cn", QwenAPICNProvider)
