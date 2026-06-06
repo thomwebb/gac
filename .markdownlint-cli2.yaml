@@ -28,6 +28,9 @@ config:
   # Fenced code blocks should have a language
   MD040: true
 
+  # Table column style (disabled for non-Latin script compatibility)
+  MD060: false
+
 # Define glob patterns for ignoring specific files
 ignores:
   - ".venv/**/*.md"
