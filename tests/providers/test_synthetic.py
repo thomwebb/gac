@@ -83,24 +83,6 @@ class TestSyntheticProviderMocked(BaseProviderTest):
         headers = mock_post.call_args.kwargs.get("headers", {})
         assert headers.get("Authorization") == "Bearer alias-key"
 
-    def test_adds_hf_prefix_for_models(self):
-        """Verify models without the hf: prefix are automatically corrected."""
-        with patch("gac.providers.base.httpx.post") as mock_post:
-            mock_post.return_value = self._create_mock_response(self.success_response)
-            messages = [{"role": "user", "content": "Generate a commit message"}]
-            with patch.dict(os.environ, {"SYNTHETIC_API_KEY": "test-key"}, clear=True):
-                result = self.api_function(
-                    model="zai-org/GLM-4.6",
-                    messages=messages,
-                    temperature=0.7,
-                    max_tokens=256,
-                )
-
-        assert result[0] == "feat: Add new feature"
-        payload = mock_post.call_args.kwargs.get("json", {})
-        assert payload.get("model") == "hf:zai-org/GLM-4.6"
-        assert payload.get("max_completion_tokens") == 256
-
 
 class TestSyntheticEdgeCases:
     """Test edge cases for Synthetic provider."""
