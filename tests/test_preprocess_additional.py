@@ -11,6 +11,7 @@ from gac.diff_scoring import (
 )
 from gac.preprocess import (
     extract_filtered_file_summary,
+    is_deleted_file_section,
     is_lockfile_or_generated,
     is_minified_content,
     preprocess_diff,
@@ -180,6 +181,49 @@ Binary file
 """
             result = should_filter_section(section)
             assert result is True
+
+    def test_should_filter_section_deleted_file_strips_content(self):
+        """A staged deletion should be summarized, not include the full file body."""
+        body = "\n".join(f"-line {i} of deleted file content" for i in range(500))
+        section = (
+            "diff --git a/big_deleted.py b/big_deleted.py\n"
+            "deleted file mode 100644\n"
+            "index abcdef1..0000000\n"
+            "--- a/big_deleted.py\n"
+            "+++ /dev/null\n"
+            "@@ -1,500 +0,0 @@\n"
+            f"{body}\n"
+        )
+
+        assert is_deleted_file_section(section) is True
+        assert should_filter_section(section) is True
+
+        summary = extract_filtered_file_summary(section)
+        assert "big_deleted.py" in summary
+        assert "deleted file mode 100644" in summary
+        assert "[Deleted file]" in summary
+        # The original body must NOT survive into the summary.
+        assert "line 0 of deleted file content" not in summary
+        assert "line 499 of deleted file content" not in summary
+        # Sanity: summary is dramatically smaller than the input section.
+        assert len(summary) < len(section) / 10
+
+    def test_extract_filtered_file_summary_ignores_minus_line_with_deleted_substring(self):
+        """A `-` content line containing the words 'deleted file' must not leak into the summary."""
+        section = (
+            "diff --git a/notes.md b/notes.md\n"
+            "index 1111111..2222222 100644\n"
+            "--- a/notes.md\n"
+            "+++ b/notes.md\n"
+            "@@ -1,2 +1,1 @@\n"
+            "-We deleted file foo.py last week.\n"
+            "-new file was added too.\n"
+            "+Cleaned up.\n"
+        )
+        summary = extract_filtered_file_summary(section, "[Custom]")
+        assert "We deleted file foo.py last week." not in summary
+        assert "new file was added too." not in summary
+        assert "[Custom]" in summary
 
     def test_is_lockfile_or_generated_package_lock(self):
         """Test is_lockfile_or_generated with package-lock.json."""

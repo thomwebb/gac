@@ -213,13 +213,13 @@ def extract_filtered_file_summary(section: str, change_type: str | None = None) 
             match = re.search(r"diff --git a/(.*?) b/", line)
             if match:
                 filename = match.group(1)
-        elif "deleted file" in line:
+        elif line.startswith("deleted file"):
             summary_lines.append(line)
-        elif "new file" in line:
+        elif line.startswith("new file"):
             summary_lines.append(line)
         elif line.startswith("index "):
             summary_lines.append(line)
-        elif "Binary file" in line:
+        elif line.startswith("Binary file"):
             summary_lines.append("[Binary file change]")
             break
 
@@ -227,6 +227,8 @@ def extract_filtered_file_summary(section: str, change_type: str | None = None) 
     if not change_type and filename:
         if any(re.search(pattern, section) for pattern in FilePatterns.BINARY):
             change_type = "[Binary file change]"
+        elif is_deleted_file_section(section):
+            change_type = "[Deleted file]"
         elif is_lockfile_or_generated(filename):
             change_type = "[Lockfile/generated file change]"
         elif any(filename.endswith(ext) for ext in FilePatterns.MINIFIED_EXTENSIONS):
@@ -261,6 +263,10 @@ def should_filter_section(section: str) -> bool:
     if file_match:
         filename = file_match.group(1)
 
+        if is_deleted_file_section(section):
+            logger.info(f"Summarized deleted file: {filename}")
+            return True
+
         if any(filename.endswith(ext) for ext in FilePatterns.MINIFIED_EXTENSIONS):
             logger.info(f"Filtered out minified file by extension: {filename}")
             return True
@@ -278,6 +284,22 @@ def should_filter_section(section: str) -> bool:
             return True
 
     return False
+
+
+def is_deleted_file_section(section: str) -> bool:
+    """Check if a diff section represents a deleted file.
+
+    A pure deletion includes the entire previous file content as ``-`` lines,
+    which can bloat the AI context for no benefit — the filename plus the
+    fact of deletion is enough to write a useful commit message.
+
+    Args:
+        section: Diff section to check
+
+    Returns:
+        True if the section's header marks the file as deleted
+    """
+    return bool(re.search(r"^deleted file mode", section, re.MULTILINE))
 
 
 def is_lockfile_or_generated(filename: str) -> bool:
