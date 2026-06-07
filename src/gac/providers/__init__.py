@@ -35,6 +35,7 @@ from .mistral import MistralProvider
 from .moonshot import MoonshotProvider
 from .neuralwatt import NeuralwattProvider
 from .ollama import OllamaProvider
+from .ollama_cloud import OllamaCloudProvider
 from .openai import OpenAIProvider
 from .opencode_go import OpenCodeGoProvider
 from .openrouter import OpenRouterProvider
@@ -75,6 +76,7 @@ register_provider("mistral", MistralProvider)
 register_provider("moonshot", MoonshotProvider)
 register_provider("neuralwatt", NeuralwattProvider)
 register_provider("ollama", OllamaProvider)
+register_provider("ollama-cloud", OllamaCloudProvider)
 register_provider("openai", OpenAIProvider)
 register_provider("opencode-go", OpenCodeGoProvider)
 register_provider("openrouter", OpenRouterProvider)
