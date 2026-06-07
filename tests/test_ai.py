@@ -563,6 +563,7 @@ class TestProviderRegistry:
             "moonshot",
             "neuralwatt",
             "ollama",
+            "ollama-cloud",
             "openai",
             "opencode-go",
             "openrouter",

@@ -486,6 +486,30 @@ def test_configure_model_chutes_success(tmp_path):
             assert mock_set_key.call_count >= 2
 
 
+def test_configure_model_ollama_cloud_success(tmp_path):
+    """Test successful Ollama Cloud provider configuration."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+
+    with patch("gac.model_cli.GAC_ENV_PATH", env_path):
+        with (
+            patch("questionary.select") as mselect,
+            patch("questionary.text") as mtext,
+            patch("questionary.password") as mpass,
+            patch("gac.model_cli.set_key") as mock_set_key,
+        ):
+            # Select Ollama Cloud provider
+            mselect.return_value.ask.return_value = "Ollama Cloud"
+            mtext.return_value.ask.return_value = "llama3:7b"
+            mpass.return_value.ask.return_value = "ollama-cloud-key"
+
+            result = _configure_model({})
+
+            assert result is True
+            # Should have set_key calls for model and API key
+            assert mock_set_key.call_count >= 2
+
+
 def test_configure_model_deepinfra_success(tmp_path):
     """Test successful DeepInfra provider configuration."""
     env_path = tmp_path / ".gac.env"
