@@ -48,13 +48,13 @@ Chỉ vậy thôi! Xem lại thông điệp đã tạo và xác nhận bằng `y
 
 ## Tính Năng Chính
 
-### **32+ Nhà Cung Cấp Hỗ Trợ**
+### **33+ Nhà Cung Cấp Hỗ Trợ**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
 - **Crof.ai** • **DeepInfra** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot (OAuth)** • **Groq**
 - **Kimi for Coding** • **Lilac** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI** • **Neuralwatt** • **Ollama**
-- **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
+- **Ollama Cloud** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
 - **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Phân Tích LLM Thông Minh**

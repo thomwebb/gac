@@ -48,13 +48,13 @@ uvx gac  # Genera y hace commit con LLM
 
 ## Características principales
 
-### **32+ Proveedores soportados**
+### **33+ Proveedores soportados**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
 - **Crof.ai** • **DeepInfra** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot (OAuth)** • **Groq**
 - **Kimi for Coding** • **Lilac** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI** • **Neuralwatt** • **Ollama**
-- **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
+- **Ollama Cloud** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
 - **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Análisis inteligente con LLM**

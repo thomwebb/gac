@@ -48,13 +48,13 @@ uvx gac  # 使用 LLM 生成并提交
 
 ## 核心特性
 
-### **支持的 32+ 提供商**
+### **支持的 33+ 提供商**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
 - **Crof.ai** • **DeepInfra** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot (OAuth)** • **Groq**
 - **Kimi for Coding** • **Lilac** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI** • **Neuralwatt** • **Ollama**
-- **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
+- **Ollama Cloud** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
 - **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **智能 LLM 分析**

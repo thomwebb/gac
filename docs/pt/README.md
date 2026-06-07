@@ -48,13 +48,13 @@ uvx gac  # Gere e envie commit com LLM
 
 ## Recursos Principais
 
-### **32+ Provedores Suportados**
+### **33+ Provedores suportados**
 
 - **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
 - **Crof.ai** • **DeepInfra** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot (OAuth)** • **Groq**
 - **Kimi for Coding** • **Lilac** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI** • **Neuralwatt** • **Ollama**
-- **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)** • **Replicate**
-- **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
+- **Ollama Cloud** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)**
+- **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
 - **Custom Endpoints (Anthropic/OpenAI)**
 
 ### 🧠 **Análise Inteligente de LLM**
