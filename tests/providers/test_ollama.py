@@ -55,18 +55,18 @@ class TestOllamaProviderMocked(BaseProviderTest):
 
     @property
     def success_response(self) -> dict[str, Any]:
-        return {"response": "feat: Add new feature"}
+        return {"message": {"content": "feat: Add new feature"}}
 
     @property
     def empty_content_response(self) -> dict[str, Any]:
-        return {"response": ""}
+        return {"message": {"content": ""}}
 
 
 class TestOllamaEdgeCases:
     """Test edge cases for Ollama provider."""
 
     def test_ollama_message_content_format(self):
-        """Test response with message.content format."""
+        """Test response with documented message.content format."""
         with patch("gac.providers.base.httpx.post") as mock_post:
             mock_response = MagicMock()
             mock_response.json.return_value = {"message": {"content": "test response"}}
@@ -75,28 +75,6 @@ class TestOllamaEdgeCases:
 
             result = call_ollama_api("llama2", [], 0.7, 1000)
             assert result[0] == "test response"
-
-    def test_ollama_response_format(self):
-        """Test response with response field format."""
-        with patch("gac.providers.base.httpx.post") as mock_post:
-            mock_response = MagicMock()
-            mock_response.json.return_value = {"response": "test response"}
-            mock_response.raise_for_status = MagicMock()
-            mock_post.return_value = mock_response
-
-            result = call_ollama_api("llama2", [], 0.7, 1000)
-            assert result[0] == "test response"
-
-    def test_ollama_fallback_string_format(self):
-        """Test fallback to string conversion for unexpected format."""
-        with patch("gac.providers.base.httpx.post") as mock_post:
-            mock_response = MagicMock()
-            mock_response.json.return_value = {"other_field": "some value"}
-            mock_response.raise_for_status = MagicMock()
-            mock_post.return_value = mock_response
-
-            result = call_ollama_api("llama2", [], 0.7, 1000)
-            assert "other_field" in result[0]
 
     def test_ollama_null_content(self):
         """Test handling of null content in message."""
@@ -115,7 +93,7 @@ class TestOllamaEdgeCases:
         """Test custom OLLAMA_API_URL environment variable."""
         with patch("gac.providers.base.httpx.post") as mock_post:
             mock_response = MagicMock()
-            mock_response.json.return_value = {"response": "test response"}
+            mock_response.json.return_value = {"message": {"content": "test response"}}
             mock_response.raise_for_status = MagicMock()
             mock_post.return_value = mock_response
 
@@ -131,7 +109,7 @@ class TestOllamaEdgeCases:
         """Test that API key is included in headers when provided."""
         with patch("gac.providers.base.httpx.post") as mock_post:
             mock_response = MagicMock()
-            mock_response.json.return_value = {"response": "test response"}
+            mock_response.json.return_value = {"message": {"content": "test response"}}
             mock_response.raise_for_status = MagicMock()
             mock_post.return_value = mock_response
 

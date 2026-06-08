@@ -67,7 +67,7 @@ class OllamaProvider(OpenAICompatibleProvider):
         return api_key
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
-        """Parse Ollama response with flexible format support."""
+        """Parse Ollama response (message.content format)."""
         from gac.errors import AIError
         from gac.postprocess import extract_think_tag_text
 
@@ -78,12 +78,8 @@ class OllamaProvider(OpenAICompatibleProvider):
         if not isinstance(completion_tokens, int):
             completion_tokens = -1
 
-        if "message" in response and "content" in response["message"]:
-            content = response["message"]["content"]
-        elif "response" in response:
-            content = response["response"]
-        else:
-            content = str(response) if response else ""
+        message = response.get("message", {})
+        content = message.get("content")
 
         if content is None:
             raise AIError.model_error("Ollama API returned null content")

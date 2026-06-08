@@ -151,21 +151,6 @@ class TestOllamaProviderEdgeCases:
             result = PROVIDER_REGISTRY["ollama"]("llama3", [{"role": "user", "content": "hi"}], 0.7, 1000)
             assert result[0] == "test response"
 
-    def test_ollama_response_in_response_format(self):
-        """Test parsing response in 'response' format."""
-        from gac.providers import PROVIDER_REGISTRY
-
-        with patch("gac.providers.base.httpx.post") as mock_post:
-            mock_response = MagicMock()
-            mock_response.json.return_value = {
-                "response": "test response",
-            }
-            mock_response.raise_for_status = MagicMock()
-            mock_post.return_value = mock_response
-
-            result = PROVIDER_REGISTRY["ollama"]("llama3", [{"role": "user", "content": "hi"}], 0.7, 1000)
-            assert result[0] == "test response"
-
     def test_ollama_null_content(self):
         """Test Ollama returns null content."""
         from gac.providers import PROVIDER_REGISTRY

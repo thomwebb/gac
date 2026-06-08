@@ -4,13 +4,12 @@ Ollama Cloud provides cloud-hosted access to Ollama models with an API-compatibl
 endpoint. Requires an OLLAMA_CLOUD_API_KEY environment variable.
 
 API Reference:
-- https://cloud.ollama.com/docs
-- Endpoint: https://cloud.ollama.com/api/chat
+- https://ollama.com/cloud
+- Endpoint: https://ollama.com/api/chat
 - Models: Same as local Ollama (llama3, mistral, etc.)
 
 Environment Variables:
     OLLAMA_CLOUD_API_KEY: Required API key for Ollama Cloud
-    OLLAMA_CLOUD_BASE_URL: Optional base URL (defaults to https://cloud.ollama.com)
 """
 
 import os
@@ -31,15 +30,12 @@ class OllamaCloudProvider(OpenAICompatibleProvider):
     config = ProviderConfig(
         name="Ollama Cloud",
         api_key_env="OLLAMA_CLOUD_API_KEY",
-        base_url="https://cloud.ollama.com",
+        base_url="https://ollama.com/api/chat",
     )
 
     def __init__(self, config: ProviderConfig):
-        """Initialize with configurable URL from environment."""
+        """Initialize the Ollama Cloud provider."""
         super().__init__(config)
-        # Allow URL override via environment variable
-        api_url = os.getenv("OLLAMA_CLOUD_BASE_URL", "https://cloud.ollama.com")
-        self.config.base_url = api_url.rstrip("/")
 
     def _build_request_body(
         self,
@@ -61,10 +57,6 @@ class OllamaCloudProvider(OpenAICompatibleProvider):
             body["reasoning_effort"] = reasoning_effort
         return body
 
-    def _get_api_url(self, model: str | None = None) -> str:
-        """Get API URL with /api/chat endpoint."""
-        return f"{self.config.base_url}/api/chat"
-
     def _get_api_key(self) -> str:
         """Get required API key for Ollama Cloud."""
         api_key = os.getenv(self.config.api_key_env)
@@ -73,7 +65,7 @@ class OllamaCloudProvider(OpenAICompatibleProvider):
         return api_key
 
     def _parse_response(self, response: dict[str, Any]) -> ParsedResponse:
-        """Parse Ollama Cloud response with flexible format support."""
+        """Parse Ollama Cloud response (message.content format)."""
         from gac.postprocess import extract_think_tag_text
 
         prompt_tokens = response.get("prompt_eval_count", -1)
@@ -83,12 +75,8 @@ class OllamaCloudProvider(OpenAICompatibleProvider):
         if not isinstance(completion_tokens, int):
             completion_tokens = -1
 
-        if "message" in response and "content" in response["message"]:
-            content = response["message"]["content"]
-        elif "response" in response:
-            content = response["response"]
-        else:
-            content = str(response) if response else ""
+        message = response.get("message", {})
+        content = message.get("content")
 
         if content is None:
             raise AIError.model_error("Ollama Cloud API returned null content")

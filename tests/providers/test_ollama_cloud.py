@@ -55,18 +55,18 @@ class TestOllamaCloudProviderMocked(BaseProviderTest):
 
     @property
     def success_response(self) -> dict[str, Any]:
-        return {"response": "feat: Add new feature"}
+        return {"message": {"content": "feat: Add new feature"}}
 
     @property
     def empty_content_response(self) -> dict[str, Any]:
-        return {"response": ""}
+        return {"message": {"content": ""}}
 
 
 class TestOllamaCloudEdgeCases:
     """Test edge cases for Ollama Cloud provider."""
 
     def test_ollama_cloud_message_content_format(self):
-        """Test response with message.content format."""
+        """Test response with documented message.content format."""
         with patch("gac.providers.base.httpx.post") as mock_post:
             mock_response = MagicMock()
             mock_response.json.return_value = {"message": {"content": "test response"}}
@@ -76,30 +76,6 @@ class TestOllamaCloudEdgeCases:
             with patch.dict(os.environ, {"OLLAMA_CLOUD_API_KEY": "test-key"}):
                 result = call_ollama_cloud_api("llama3", [], 0.7, 1000)
             assert result[0] == "test response"
-
-    def test_ollama_cloud_response_format(self):
-        """Test response with response field format."""
-        with patch("gac.providers.base.httpx.post") as mock_post:
-            mock_response = MagicMock()
-            mock_response.json.return_value = {"response": "test response"}
-            mock_response.raise_for_status = MagicMock()
-            mock_post.return_value = mock_response
-
-            with patch.dict(os.environ, {"OLLAMA_CLOUD_API_KEY": "test-key"}):
-                result = call_ollama_cloud_api("llama3", [], 0.7, 1000)
-            assert result[0] == "test response"
-
-    def test_ollama_cloud_fallback_string_format(self):
-        """Test fallback to string conversion for unexpected format."""
-        with patch("gac.providers.base.httpx.post") as mock_post:
-            mock_response = MagicMock()
-            mock_response.json.return_value = {"other_field": "some value"}
-            mock_response.raise_for_status = MagicMock()
-            mock_post.return_value = mock_response
-
-            with patch.dict(os.environ, {"OLLAMA_CLOUD_API_KEY": "test-key"}):
-                result = call_ollama_cloud_api("llama3", [], 0.7, 1000)
-            assert "other_field" in result[0]
 
     def test_ollama_cloud_null_content(self):
         """Test handling of null content in message."""
@@ -115,26 +91,20 @@ class TestOllamaCloudEdgeCases:
 
             assert "null content" in str(exc_info.value).lower()
 
-    def test_ollama_cloud_custom_api_url(self):
-        """Test custom OLLAMA_CLOUD_BASE_URL environment variable."""
+    def test_ollama_cloud_official_api_url(self):
+        """Test that official Ollama Cloud URL is used."""
         with patch("gac.providers.base.httpx.post") as mock_post:
             mock_response = MagicMock()
-            mock_response.json.return_value = {"response": "test response"}
+            mock_response.json.return_value = {"message": {"content": "test response"}}
             mock_response.raise_for_status = MagicMock()
             mock_post.return_value = mock_response
 
-            with patch.dict(
-                os.environ,
-                {
-                    "OLLAMA_CLOUD_API_KEY": "test-key",
-                    "OLLAMA_CLOUD_BASE_URL": "https://custom.ollama.com",
-                },
-            ):
+            with patch.dict(os.environ, {"OLLAMA_CLOUD_API_KEY": "test-key"}):
                 result = call_ollama_cloud_api("llama3", [], 0.7, 1000)
 
-            # Verify custom URL was used
+            # Verify official URL was used
             call_args = mock_post.call_args
-            assert "https://custom.ollama.com/api/chat" in call_args[0][0]
+            assert "https://ollama.com/api/chat" in call_args[0][0]
             assert result[0] == "test response"
 
     def test_ollama_cloud_missing_api_key(self):
@@ -159,7 +129,7 @@ class TestOllamaCloudEdgeCases:
         """Test that API key is included in headers when provided."""
         with patch("gac.providers.base.httpx.post") as mock_post:
             mock_response = MagicMock()
-            mock_response.json.return_value = {"response": "test response"}
+            mock_response.json.return_value = {"message": {"content": "test response"}}
             mock_response.raise_for_status = MagicMock()
             mock_post.return_value = mock_response
 
