@@ -118,7 +118,6 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("Together AI", "openai/gpt-oss-120B"),
         ("Wafer.ai", "Qwen3.5-397B-A17B"),
         ("Z.AI", "glm-5.1"),
-        ("Z.AI Coding", "glm-5.1"),
     ]
     provider_names = [p[0] for p in providers]
     click.echo()
@@ -147,7 +146,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
     is_plexus = provider_key == "plexus-gateway"
     is_qwen_api = provider_key in ("qwen-cloud-api-intl", "qwen-cloud-api-cn")
     is_streamlake = provider_key == "streamlake"
-    is_zai = provider_key in ("zai", "zai-coding")
+    is_zai = provider_key == "zai"
 
     if provider_key == "chatgpt-oauth":
         # Keep as-is, provider_key is already "chatgpt-oauth"
@@ -174,6 +173,27 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         provider_key = "synthetic"
     elif provider_key == "waferai":
         provider_key = "wafer"
+
+    # Z.AI follow-up question for API vs Coding Plans
+    if is_zai:
+        zai_type = questionary.select(
+            "Select Z.AI endpoint type:",
+            choices=[
+                "Z.AI API",
+                "Z.AI Coding Plans",
+            ],
+            use_shortcuts=True,
+            use_arrow_keys=True,
+            use_jk_keys=False,
+        ).ask()
+        if not zai_type:
+            click.echo("Z.AI type selection cancelled. Exiting.")
+            return False
+        # Set provider_key based on selection
+        if zai_type == "Z.AI Coding Plans":
+            provider_key = "zai-coding"
+        else:
+            provider_key = "zai"
 
     if is_streamlake:
         endpoint_id = _prompt_required_text("Enter the Streamlake inference endpoint ID (required):")
@@ -478,7 +498,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
     # Determine API key name based on provider
     if is_lmstudio:
         api_key_name = "LMSTUDIO_API_KEY"
-    elif is_zai:
+    elif provider_key in ("zai", "zai-coding"):
         api_key_name = "ZAI_API_KEY"
     elif is_qwen_api:
         api_key_name = "QWEN_API_KEY"
