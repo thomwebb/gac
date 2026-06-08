@@ -347,9 +347,10 @@ def test_configure_model_zai_api_key_existing_keep(tmp_path):
             patch("questionary.password"),
             patch("gac.model_cli.set_key") as mock_set_key,
         ):
-            # Select Z.AI provider
+            # Select Z.AI provider, then Z.AI type, then keep existing key
             mselect.return_value.ask.side_effect = [
                 "Z.AI",  # Provider selection
+                "Z.AI API",  # Z.AI type selection
                 "Keep existing key",  # API key action
                 # Reasoning effort
             ]
