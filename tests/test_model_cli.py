@@ -926,6 +926,7 @@ class TestZAIAndQwenProviders:
     """Tests for ZAI and Qwen provider configurations."""
 
     def test_zai_provider_success(self, tmp_path) -> None:
+        """Test Z.AI provider with API endpoint selection."""
         env_path = tmp_path / ".gac.env"
         env_path.touch()
 
@@ -936,7 +937,8 @@ class TestZAIAndQwenProviders:
                 mock.patch("questionary.password") as mpass,
                 mock.patch("gac.model_cli.set_key") as mset,
             ):
-                mselect.return_value.ask.side_effect = ["Z.AI"]
+                # Provider selection, then Z.AI type selection
+                mselect.return_value.ask.side_effect = ["Z.AI", "Z.AI API"]
                 mtext.return_value.ask.side_effect = ["zai-model"]
                 mpass.return_value.ask.side_effect = ["zai-key"]
 
@@ -945,8 +947,11 @@ class TestZAIAndQwenProviders:
                 # Check API key name is ZAI_API_KEY
                 calls = [str(c) for c in mset.call_args_list]
                 assert any("ZAI_API_KEY" in c for c in calls)
+                # Check provider_key is "zai"
+                assert any("zai:zai-model" in c for c in calls)
 
     def test_zai_coding_provider_success(self, tmp_path) -> None:
+        """Test Z.AI provider with Coding Plans endpoint selection."""
         env_path = tmp_path / ".gac.env"
         env_path.touch()
 
@@ -957,7 +962,8 @@ class TestZAIAndQwenProviders:
                 mock.patch("questionary.password") as mpass,
                 mock.patch("gac.model_cli.set_key") as mset,
             ):
-                mselect.return_value.ask.side_effect = ["Z.AI Coding"]
+                # Provider selection, then Z.AI type selection
+                mselect.return_value.ask.side_effect = ["Z.AI", "Z.AI Coding Plans"]
                 mtext.return_value.ask.side_effect = ["zai-coding-model"]
                 mpass.return_value.ask.side_effect = ["zai-key"]
 
@@ -965,6 +971,26 @@ class TestZAIAndQwenProviders:
                 assert result is True
                 calls = [str(c) for c in mset.call_args_list]
                 assert any("ZAI_API_KEY" in c for c in calls)
+                # Check provider_key is "zai-coding"
+                assert any("zai-coding:zai-coding-model" in c for c in calls)
+
+    def test_zai_type_selection_cancelled(self, tmp_path) -> None:
+        """Test Z.AI provider with cancelled type selection."""
+        env_path = tmp_path / ".gac.env"
+        env_path.touch()
+
+        with mock.patch("gac.model_cli.GAC_ENV_PATH", env_path):
+            with (
+                mock.patch("questionary.select") as mselect,
+                mock.patch("gac.model_cli.click.echo") as mock_echo,
+            ):
+                # Select Z.AI provider, then cancel at type selection
+                mselect.return_value.ask.side_effect = ["Z.AI", None]
+
+                result = _configure_model({})
+
+                assert result is False
+                mock_echo.assert_called_with("Z.AI type selection cancelled. Exiting.")
 
     def test_qwen_cloud_intl_provider_success(self, tmp_path) -> None:
         env_path = tmp_path / ".gac.env"
