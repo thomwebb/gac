@@ -54,7 +54,7 @@ def test_configure_model_custom_openai_cancellation(tmp_path):
 
 
 def test_configure_model_zai_success(tmp_path):
-    """Test successful Z.AI provider configuration."""
+    """Test successful Z.AI provider configuration with API endpoint."""
     env_path = tmp_path / ".gac.env"
     env_path.touch()
 
@@ -65,8 +65,8 @@ def test_configure_model_zai_success(tmp_path):
             patch("questionary.password") as mpass,
             patch("gac.model_cli.set_key") as mock_set_key,
         ):
-            # Select Z.AI provider
-            mselect.return_value.ask.return_value = "Z.AI"
+            # Select Z.AI provider, then Z.AI API endpoint
+            mselect.return_value.ask.side_effect = ["Z.AI", "Z.AI API"]
             mtext.return_value.ask.return_value = "glm-4.5-air"
             mpass.return_value.ask.return_value = "zai-api-key"
 
@@ -78,7 +78,7 @@ def test_configure_model_zai_success(tmp_path):
 
 
 def test_configure_model_zai_coding_success(tmp_path):
-    """Test successful Z.AI Coding provider configuration."""
+    """Test successful Z.AI provider configuration with Coding Plans endpoint."""
     env_path = tmp_path / ".gac.env"
     env_path.touch()
 
@@ -89,8 +89,8 @@ def test_configure_model_zai_coding_success(tmp_path):
             patch("questionary.password") as mpass,
             patch("gac.model_cli.set_key") as mock_set_key,
         ):
-            # Select Z.AI Coding provider
-            mselect.return_value.ask.return_value = "Z.AI Coding"
+            # Select Z.AI provider, then Z.AI Coding Plans endpoint
+            mselect.return_value.ask.side_effect = ["Z.AI", "Z.AI Coding Plans"]
             mtext.return_value.ask.return_value = "glm-4.6"
             mpass.return_value.ask.return_value = "zai-coding-key"
 
