@@ -100,9 +100,9 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("Kimi for Coding", "kimi-for-coding"),
         ("Lilac", "google/gemma-4-31b-it"),
         ("LM Studio", "gemma4"),
-        ("MiniMax.io", "MiniMax-M2.7"),
+        ("MiniMax.io", "MiniMax-M3"),
         ("Mistral", "devstral-2512"),
-        ("Moonshot AI", "kimi-k2.6"),
+        ("Moonshot AI", "kimi-k2.7-code"),
         ("Neuralwatt", "qwen3.6-35b-fast"),
         ("Ollama", "gemma4"),
         ("Ollama Cloud", "gpt-oss:120b-cloud"),
@@ -114,10 +114,10 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("Qwen Cloud (INTL API)", "qwen3.5-flash"),
         ("Replicate", "openai/gpt-oss-120b"),
         ("Streamlake", ""),
-        ("Synthetic.new", "syn:small:text"),
+        ("Synthetic.new", "syn:large:text"),
         ("Together AI", "openai/gpt-oss-120B"),
         ("Wafer.ai", "Qwen3.5-397B-A17B"),
-        ("Z.AI", "glm-5.1"),
+        ("Z.AI", "glm-5.2"),
     ]
     provider_names = [p[0] for p in providers]
     click.echo()
