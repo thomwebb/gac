@@ -18,6 +18,7 @@
     - [스크립트 통합 및 외부 처리](#스크립트-통합-및-외부-처리)
     - [Pre-commit 및 Lefthook Hooks 건너뛰기](#pre-commit-및-lefthook-hooks-건너뛰기)
     - [보안 검사](#보안-검사)
+    - [Binary File Detection](#binary-file-detection)
     - [SSL 인증서 검증](#ssl-인증서-검증)
   - [구성 노트](#구성-노트)
     - [고급 구성 옵션](#고급-구성-옵션)
@@ -310,6 +311,90 @@ uvx gac --skip-secret-scan  # 이 커밋에 대한 보안 검사 건너뛰기
 - 변경 사항이 안전하다고 확인한 경우
 
 **참고:** 스캐너는 정규식 기반 패턴 매칭(LLLM 아님)을 사용하여 일반적인 비밀 형식을 감지합니다. 모든 AI API 호출 전에 실행됩니다 — 비밀이 발견되면 API 호출이 발생하지 않습니다. 커밋하기 전에는 항상 스테이징된 변경 사항을 검토하세요.
+
+### Binary File Detection
+
+uvx gac includes automatic detection of binary files in staged changes, preventing accidental commits of compiled files, images, and other binary assets that typically should not be in version control. The detector uses multiple strategies:
+
+- **Extension-based detection** - Fast recognition of 60+ binary file types
+- **Null byte detection** - Reliable indicator of binary content
+- **UTF-8 validity checking** - Text files should be valid UTF-8 or ASCII
+- **Magic byte identification** - Detects file types from file signatures
+
+**Supported binary types:**
+
+- **Executables:** .exe, .dll, .so, .dylib, .bin, .o, .obj, .lib, .a
+- **Archives:** .zip, .tar, .gz, .bz2, .7z, .rar, .xz, .zst
+- **Images:** .png, .jpg, .jpeg, .gif, .bmp, .ico, .svg, .tiff, .webp
+- **Media:** .mp3, .wav, .ogg, .flac, .m4a, .aac, .mp4, .avi, .mkv, .mov, .wmv
+- **Fonts:** .ttf, .otf, .woff, .woff2, .eot
+- **Documents:** .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx
+- **Databases:** .db, .sqlite, .sqlite3, .mdb, .accdb
+- **Compiled code:** .class, .jar, .war, .ear, .pyc, .pyd, .pyo, .beam, .hi
+
+**When binary files are detected:**
+
+```sh
+uvx gac
+# Output:
+# BINARY FILE WARNING: Binary files detected!
+#
+#   • image.png
+#     Type: Image file
+#     Size: 2.3 MB
+#
+# Binary files should typically be excluded from version control.
+# Use .gitignore to prevent accidental commits of binary files.
+#
+# Options:
+#   [a] Abort commit (recommended)
+#   [c] Continue anyway (you know what you are doing)
+#   [r] Unstage binary file(s) and continue
+#
+# Choose an option [a]:
+```
+
+**Best practices:**
+
+1. **Add binary patterns to .gitignore:**
+
+   ```gitignore
+   # Compiled files
+   *.exe
+   *.dll
+   *.so
+   *.dylib
+   *.o
+   *.a
+
+   # Images
+   *.png
+   *.jpg
+   *.jpeg
+   *.gif
+
+   # Archives
+   *.zip
+   *.tar.gz
+
+   # Python
+   *.pyc
+   __pycache__/
+   ```
+
+2. **Use Git LFS** for large binary files that must be tracked:
+
+   ```sh
+   git lfs track "*.psd"
+   git lfs track "*.zip"
+   ```
+
+3. **Commit binary files only when necessary:**
+   - Icons and assets that are part of the codebase
+   - Test fixtures that need to be versioned
+   - Documentation images
+
+**Note:** Binary detection runs automatically during the commit workflow (similar to secret scanning). There is no flag to disable it, as binary files generally should not be committed unless there is a specific reason. If you need to commit a binary file, choose the "Continue anyway" option or ensure it is properly documented in your project guidelines.
 
 ### SSL 인증서 검증
 

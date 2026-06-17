@@ -18,6 +18,7 @@
     - [脚本集成和外部处理](#脚本集成和外部处理)
     - [跳过 Pre-commit 和 Lefthook 钩子](#跳过-pre-commit-和-lefthook-钩子)
     - [安全扫描](#安全扫描)
+    - [二进制文件检测](#二进制文件检测)
     - [SSL 证书验证](#ssl-证书验证)
   - [配置说明](#配置说明)
     - [高级配置选项](#高级配置选项)
@@ -314,6 +315,90 @@ uvx gac --skip-secret-scan  # 为此次提交跳过安全扫描
 - 当你已经验证更改是安全的
 
 **注意：**扫描程序使用基于正则表达式的模式匹配（而非 LLM）来检测常见的密钥格式。它在任何 AI API 调用之前运行 — 如果发现密钥，则不会进行任何 API 调用。在提交之前，始终查看你的暂存更改。
+
+### 二进制文件检测
+
+uvx gac 包含对暂存更改中二进制文件的自动检测功能，防止意外提交编译文件、图像和其他通常不应放在版本控制中的二进制资产。检测器使用多种策略：
+
+- **基于扩展名的检测** - 快速识别 60 多种二进制文件类型
+- **空字节检测** - 二进制内容的可靠指示器
+- **UTF-8 有效性检查** - 文本文件应为有效的 UTF-8 或 ASCII
+- **魔数识别** - 从文件签名检测文件类型
+
+**支持的二进制类型：**
+
+- **可执行文件：** .exe, .dll, .so, .dylib, .bin, .o, .obj, .lib, .a
+- **归档文件：** .zip, .tar, .gz, .bz2, .7z, .rar, .xz, .zst
+- **图像：** .png, .jpg, .jpeg, .gif, .bmp, .ico, .tiff, .webp
+- **媒体：** .mp3, .wav, .ogg, .flac, .m4a, .aac, .mp4, .avi, .mkv, .mov, .wmv
+- **字体：** .ttf, .otf, .woff, .woff2, .eot
+- **文档：** .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx
+- **数据库：** .db, .sqlite, .sqlite3, .mdb, .accdb
+- **编译代码：** .class, .jar, .war, .ear, .pyc, .pyd, .pyo, .beam, .hi
+
+**检测到二进制文件时：**
+
+```sh
+uvx gac
+# 输出：
+# BINARY FILE WARNING: Binary files detected!
+#
+#   • image.png
+#     Type: Image file
+#     Size: 2.3 MB
+#
+# Binary files should typically be excluded from version control.
+# Use .gitignore to prevent accidental commits of binary files.
+#
+# Options:
+#   [a] Abort commit (recommended)
+#   [c] Continue anyway (you know what you're doing)
+#   [r] Unstage binary file(s) and continue（取消暂存二进制文件）
+#
+# Choose an option [a]:
+```
+
+**最佳实践：**
+
+1. **将二进制模式添加到 .gitignore：**
+
+   ```gitignore
+   # Compiled files
+   *.exe
+   *.dll
+   *.so
+   *.dylib
+   *.o
+   *.a
+
+   # Images
+   *.png
+   *.jpg
+   *.jpeg
+   *.gif
+
+   # Archives
+   *.zip
+   *.tar.gz
+
+   # Python
+   *.pyc
+   __pycache__/
+   ```
+
+2. **对必须跟踪的大型二进制文件使用 Git LFS：**
+
+   ```sh
+   git lfs track "*.psd"
+   git lfs track "*.zip"
+   ```
+
+3. **仅在必要时提交二进制文件：**
+   - 作为代码库一部分的图标和资产
+   - 需要版本控制的测试装置
+   - 文档图像
+
+**注意：**二进制检测在提交工作流期间自动运行（类似于秘密扫描）。没有标志可以禁用它，因为二进制文件通常不应该提交，除非有特定原因。如果需要提交二进制文件，请选择 "Continue anyway" 选项或确保它在项目指南中有适当的文档说明。
 
 ### SSL 证书验证
 

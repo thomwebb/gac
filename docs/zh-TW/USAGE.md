@@ -266,6 +266,90 @@ uvx gac --skip-secret-scan  # 為此次提交跳過安全掃描
 
 **注意：**掃描程式使用基於正則表達式的模式匹配（而非 LLM）來檢測常見的密鑰格式。它在任何 AI API 呼叫之前執行 — 如果發現密鑰，則不會進行任何 API 呼叫。在提交之前，始終檢視你的暫存變更。
 
+### 二進位檔案偵測
+
+uvx gac 包含對暫存變更中二進位檔案的自動偵測功能，防止意外提交編譯檔案、圖片和其他通常不應放在版本控制中的二進位資產。偵測器使用多種策略：
+
+- **基於副檔名的偵測** - 快速識別 60 多種二進位檔案類型
+- **空位元組偵測** - 二進位內容的可靠指示器
+- **UTF-8 有效性檢查** - 文字檔案應為有效的 UTF-8 或 ASCII
+- **魔數識別** - 從檔案簽章偵測檔案類型
+
+**支援的二進位類型：**
+
+- **可執行檔案：** .exe, .dll, .so, .dylib, .bin, .o, .obj, .lib, .a
+- **壓縮檔：** .zip, .tar, .gz, .bz2, .7z, .rar, .xz, .zst
+- **圖片：** .png, .jpg, .jpeg, .gif, .bmp, .ico, .tiff, .webp
+- **媒體：** .mp3, .wav, .ogg, .flac, .m4a, .aac, .mp4, .avi, .mkv, .mov, .wmv
+- **字型：** .ttf, .otf, .woff, .woff2, .eot
+- **文件：** .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx
+- **資料庫：** .db, .sqlite, .sqlite3, .mdb, .accdb
+- **編譯程式碼：** .class, .jar, .war, .ear, .pyc, .pyd, .pyo, .beam, .hi
+
+**偵測到二進位檔案時：**
+
+```sh
+uvx gac
+# 輸出：
+# BINARY FILE WARNING: Binary files detected!
+#
+#   • image.png
+#     Type: Image file
+#     Size: 2.3 MB
+#
+# Binary files should typically be excluded from version control.
+# Use .gitignore to prevent accidental commits of binary files.
+#
+# Options:
+#   [a] Abort commit (recommended)
+#   [c] Continue anyway (you know what you're doing)
+#   [r] Unstage binary file(s) and continue（取消暫存二進位檔案）
+#
+# Choose an option [a]:
+```
+
+**最佳實務：**
+
+1. **將二進位模式新增到 .gitignore：**
+
+   ```gitignore
+   # Compiled files
+   *.exe
+   *.dll
+   *.so
+   *.dylib
+   *.o
+   *.a
+
+   # Images
+   *.png
+   *.jpg
+   *.jpeg
+   *.gif
+
+   # Archives
+   *.zip
+   *.tar.gz
+
+   # Python
+   *.pyc
+   __pycache__/
+   ```
+
+2. **對必須追蹤的大型二進位檔案使用 Git LFS：**
+
+   ```sh
+   git lfs track "*.psd"
+   git lfs track "*.zip"
+   ```
+
+3. **僅在必要時提交二進位檔案：**
+   - 作為程式碼庫一部分的圖示和資產
+   - 需要版本控制的測試裝置
+   - 文件圖片
+
+**注意：**二進位偵測在提交工作流程期間自動執行（類似於秘密掃描）。沒有標誌可以停用它，因為二進位檔案通常不應該提交，除非有特定原因。如果需要提交二進位檔案，請選擇 "Continue anyway" 選項或確保它在專案指南中有適當的文件說明。
+
 ### SSL 證書驗證
 
 `--no-verify-ssl` 標誌允許你跳過 API 調用的 SSL 證書驗證：

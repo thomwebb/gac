@@ -17,6 +17,7 @@ Dit document beschrijft alle beschikbare vlaggen en opties voor de `uvx gac` CLI
   - [Geavanceerd](#geavanceerd)
     - [Pre-commit en Lefthook Hooks Overslaan](#pre-commit-en-lefthook-hooks-overslaan)
     - [Security Scanning](#security-scanning)
+    - [Binary File Detection](#binary-file-detection)
     - [SSL-certificaatverificatie](#ssl-certificaatverificatie)
   - [Configuratie Notities](#configuratie-notities)
     - [Geavanceerde Configuratie Opties](#geavanceerde-configuratie-opties)
@@ -265,6 +266,90 @@ uvx gac --skip-secret-scan  # Sla security scan over voor deze commit
 - Wanneer u heeft geverifieerd dat de wijzigingen veilig zijn
 
 **Let op:** De scanner gebruikt regex-gebaseerde patroonmatching (geen LLM's) om algemene geheime formaten te detecteren. Het wordt uitgevoerd voordat enige AI API-aanroep wordt gedaan — als een geheim wordt gevonden, wordt geen API-aanroep uitgevoerd. Bekijk altijd uw staged wijzigingen voordat u commit.
+
+### Binary File Detection
+
+uvx gac includes automatic detection of binary files in staged changes, preventing accidental commits of compiled files, images, and other binary assets that typically should not be in version control. The detector uses multiple strategies:
+
+- **Extension-based detection** - Fast recognition of 60+ binary file types
+- **Null byte detection** - Reliable indicator of binary content
+- **UTF-8 validity checking** - Text files should be valid UTF-8 or ASCII
+- **Magic byte identification** - Detects file types from file signatures
+
+**Supported binary types:**
+
+- **Executables:** .exe, .dll, .so, .dylib, .bin, .o, .obj, .lib, .a
+- **Archives:** .zip, .tar, .gz, .bz2, .7z, .rar, .xz, .zst
+- **Images:** .png, .jpg, .jpeg, .gif, .bmp, .ico, .svg, .tiff, .webp
+- **Media:** .mp3, .wav, .ogg, .flac, .m4a, .aac, .mp4, .avi, .mkv, .mov, .wmv
+- **Fonts:** .ttf, .otf, .woff, .woff2, .eot
+- **Documents:** .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx
+- **Databases:** .db, .sqlite, .sqlite3, .mdb, .accdb
+- **Compiled code:** .class, .jar, .war, .ear, .pyc, .pyd, .pyo, .beam, .hi
+
+**When binary files are detected:**
+
+```sh
+uvx gac
+# Output:
+# BINARY FILE WARNING: Binary files detected!
+#
+#   • image.png
+#     Type: Image file
+#     Size: 2.3 MB
+#
+# Binary files should typically be excluded from version control.
+# Use .gitignore to prevent accidental commits of binary files.
+#
+# Options:
+#   [a] Abort commit (recommended)
+#   [c] Continue anyway (you know what you are doing)
+#   [r] Unstage binary file(s) and continue
+#
+# Choose an option [a]:
+```
+
+**Best practices:**
+
+1. **Add binary patterns to .gitignore:**
+
+   ```gitignore
+   # Compiled files
+   *.exe
+   *.dll
+   *.so
+   *.dylib
+   *.o
+   *.a
+
+   # Images
+   *.png
+   *.jpg
+   *.jpeg
+   *.gif
+
+   # Archives
+   *.zip
+   *.tar.gz
+
+   # Python
+   *.pyc
+   __pycache__/
+   ```
+
+2. **Use Git LFS** for large binary files that must be tracked:
+
+   ```sh
+   git lfs track "*.psd"
+   git lfs track "*.zip"
+   ```
+
+3. **Commit binary files only when necessary:**
+   - Icons and assets that are part of the codebase
+   - Test fixtures that need to be versioned
+   - Documentation images
+
+**Note:** Binary detection runs automatically during the commit workflow (similar to secret scanning). There is no flag to disable it, as binary files generally should not be committed unless there is a specific reason. If you need to commit a binary file, choose the "Continue anyway" option or ensure it is properly documented in your project guidelines.
 
 ### SSL-certificaatverificatie
 
