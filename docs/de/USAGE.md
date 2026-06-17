@@ -381,6 +381,7 @@ Sie können das Verhalten von gac mit diesen optionalen Umgebungsvariablen anpas
 
 - `GAC_EDITOR=code --wait` - Überschreibt den Editor, der beim Drücken von `e` am Bestätigungs-Prompt verwendet wird. Standardmäßig öffnet `e` eine In-Place-TUI; durch Setzen von `GAC_EDITOR` wird auf einen externen Editor umgeschaltet. Unterstützt jeden Editorbefehl mit Argumenten. Wait-Flags (`--wait`/`-w`) werden für bekannte GUI-Editoren (VS Code, Cursor, Zed, Sublime Text) automatisch eingefügt, sodass der Prozess blockiert, bis Sie die Datei schließen
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - Automatisch Scope herleiten und in Commit-Nachrichten einbeziehen (z.B. `feat(auth):` vs `feat:)
+- `GAC_ALWAYS_GROUPED=true` - Immer gruppierter Commit-Modus verwenden (entspricht immer die Option `-g` oder `--group` angeben)
 - `GAC_VERBOSE=true` - Detaillierte Commit-Nachrichten mit Motivation, Architektur und Auswirkungs-Abschnitten generieren
 - `GAC_USE_50_72_RULE=true` - Die 50/72-Regel für Commit-Nachrichten immer erzwingen (Betreff ≤50 Zeichen, Body-Zeilen ≤72 Zeichen)
 - `GAC_SIGNOFF=true` - Immer Signed-off-by Zeile zu Commits hinzufügen (für DCO-Konformität)

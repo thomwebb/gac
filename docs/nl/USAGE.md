@@ -332,6 +332,7 @@ U kunt het gedrag van gac aanpassen met deze optionele omgevingsvariabelen:
 
 - `GAC_EDITOR=code --wait` - Overschrijf de editor die wordt gebruikt wanneer u `e` indrukt bij de bevestigingsprompt. Standaard opent `e` een in-place TUI; door `GAC_EDITOR` in te stellen schakelt u over naar een externe editor. Ondersteunt elke editoropdracht met argumenten. Wait-flags (`--wait`/`-w`) worden automatisch ingevoegd voor bekende GUI-editors (VS Code, Cursor, Zed, Sublime Text) zodat het proces blokkeert tot u het bestand sluit
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - Stel automatisch een scope en voeg deze toe aan commitberichten (bv., `feat(auth):` vs `feat:)
+- `GAC_ALWAYS_GROUPED=true` - Gebruik altijd de gegroepeerde commit-modus (equivalent aan altijd de vlag `-g` of `--group` doorgeven)
 - `GAC_VERBOSE=true` - Genereer gedetailleerde commitberichten met motivatie, architectuur en impact secties
 - `GAC_USE_50_72_RULE=true` - De 50/72-regel altijd toepassen voor commitberichten (onderwerp ≤50 tekens, body-regels ≤72 tekens)
 - `GAC_SIGNOFF=true` - Altijd Signed-off-by regel toevoegen aan commits (voor DCO-naleving)

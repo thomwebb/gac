@@ -377,6 +377,7 @@ git config --global user.email "your.email@example.com"
 
 - `GAC_EDITOR=code --wait` - 확인 프롬프트에서 `e`를 누를 때 사용할 에디터를 재정의합니다. 기본적으로 `e`는 인플레이스 TUI를 열며, `GAC_EDITOR`를 설정하면 외부 에디터로 전환됩니다. 인수가 있는 모든 에디터 명령을 지원합니다. 알려진 GUI 에디터(VS Code, Cursor, Zed, Sublime Text)에는 대기 플래그(`--wait`/`-w`)가 자동으로 삽입되어 파일을 닫을 때까지 프로세스가 차단됩니다
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - 커밋 메시지에 스코프를 자동으로 추론하고 포함 (예: `feat(auth):`처럼 스코프를 포함해 `feat:` 대신 사용)
+- `GAC_ALWAYS_GROUPED=true` - 항상 그룹화된 커밋 모드 사용 (항상 `-g` 또는 `--group` 플래그를 전달하는 것과 동일)
 - `GAC_VERBOSE=true` - 동기, 아키텍처 및 영향 섹션으로 상세한 커밋 메시지 생성
 - `GAC_USE_50_72_RULE=true` - 커밋 메시지에 항상 50/72 규칙 적용 (제목 ≤50자, 본문 줄 ≤72자)
 - `GAC_SIGNOFF=true` - 항상 커밋에 Signed-off-by 라인 추가 (DCO 규정 준수용)

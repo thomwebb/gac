@@ -377,6 +377,7 @@ Puoi personalizzare il comportamento di gac con queste variabili ambiente opzion
 
 - `GAC_EDITOR=code --wait` - Sovrascrive l'editor usato quando premi `e` al prompt di conferma. Per impostazione predefinita, `e` apre una TUI in-place; impostando `GAC_EDITOR` si passa a un editor esterno. Supporta qualsiasi comando di editor con argomenti. I flag di attesa (`--wait`/`-w`) vengono inseriti automaticamente per gli editor GUI noti (VS Code, Cursor, Zed, Sublime Text) in modo che il processo si blocchi fino alla chiusura del file
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - Deduci automaticamente e includi scope nei messaggi di commit (es. `feat(auth):` vs `feat:)
+- `GAC_ALWAYS_GROUPED=true` - Usa sempre la modalità di commit raggruppati (equivalente a passare sempre il flag `-g` o `--group`)
 - `GAC_VERBOSE=true` - Genera messaggi di commit dettagliati con sezioni motivazione, architettura e impatto
 - `GAC_USE_50_72_RULE=true` - Applica sempre la regola 50/72 per i messaggi di commit (oggetto ≤50 caratteri, righe corpo ≤72 caratteri)
 - `GAC_SIGNOFF=true` - Aggiungi sempre la riga Signed-off-by ai commit (per conformità DCO)

@@ -332,6 +332,7 @@ Bạn có thể tùy chỉnh hành vi của gac với các biến môi trường
 
 - `GAC_EDITOR=code --wait` - Ghi đè trình soạn thảo được sử dụng khi bạn nhấn `e` tại gợi ý xác nhận. Mặc định, `e` mở TUI tại chỗ; đặt `GAC_EDITOR` sẽ chuyển sang trình soạn thảo ngoài. Hỗ trợ bất kỳ lệnh trình soạn thảo nào với đối số. Cờ chờ (`--wait`/`-w`) được tự động chèn cho các trình soạn thảo GUI đã biết (VS Code, Cursor, Zed, Sublime Text) để quy trình chặn cho đến khi bạn đóng tệp
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - Tự động suy luận và bao gồm phạm vi trong thông điệp commit (ví dụ, `feat(auth):` so với `feat:)
+- `GAC_ALWAYS_GROUPED=true` - Luôn sử dụng chế độ commit nhóm (tương đương với luôn chuyển cờ `-g` hoặc `--group`)
 - `GAC_VERBOSE=true` - Tạo thông điệp commit chi tiết với các phần động cơ, kiến trúc và tác động
 - `GAC_USE_50_72_RULE=true` - Luôn áp dụng quy tắc 50/72 cho thông điệp commit (chủ đề ≤50 ký tự, các dòng nội dung ≤72 ký tự)
 - `GAC_SIGNOFF=true` - Luôn thêm dòng Signed-off-by vào commit (để tuân thủ DCO)

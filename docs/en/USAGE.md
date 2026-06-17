@@ -72,6 +72,8 @@ Generates an LLM-powered commit message for staged changes and prompts for confi
 
 **Note:** Combine `-a` and `-g` (i.e., `-ag`) to stage ALL changes first, then group them into commits.
 
+**Note:** To always use grouped commit mode without typing `-g` every time, set `GAC_ALWAYS_GROUPED=true` in your `.gac.env` file. See [Advanced Configuration Options](#advanced-configuration-options) for more details.
+
 **Note:** When using `--group`, the max output tokens limit is automatically scaled based on the number of files being committed (2x for 1-9 files, 3x for 10-19 files, 4x for 20-29 files, 5x for 30+ files). This ensures the LLM has enough tokens to generate all grouped commits without truncation, even for large changesets.
 
 **Note:** `--message-only` and `--group` are mutually exclusive. Use `--message-only` when you want to get the commit message for external processing, and `--group` when you want to organize multiple commits within the current git workflow.
@@ -379,6 +381,7 @@ You can customize gac's behavior with these optional environment variables:
 
 - `GAC_EDITOR=code --wait` - Override the editor used when you press `e` at the confirmation prompt. By default, `e` opens an in-place TUI; setting `GAC_EDITOR` switches to an external editor. Supports any editor command with arguments. Wait flags (`--wait`/`-w`) are auto-inserted for known GUI editors (VS Code, Cursor, Zed, Sublime Text) so the process blocks until you close the file
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - Automatically infer and include scope in commit messages (e.g., `feat(auth):` vs `feat:`)
+- `GAC_ALWAYS_GROUPED=true` - Always use grouped commit mode (equivalent to always passing the `-g` or `--group` flag)
 - `GAC_VERBOSE=true` - Generate detailed commit messages with motivation, architecture, and impact sections
 - `GAC_USE_50_72_RULE=true` - Always enforce the 50/72 rule for commit messages (subject ≤50 chars, body lines ≤72 chars)
 - `GAC_SIGNOFF=true` - Always add Signed-off-by line to commits (for DCO compliance)

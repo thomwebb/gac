@@ -332,6 +332,7 @@ Du kan tilpasse gac sitt oppførsel med disse valgfrie miljøvariablene:
 
 - `GAC_EDITOR=code --wait` - Overstyr editoren som brukes når du trykker `e` i bekreftelsesprompten. Som standard åpner `e` en innebygd TUI; ved å sette `GAC_EDITOR` bytter du til en ekstern editor. Støtter enhver editorkommando med argumenter. Venteflagg (`--wait`/`-w`) settes automatisk inn for kjente GUI-editorer (VS Code, Cursor, Zed, Sublime Text) slik at prosessen blokkeres til du lukker filen
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - Utled automatisk og inkluder scope i commit-meldinger (f.eks. `feat(auth):` vs `feat:)
+- `GAC_ALWAYS_GROUPED=true` - Bruk alltid gruppert commit-modus (ekvivalent med å alltid sende flagget `-g` eller `--group`)
 - `GAC_VERBOSE=true` - Generer detaljerte commit-meldinger med motivasjon, arkitektur og påvirkningseksjoner
 - `GAC_USE_50_72_RULE=true` - Alltid anvende 50/72-regelen for commit-meldinger (emne ≤50 tegn, brødtekstlinjer ≤72 tegn)
 - `GAC_SIGNOFF=true` - Alltid legg til Signed-off-by-linje i commits (for DCO-samsvar)

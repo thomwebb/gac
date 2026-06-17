@@ -382,6 +382,7 @@ git config --global user.email "your.email@example.com"
 
 - `GAC_EDITOR=code --wait` - 確認プロンプトで `e` を押したときに使用するエディタを上書き。デフォルトでは `e` はインプレース TUI を開きますが、`GAC_EDITOR` を設定すると外部エディタに切り替わります。引数付きのエディタコマンドに対応。既知の GUI エディタ（VS Code、Cursor、Zed、Sublime Text）には待機フラグ（`--wait`/`-w`）が自動挿入され、ファイルを閉じるまでプロセスがブロックされます
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - コミットメッセージにスコープを自動的に推論して含める（例: `feat(auth):` vs `feat:`）
+- `GAC_ALWAYS_GROUPED=true` - 常にグループ化コミットモードを使用（常に `-g` または `--group` フラグを渡すのと同じ）
 - `GAC_VERBOSE=true` - 動機、アーキテクチャ、影響セクションを含む詳細なコミットメッセージを生成
 - `GAC_USE_50_72_RULE=true` - コミットメッセージに常に 50/72 ルールを適用（件名 ≤50 文字、本文行 ≤72 文字）
 - `GAC_SIGNOFF=true` - 常にコミットに Signed-off-by 行を追加（DCO 準拠用）

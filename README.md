@@ -216,7 +216,7 @@ Run `uvx gac init` to configure your provider interactively, or set environment 
 
 Need to change providers or models later without touching language settings? Use `uvx gac model` for a streamlined flow that skips the language prompts.
 
-See `.gac.env.example` for all available options.
+See `.gac.env.example` for all available options, including `GAC_ALWAYS_GROUPED` to always use grouped commit mode, `GAC_ALWAYS_INCLUDE_SCOPE` to auto-infer commit scopes, and many others for customization.
 
 **Want commit messages in another language?** Run `uvx gac language` to select from 25+ languages including Español, Français, 日本語, and more.
 

@@ -383,6 +383,7 @@ git config --global user.email "your.email@example.com"
 
 - `GAC_EDITOR=code --wait` - 覆盖在确认提示符处按 `e` 时使用的编辑器。默认情况下，`e` 打开就地 TUI；设置 `GAC_EDITOR` 将切换到外部编辑器。支持任何带参数的编辑器命令。对于已知的 GUI 编辑器（VS Code、Cursor、Zed、Sublime Text），等待标志（`--wait`/`-w`）会自动插入，以便进程在关闭文件前一直阻塞
 - `GAC_ALWAYS_INCLUDE_SCOPE=true` - 自动推断并在提交信息中包含范围（例如，`feat(auth):` vs `feat:)
+- `GAC_ALWAYS_GROUPED=true` - 始终使用分组提交模式（相当于始终传递 `-g` 或 `--group` 标志）
 - `GAC_VERBOSE=true` - 生成包含动机、架构和影响部分的详细提交信息
 - `GAC_USE_50_72_RULE=true` - 始终对提交信息应用 50/72 规则（主题 ≤50 字符，正文行 ≤72 字符）
 - `GAC_SIGNOFF=true` - 始终在提交中添加 Signed-off-by 行（用于 DCO 合规）
