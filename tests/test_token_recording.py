@@ -44,6 +44,7 @@ def base_cli_mocks(monkeypatch):
         "warning_limit_tokens": 10000,
         "no_verify_ssl": False,
         "always_include_scope": False,
+        "always_grouped": False,
         "verbose": False,
         "use_50_72_rule": False,
         "signoff": False,

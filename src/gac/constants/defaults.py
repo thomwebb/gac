@@ -11,6 +11,7 @@ class EnvDefaults:
     MAX_OUTPUT_TOKENS: int = 4096  # includes reasoning tokens
     WARNING_LIMIT_TOKENS: int = 32768
     ALWAYS_INCLUDE_SCOPE: bool = False
+    ALWAYS_GROUPED: bool = False
     SKIP_SECRET_SCAN: bool = False
     VERBOSE: bool = False
     NO_VERIFY_SSL: bool = False  # Skip SSL certificate verification (for corporate proxies)

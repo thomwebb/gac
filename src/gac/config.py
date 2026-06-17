@@ -26,6 +26,7 @@ class GACConfig(TypedDict, total=False):
     log_level: str
     warning_limit_tokens: int
     always_include_scope: bool
+    always_grouped: bool
     skip_secret_scan: bool
     no_verify_ssl: bool
     verbose: bool
@@ -162,6 +163,7 @@ def load_config() -> GACConfig:
         "log_level": os.getenv("GAC_LOG_LEVEL", Logging.DEFAULT_LEVEL),
         "warning_limit_tokens": int(os.getenv("GAC_WARNING_LIMIT_TOKENS", EnvDefaults.WARNING_LIMIT_TOKENS)),
         "always_include_scope": _parse_bool_env("GAC_ALWAYS_INCLUDE_SCOPE", EnvDefaults.ALWAYS_INCLUDE_SCOPE),
+        "always_grouped": _parse_bool_env("GAC_ALWAYS_GROUPED", EnvDefaults.ALWAYS_GROUPED),
         "skip_secret_scan": _parse_bool_env("GAC_SKIP_SECRET_SCAN", EnvDefaults.SKIP_SECRET_SCAN),
         "no_verify_ssl": _parse_bool_env("GAC_NO_VERIFY_SSL", EnvDefaults.NO_VERIFY_SSL),
         "verbose": _parse_bool_env("GAC_VERBOSE", EnvDefaults.VERBOSE),

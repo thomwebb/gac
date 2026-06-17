@@ -152,7 +152,10 @@ def cli(
             console.print("[red]Error: --stage and --add-all options are mutually exclusive[/red]")
             sys.exit(1)
 
-        if message_only and group:
+        # Determine grouped mode early for validation (config-derived value)
+        use_group = bool(group or config["always_grouped"])
+
+        if message_only and use_group:
             console.print("[red]Error: --message-only and --group options are mutually exclusive[/red]")
             console.print("[yellow]--message-only is for generating a single commit message for external use[/yellow]")
             console.print("[yellow]--group is for organizing multiple commits within the current workflow[/yellow]")
@@ -177,7 +180,7 @@ def cli(
             opts = CLIOptions(
                 stage_all=add_all,
                 stage=stage,
-                group=group,
+                group=use_group,
                 interactive=interactive,
                 model=model,
                 hint=hint,
