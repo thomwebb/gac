@@ -145,3 +145,52 @@ class TestGitStateValidator:
         result = validator.handle_secret_detection([mock_secret])
 
         assert result is True
+
+    def test_handle_binary_detection_no_binaries(self, validator):
+        """Test handle_binary_detection when no binaries are found."""
+        result = validator.handle_binary_detection([])
+
+        assert result is True
+
+    @patch("gac.git_state_validator.console.print")
+    @patch("click.prompt")
+    def test_handle_binary_detection_abort(self, mock_prompt, mock_print, validator):
+        """Test handle_binary_detection when user chooses to abort."""
+        from gac.binary import DetectedBinary
+
+        mock_binary = DetectedBinary(file_path="image.png", file_size=1024, binary_type="Image file", extension=".png")
+        mock_prompt.return_value = "a"
+
+        result = validator.handle_binary_detection([mock_binary])
+
+        assert result is None  # Returns None when user aborts
+
+    @patch("gac.git_state_validator.console.print")
+    @patch("click.prompt")
+    def test_handle_binary_detection_continue(self, mock_prompt, mock_print, validator):
+        """Test handle_binary_detection when user chooses to continue."""
+        from gac.binary import DetectedBinary
+
+        mock_binary = DetectedBinary(file_path="image.png", file_size=1024, binary_type="Image file", extension=".png")
+        mock_prompt.return_value = "c"
+
+        result = validator.handle_binary_detection([mock_binary])
+
+        assert result is True
+
+    @patch("gac.git_state_validator.console.print")
+    @patch("click.prompt")
+    @patch("gac.git_state_validator.run_git_command")
+    @patch("gac.git_state_validator.get_staged_files")
+    def test_handle_binary_detection_unstage(self, mock_get_files, mock_run, mock_prompt, mock_print, validator):
+        """Test handle_binary_detection when user chooses to unstage binary files."""
+        from gac.binary import DetectedBinary
+
+        mock_binary = DetectedBinary(file_path="image.png", file_size=1024, binary_type="Image file", extension=".png")
+        mock_prompt.return_value = "r"
+        mock_run.return_value = GitCommandResult.ok("")
+        mock_get_files.return_value = ["remaining.txt"]  # Still have files after removal
+
+        result = validator.handle_binary_detection([mock_binary])
+
+        assert result is False  # Returns False when files were removed

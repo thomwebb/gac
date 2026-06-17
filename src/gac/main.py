@@ -279,6 +279,25 @@ def main(opts: CLIOptions, config: GACConfig | None = None) -> int:
             if git_state is None:
                 return 0
 
+    # Handle binary file detection
+    if git_state.has_binaries:
+        binary_decision = git_validator.handle_binary_detection(git_state.binaries, opts.quiet)
+        if binary_decision is None:
+            # User chose to abort
+            return 0
+        if not binary_decision:
+            # Binaries were removed, we need to refresh the git state
+            git_state = git_validator.get_git_state(
+                stage_all=False,
+                dry_run=opts.dry_run,
+                skip_secret_scan=True,
+                quiet=opts.quiet,
+                model=model,
+            )
+            # After removing binary files, no staged changes may remain
+            if git_state is None:
+                return 0
+
     # Adjust max_output_tokens for grouped mode
     if opts.group:
         num_files = len(git_state.staged_files)

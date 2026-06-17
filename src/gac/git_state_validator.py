@@ -3,8 +3,10 @@
 
 import logging
 import subprocess
-from typing import Any, NamedTuple
+from dataclasses import dataclass, field
+from typing import Any
 
+from gac.binary import DetectedBinary, detect_binary_files, format_file_size
 from gac.config import GACConfig
 from gac.errors import ConfigError, GitError, handle_error
 from gac.git import get_staged_diffs_per_file, get_staged_files, get_staged_status, run_git_command
@@ -16,7 +18,8 @@ from gac.workflow_utils import PromptFn
 logger = logging.getLogger(__name__)
 
 
-class GitState(NamedTuple):
+@dataclass(frozen=True)
+class GitState:
     """Structured representation of git repository state."""
 
     repo_root: str
@@ -25,8 +28,10 @@ class GitState(NamedTuple):
     diff: str
     diff_stat: str
     processed_diff: str
-    has_secrets: bool
-    secrets: list[Any]
+    has_secrets: bool = False
+    secrets: list[Any] = field(default_factory=list)
+    has_binaries: bool = False
+    binaries: list[DetectedBinary] = field(default_factory=list)
 
 
 class GitStateValidator:
@@ -123,6 +128,11 @@ class GitStateValidator:
             secrets = scan_staged_diff(combined_diff)
             has_secrets = bool(secrets)
 
+        # Scan for binary files
+        logger.info("Scanning staged changes for binary files...")
+        binaries = detect_binary_files(staged_files)
+        has_binaries = bool(binaries)
+
         # Process diff for AI consumption using per-file diffs (avoids regex split issues)
         logger.debug(f"Preprocessing {len(per_file_diffs)} per-file diffs")
         if model is None:
@@ -141,6 +151,8 @@ class GitStateValidator:
             processed_diff=processed_diff,
             has_secrets=has_secrets,
             secrets=secrets,
+            has_binaries=has_binaries,
+            binaries=binaries,
         )
 
     def handle_secret_detection(
@@ -205,7 +217,93 @@ class GitStateValidator:
             affected_files = get_affected_files(secrets)
             for file_path in affected_files:
                 try:
-                    result = run_git_command(["reset", "HEAD", file_path])
+                    result = run_git_command(["reset", "HEAD", "--", file_path])
+                    if result.success:
+                        console.print(f"[green]Unstaged: {file_path}[/green]")
+                    else:
+                        console.print(
+                            f"[red]Failed to unstage {file_path}: git exited with code {result.returncode}[/red]"
+                        )
+                except GitError as e:
+                    console.print(f"[red]Failed to unstage {file_path}: {e}[/red]")
+
+            # Check if there are still staged files
+            remaining_staged = get_staged_files(existing_only=False)
+            if not remaining_staged:
+                console.print("[yellow]No files remain staged. Commit aborted.[/yellow]")
+                return None
+
+            console.print(f"[green]Continuing with {len(remaining_staged)} staged file(s)...[/green]")
+            return False
+
+        return True
+
+    def handle_binary_detection(
+        self,
+        binaries: list[DetectedBinary],
+        quiet: bool = False,
+        prompt_fn: PromptFn | None = None,
+    ) -> bool | None:
+        """Handle binary file detection and user interaction.
+
+        Returns:
+            True: Continue with commit
+            False: Re-get git state (files were removed)
+            None: Abort workflow
+        """
+        if not binaries:
+            return True
+
+        if not quiet:
+            console.print("\n[bold yellow]  BINARY FILE WARNING: Binary files detected![/bold yellow]")
+            console.print("[yellow]The following binary files were found in your staged changes:[/yellow]\n")
+
+        for binary in binaries:
+            size_str = format_file_size(binary.file_size)
+            if not quiet:
+                console.print(f"  • [cyan]{binary.file_path}[/cyan]")
+                console.print(f"    Type: [dim]{binary.binary_type}[/dim]")
+                console.print(f"    Size: [dim]{size_str}[/dim]\n")
+
+        if not quiet:
+            console.print("[yellow]Binary files should typically be excluded from version control.[/yellow]")
+            console.print("Use .gitignore to prevent accidental commits of binary files.\n")
+            console.print("[bold]Options:[/bold]")
+            console.print("  \\[a] Abort commit (recommended)")
+            console.print("  \\[c] [yellow]Continue anyway[/yellow] (you know what you're doing)")
+            console.print("  \\[r] Unstage binary file(s) and continue")
+
+        try:
+            import click
+
+            _prompt = prompt_fn or (lambda msg, **kw: click.prompt(msg, **kw))
+            choice = (
+                _prompt(
+                    "\nChoose an option",
+                    type=click.Choice(["a", "c", "r"], case_sensitive=False),
+                    default="a",
+                    show_choices=True,
+                    show_default=True,
+                )
+                .strip()
+                .lower()
+            )
+        except (EOFError, KeyboardInterrupt):
+            console.print("\n[red]Aborted by user.[/red]")
+            return None
+
+        if choice == "a":
+            console.print("[yellow]Commit aborted.[/yellow]")
+            return None
+        elif choice == "c":
+            console.print("[bold yellow]  Continuing with binary files in commit...[/bold yellow]")
+            logger.warning("User chose to continue despite detected binary files")
+            return True
+        elif choice == "r":
+            for binary in binaries:
+                file_path = binary.file_path
+                try:
+                    result = run_git_command(["reset", "HEAD", "--", file_path])
                     if result.success:
                         console.print(f"[green]Unstaged: {file_path}[/green]")
                     else:
