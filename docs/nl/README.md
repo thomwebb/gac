@@ -143,6 +143,7 @@ uvx gac
 | `uvx gac -i`        | Stel vragen over wijzigingen voor betere context                     |
 | `uvx gac -g`        | Wijzigingen groeperen in meerdere logische commits                   |
 | `uvx gac -p`        | Commit en push                                                       |
+| `uvx gac model`     | Wijzig AI-provider en model                                          |
 | `uvx gac stats`     | Uw gac-gebruiksstatistieken bekijken                                 |
 
 ### Power User Voorbeelden

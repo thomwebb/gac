@@ -143,6 +143,7 @@ uvx gac
 | `uvx gac -i`        | 변경에 대한 질문하여 더 나은 컨텍스트 얻기              |
 | `uvx gac -g`        | 변경 사항을 여러 논리적인 커밋으로 그룹화               |
 | `uvx gac -p`        | 커밋하고 푸시                                           |
+| `uvx gac model`     | AI 공급자와 모델 변경                                   |
 | `uvx gac stats`     | gac 사용 통계 보기                                      |
 
 ### 고급 사용자 예제

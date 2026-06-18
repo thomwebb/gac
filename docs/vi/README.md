@@ -143,6 +143,7 @@ uvx gac
 | `uvx gac -i`         | Hỏi về các thay đổi để có ngữ cảnh tốt hơn                                    |
 | `uvx gac -g`         | Nhóm các thay đổi thành nhiều commit logic                                    |
 | `uvx gac -p`         | Commit và push                                                                |
+| `uvx gac model`      | Đổi nhà cung cấp và mô hình AI                                                |
 | `uvx gac stats`      | Xem thống kê sử dụng gac của bạn                                              |
 
 ### Ví Dụ Người Dùng Nâng Cao

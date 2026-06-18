@@ -143,6 +143,7 @@ uvx gac
 | `uvx gac -i`        | 询问有关更改的问题以获得更好的上下文               |
 | `uvx gac -g`        | 将更改分组为多个逻辑提交                           |
 | `uvx gac -p`        | 提交并推送                                         |
+| `uvx gac model`     | 更改 AI 提供商和模型                               |
 | `uvx gac stats`     | 查看你的 gac 使用统计                              |
 
 ### 高级用户示例

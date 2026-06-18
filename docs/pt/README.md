@@ -143,6 +143,7 @@ uvx gac
 | `uvx gac -i`        | Fazer perguntas sobre alterações para melhor contexto                 |
 | `uvx gac -g`        | Agrupar alterações em múltiplos commits lógicos                       |
 | `uvx gac -p`        | Fazer commit e push                                                   |
+| `uvx gac model`     | Alterar provedor e modelo de IA                                       |
 | `uvx gac stats`     | Veja suas estatísticas de uso do gac                                  |
 
 ### Exemplos para Usuários Avançados

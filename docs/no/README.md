@@ -143,6 +143,7 @@ uvx gac
 | `uvx gac -i`        | Stil spørsmål om endringer for bedre kontekst                            |
 | `uvx gac -g`        | Gruppere endringer i flere logiske commits                               |
 | `uvx gac -p`        | Commit og push                                                           |
+| `uvx gac model`     | Endre AI-leverandør og modell                                            |
 | `uvx gac stats`     | Vis din gac-bruksstatistikk                                              |
 
 ### Eksempler for Avanserte Brukere
