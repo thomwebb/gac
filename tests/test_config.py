@@ -262,7 +262,7 @@ class TestValidateConfig:
     # reasoning_effort validation tests
     def test_reasoning_effort_valid_values(self):
         """Test that valid reasoning_effort values pass validation."""
-        for value in ("none", "low", "medium", "high", None):
+        for value in ("none", "low", "medium", "high", "max", None):
             validate_config({"reasoning_effort": value})
 
     def test_reasoning_effort_none_is_allowed(self):

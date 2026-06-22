@@ -88,6 +88,17 @@ def test_no_existing_value_high():
         assert _read_env(env_path).get("GAC_REASONING_EFFORT") == "high"
 
 
+def test_no_existing_value_max():
+    """No existing value → select max."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        env_path = _make_env(tmpdir)
+        with mock.patch("questionary.select") as mselect:
+            mselect.return_value.ask.return_value = "max"
+            result = configure_reasoning_effort_workflow(env_path)
+        assert result is True
+        assert _read_env(env_path).get("GAC_REASONING_EFFORT") == "max"
+
+
 def test_no_existing_value_cancel():
     """No existing value → cancel (None) at full choice list."""
     with tempfile.TemporaryDirectory() as tmpdir:
