@@ -7,7 +7,7 @@ description: Use when adding a new AI provider to the GAC project (e.g. a new Op
 
 ## Overview
 
-GAC supports ~30 providers via a registry pattern. Adding one means creating a provider class, registering it, listing it in the interactive setup CLI, advertising it in the README, and adding standardized tests. Skipping any step leaves the provider partially wired (e.g. selectable in `uvx gac init` but not in the registry, or callable but not advertised).
+GAC supports 35+ providers via a registry pattern. Adding one means creating a provider class, registering it, listing it in the interactive setup CLI, advertising it in the README, and adding standardized tests. Skipping any step leaves the provider partially wired (e.g. selectable in `uvx gac init` but not in the registry, or callable but not advertised).
 
 **Core principle:** every provider lives in five places. Touch all five.
 
@@ -164,8 +164,8 @@ All of these must pass before claiming done.
 | Forgot `register_provider` call                                | `KeyError: '<key>'` from `PROVIDER_REGISTRY[<key>]`                                          | Add the registration in `__init__.py`                          |
 | Display name → key mismatch, no alias                          | `uvx gac init` selects provider but `GAC_MODEL` prefix is wrong (e.g. `crofai:` not `crof:`) | Add `elif provider_key == "..."` mapping in `_configure_model` |
 | Missed `tests/test_ai.py` update                               | `test_provider_registry_complete` fails                                                      | Add key to `expected_providers` set                            |
-| Used `pip install` instead of `uv pip install`                 | CLAUDE.md violation                                                                          | Always use `uv pip install`                                    |
-| Tried to manually bump `__version__.py` or edit `CHANGELOG.md` | CLAUDE.md violation                                                                          | Don't — these are auto-managed                                 |
+| Used `pip install` instead of `uv pip install`                 | AGENTS.md violation                                                                          | Always use `uv pip install`                                    |
+| Tried to manually bump `__version__.py` or edit `CHANGELOG.md` | AGENTS.md violation                                                                          | Don't — these are auto-managed                                 |
 | Hardcoded base URL instead of env-overridable                  | Users on enterprise gateways can't redirect                                                  | Read `<KEY>_BASE_URL` env var with fallback default            |
 
 ## Provider Type Cheat Sheet
