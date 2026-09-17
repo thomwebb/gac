@@ -83,6 +83,7 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
     """Run the provider/model/API key configuration flow."""
     providers = [
         ("Anthropic", "claude-haiku-4-5"),
+        ("Atlas Cloud", "openai/gpt-4.1-mini"),
         ("Azure OpenAI", "gpt-5.4-mini"),
         ("Cerebras", "zai-glm-4.7"),
         ("ChatGPT (OAuth)", "gpt-5.4-mini"),
@@ -148,7 +149,9 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
     is_streamlake = provider_key == "streamlake"
     is_zai = provider_key == "zai"
 
-    if provider_key == "chatgpt-oauth":
+    if provider_key == "atlas-cloud":
+        provider_key = "atlascloud"
+    elif provider_key == "chatgpt-oauth":
         # Keep as-is, provider_key is already "chatgpt-oauth"
         pass
     elif provider_key == "claude-code-oauth":

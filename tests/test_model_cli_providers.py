@@ -462,6 +462,28 @@ def test_configure_model_together_success(tmp_path):
             assert mock_set_key.call_count >= 2
 
 
+def test_configure_model_atlascloud_success(tmp_path):
+    """Persist the Atlas registry key, full model ID, and isolated API key."""
+    env_path = tmp_path / ".gac.env"
+    env_path.touch()
+    with (
+        patch("gac.model_cli.GAC_ENV_PATH", env_path),
+        patch("questionary.select") as select,
+        patch("questionary.text") as text,
+        patch("questionary.password") as password,
+        patch("gac.model_cli.set_key") as set_key,
+    ):
+        select.return_value.ask.return_value = "Atlas Cloud"
+        text.return_value.ask.return_value = ""
+        password.return_value.ask.return_value = "test-atlas-key"
+        assert _configure_model({}) is True
+        assert "Atlas Cloud" in select.call_args.kwargs["choices"]
+        assert text.call_args.kwargs["default"] == "openai/gpt-4.1-mini"
+        assert set_key.call_count == 2
+        set_key.assert_any_call(str(env_path), "GAC_MODEL", "atlascloud:openai/gpt-4.1-mini")
+        set_key.assert_any_call(str(env_path), "ATLASCLOUD_API_KEY", "test-atlas-key")
+
+
 def test_configure_model_chutes_success(tmp_path):
     """Test successful Chutes provider configuration."""
     env_path = tmp_path / ".gac.env"

@@ -50,12 +50,18 @@ That's it! Review the generated message and confirm with `y`.
 
 ### **35+ Supported Providers**
 
-- **Anthropic** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
+- **Anthropic** • **Atlas Cloud** • **Azure OpenAI** • **Cerebras** • **ChatGPT (OAuth)** • **Chutes.ai** • **Claude Code (OAuth)**
 - **Crof.ai** • **DeepInfra** • **DeepSeek** • **Fireworks** • **Gemini** • **GitHub Copilot (OAuth)** • **Groq**
 - **Kimi for Coding** • **Lilac** • **LM Studio** • **MiniMax.io** • **Mistral AI** • **Moonshot AI** • **Neuralwatt** • **Ollama**
 - **Ollama Cloud** • **OpenAI** • **OpenCode Go** • **OpenRouter** • **Plexus Gateway** • **Qwen Cloud (CN & INTL)**
 - **Replicate** • **Streamlake/Vanchin** • **Synthetic.new** • **Together AI** • **Wafer.ai** • **Z.AI (API & Coding Plans)**
 - **Custom Endpoints (Anthropic/OpenAI)**
+
+For Atlas Cloud, select **Atlas Cloud** in `gac init`, or set `GAC_MODEL=atlascloud:openai/gpt-4.1-mini`
+and `ATLASCLOUD_API_KEY`. Use the full model ID from the Atlas Cloud catalog, including its namespace.
+The default API base is `https://api.atlascloud.ai/v1`; `ATLASCLOUD_BASE_URL` can override it
+(include `/v1`, not `/chat/completions`). OpenAI credentials are not used for this provider.
+Set `GAC_RETRIES=1` to make only one generation attempt.
 
 ### 🧠 **Smart LLM Analysis**
 
