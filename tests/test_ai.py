@@ -540,6 +540,7 @@ class TestProviderRegistry:
     def test_provider_registry_complete(self):
         """Test that PROVIDER_REGISTRY contains all expected providers."""
         expected_providers = {
+            "atlascloud",
             "anthropic",
             "azure-openai",
             "cerebras",

@@ -13,6 +13,7 @@ Usage:
 
 # Import provider classes for registration
 from .anthropic import AnthropicProvider
+from .atlascloud import AtlasCloudProvider
 from .azure_openai import AzureOpenAIProvider
 from .cerebras import CerebrasProvider
 from .chatgpt_oauth import ChatGPTOAuthProvider
@@ -54,6 +55,7 @@ from .zai import ZAICodingProvider, ZAIProvider
 
 # Register all providers - this populates PROVIDER_REGISTRY automatically
 register_provider("anthropic", AnthropicProvider)
+register_provider("atlascloud", AtlasCloudProvider)
 register_provider("azure-openai", AzureOpenAIProvider)
 register_provider("cerebras", CerebrasProvider)
 register_provider("chatgpt-oauth", ChatGPTOAuthProvider)
