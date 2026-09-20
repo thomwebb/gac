@@ -205,7 +205,7 @@ class BaseConfiguredProvider(ABC, ProviderProtocol):
             messages: List of message dictionaries
             temperature: Temperature parameter (0.0-2.0)
             max_tokens: Maximum tokens in response
-            reasoning_effort: "none", "low", "medium", "high", or None (use model default)
+            reasoning_effort: "none", "low", "medium", "high", "xhigh", "max", or None (use model default)
             **kwargs: Additional provider-specific parameters
 
         Returns:

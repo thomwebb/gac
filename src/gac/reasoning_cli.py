@@ -42,7 +42,7 @@ def configure_reasoning_effort_workflow(env_path: Path | str) -> bool:
             click.echo(f"Reasoning Effort — currently: {existing_re_norm}")
         else:
             click.echo(f"Reasoning Effort — currently: {existing_re} [invalid]")
-            click.echo("This must be one of: none, low, medium, high, max — or unset to use the model default.")
+            click.echo("This must be one of: none, low, medium, high, xhigh, max — or unset to use the model default.")
 
         re_action = questionary.select(
             "How would you like to proceed?",
@@ -77,7 +77,7 @@ def configure_reasoning_effort_workflow(env_path: Path | str) -> bool:
     # Full choice list (first time or "Select new value" from existing)
     re_choice = questionary.select(
         "Select reasoning effort:",
-        choices=["Skip (use model default)", "none", "low", "medium", "high", "max"],
+        choices=["Skip (use model default)", "none", "low", "medium", "high", "xhigh", "max"],
         use_shortcuts=True,
         use_arrow_keys=True,
         use_jk_keys=False,

@@ -62,7 +62,7 @@ _CONFIG_VALIDATORS: list[tuple[str, type | tuple[type, ...], float | int | None,
 ]
 
 
-_VALID_REASONING_EFFORT_VALUES = {"low", "medium", "high", "max", "none"}
+_VALID_REASONING_EFFORT_VALUES = {"none", "low", "medium", "high", "xhigh", "max"}
 
 
 def _parse_reasoning_effort_env() -> str | None:
