@@ -548,7 +548,7 @@ def authenticate_and_save(host: str = "github.com", quiet: bool = False) -> bool
 
     if not quiet:
         print("✅ Copilot session token obtained!")
-        print("   Use: gac -m copilot:gpt-4o-mini")
+        print("   Use: gac -m copilot:gpt-5.6-luna")
 
     return True
 

@@ -208,7 +208,7 @@ def chatgpt_login(quiet: bool = False) -> None:
     securely in ~/.gac/oauth/chatgpt-oauth.json.
 
     After authentication, you can use ChatGPT Codex models like:
-        uvx gac -m chatgpt-oauth:gpt-5.4
+        uvx gac -m chatgpt-oauth:gpt-5.6-luna
     """
     if not quiet:
         setup_logging("INFO")
@@ -235,7 +235,7 @@ def chatgpt_login(quiet: bool = False) -> None:
             click.echo()
             click.echo("✅ ChatGPT authentication completed successfully!")
             click.echo(f"   Available models: {', '.join(DEFAULT_CODEX_MODELS[:4])}")
-            click.echo("   Use: uvx gac -m chatgpt-oauth:gpt-5.4")
+            click.echo("   Use: uvx gac -m chatgpt-oauth:gpt-5.6-luna")
     else:
         click.echo("❌ ChatGPT authentication failed.")
         click.echo("   Please try again or check your network connection.")
@@ -306,7 +306,7 @@ def copilot_login(quiet: bool = False, host: str = "github.com") -> None:
     via the --host flag (e.g. --host ghe.mycompany.com).
 
     After authentication, you can use Copilot models like:
-        uvx gac -m copilot:gpt-4o-mini
+        uvx gac -m copilot:gpt-5.6-luna
     """
     if not quiet:
         setup_logging("INFO")
@@ -337,7 +337,7 @@ def copilot_login(quiet: bool = False, host: str = "github.com") -> None:
         if not quiet:
             click.echo()
             click.echo("✅ Copilot authentication completed successfully!")
-            click.echo("   Use: uvx gac -m copilot:gpt-5-mini")
+            click.echo("   Use: uvx gac -m copilot:gpt-5.6-luna")
     else:
         click.echo("❌ Copilot authentication failed.")
         click.echo("   Ensure your GitHub account has Copilot access.")
