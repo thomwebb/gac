@@ -71,6 +71,9 @@ CHATGPT_OAUTH_CONFIG: dict[str, Any] = {
 
 # Known Codex-compatible models
 DEFAULT_CODEX_MODELS: list[str] = [
+    "gpt-5.6-sol",
+    "gpt-5.6-terra",
+    "gpt-5.6-luna",
     "gpt-5.5",
     "gpt-5.4",
     "gpt-5.3-instant",
