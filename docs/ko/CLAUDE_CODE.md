@@ -13,7 +13,7 @@ Claude Code는 Anthropic의 구독 서비스로, OAuth 기반의 Claude 모델 �
 ## 이점
 
 - **비용 효율성**: 기존 Claude Code 구독을 사용하고 API 액세스를 별도로 지불할 필요가 없습니다
-- **동일한 모델**: 동일한 Claude 모델(예: `claude-sonnet-4-5`)에 액세스할 수 있습니다
+- **동일한 모델**: 동일한 Claude 모델(예: `claude-sonnet-5`)에 액세스할 수 있습니다
 - **별도 과금**: Claude Code 사용은 Anthropic API 과금과 분리되어 있습니다
 
 ## 설정
@@ -62,14 +62,14 @@ git add .
 uvx gac
 
 # 또는 단일 커밋을 위해 모델을 재정의
-uvx gac -m claude-code:claude-sonnet-4-5
+uvx gac -m claude-code:claude-sonnet-5
 ```
 
 ## 사용 가능한 모델
 
 Claude Code는 Anthropic API와 동일한 모델에 접근할 수 있습니다. 현재 Claude 4.5 모델 제품군은 다음을 포함합니다:
 
-- `claude-sonnet-4-5` - 최신이고 가장 지능적인 Sonnet 모델, 코딩에 최적
+- `claude-sonnet-5` - 최신이고 가장 지능적인 Sonnet 모델, 코딩에 최적
 - `claude-haiku-4-5` - 빠르고 효율적
 - `claude-opus-4-5` - 복잡한 추론에서 가장 강력한 모델
 

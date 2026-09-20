@@ -10,9 +10,9 @@ GitHub Copilot OAuth 使用 **Device Flow**——一種安全的、基於瀏覽�
 
 這使您可以透過單一訂閱存取多個提供商的模型：
 
-- **OpenAI** — `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`
-- **Anthropic** — `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5`
-- **Google** — `gemini-2.5-pro`, `gemini-2.5-flash`
+- **OpenAI** — `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`
+- **Anthropic** — `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5`
+- **Google** — `gemini-3.8-flash`, `gemini-3.7-flash`
 
 ## 優勢
 
@@ -68,9 +68,9 @@ git add .
 uvx gac
 
 # 或者為單次提交覆蓋模型
-uvx gac -m copilot:gpt-4.1
-uvx gac -m copilot:claude-sonnet-4.5
-uvx gac -m copilot:gemini-2.5-pro
+uvx gac -m copilot:gpt-5.6-luna
+uvx gac -m copilot:claude-sonnet-5
+uvx gac -m copilot:gemini-3.8-flash
 ```
 
 ## 可用模型
@@ -79,9 +79,9 @@ Copilot 提供對多個提供商模型的存取。目前模型包括：
 
 | 提供商    | 模型                                                                                           |
 | --------- | ---------------------------------------------------------------------------------------------- |
-| OpenAI    | `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`                                           |
-| Anthropic | `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5` |
-| Google    | `gemini-2.5-pro`, `gemini-2.5-flash`                                                           |
+| OpenAI    | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`                  |
+| Anthropic | `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5` |
+| Google    | `gemini-3.8-flash`, `gemini-3.7-flash`                                                         |
 
 > **注意：** 登入後顯示的模型清單僅供參考，可能會隨著 GitHub 新增新模型而過時。請查看 [GitHub Copilot 文件](https://docs.github.com/en/copilot) 取得最新的可用模型。
 

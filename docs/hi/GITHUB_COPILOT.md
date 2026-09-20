@@ -10,9 +10,9 @@ GitHub Copilot OAuth **Device Flow** का उपयोग करता है 
 
 यह आपको एक ही सदस्यता के माध्यम से कई प्रदाताओं के मॉडलों तक पहुंच देता है:
 
-- **OpenAI** — `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`
-- **Anthropic** — `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5`
-- **Google** — `gemini-2.5-pro`, `gemini-2.5-flash`
+- **OpenAI** — `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`
+- **Anthropic** — `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5`
+- **Google** — `gemini-3.8-flash`, `gemini-3.7-flash`
 
 ## लाभ
 
@@ -68,9 +68,9 @@ git add .
 uvx gac
 
 # या एकल कमिट के लिए मॉडल ओवरराइड करें
-uvx gac -m copilot:gpt-4.1
-uvx gac -m copilot:claude-sonnet-4.5
-uvx gac -m copilot:gemini-2.5-pro
+uvx gac -m copilot:gpt-5.6-luna
+uvx gac -m copilot:claude-sonnet-5
+uvx gac -m copilot:gemini-3.8-flash
 ```
 
 ## उपलब्ध मॉडल
@@ -79,9 +79,9 @@ Copilot कई प्रदाताओं के मॉडलों तक प�
 
 | प्रदाता   | मॉडल                                                                                           |
 | --------- | ---------------------------------------------------------------------------------------------- |
-| OpenAI    | `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`                                           |
-| Anthropic | `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5` |
-| Google    | `gemini-2.5-pro`, `gemini-2.5-flash`                                                           |
+| OpenAI    | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`                  |
+| Anthropic | `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5` |
+| Google    | `gemini-3.8-flash`, `gemini-3.7-flash`                                                         |
 
 > **नोट:** लॉगिन के बाद दिखाई गई मॉडल सूची सूचनात्मक है और GitHub द्वारा नए मॉडल जोड़े जाने पर पुरानी हो सकती है। नवीनतम उपलब्ध मॉडलों के लिए [GitHub Copilot दस्तावेज़ीकरण](https://docs.github.com/en/copilot) देखें।
 

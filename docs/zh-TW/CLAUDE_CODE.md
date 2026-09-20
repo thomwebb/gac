@@ -13,7 +13,7 @@ Claude Code 是 Anthropic 的訂閱服務，提供基於 OAuth 的 Claude 模型
 ## 優勢
 
 - **成本效益**：使用您現有的 Claude Code 訂閱，而不是單獨支付 API 存取費用
-- **相同模型**：存取相同的 Claude 模型（例如 `claude-sonnet-4-5`）
+- **相同模型**：存取相同的 Claude 模型（例如 `claude-sonnet-5`）
 - **獨立計費**：Claude Code 使用與 Anthropic API 計費分離
 
 ## 設定
@@ -62,14 +62,14 @@ git add .
 uvx gac
 
 # 或者為單次提交覆蓋模型
-uvx gac -m claude-code:claude-sonnet-4-5
+uvx gac -m claude-code:claude-sonnet-5
 ```
 
 ## 可用模型
 
 Claude Code 提供與 Anthropic API 相同的模型存取權限。當前的 Claude 4.5 系列模型包括：
 
-- `claude-sonnet-4-5` - 最新且最智能的 Sonnet 模型，最適合編碼
+- `claude-sonnet-5` - 最新且最智能的 Sonnet 模型，最適合編碼
 - `claude-haiku-4-5` - 快速高效
 - `claude-opus-4-5` - 最複雜推理的最強能力模型
 

@@ -13,7 +13,7 @@ ChatGPT OAuth 让您可以利用现有的 ChatGPT Plus 或 Pro 订阅来访问 C
 ## 优势
 
 - **成本效益**：使用现有的 ChatGPT Plus/Pro 订阅，无需单独支付 API 访问费用
-- **相同模型**：访问 Codex 优化模型（`gpt-5.5`、`gpt-5.4`、`gpt-5.3-codex`）
+- **相同模型**：访问 Codex 优化模型（`gpt-5.6-sol`、`gpt-5.6-luna`、`gpt-5.3-codex`）
 - **无需管理 API 密钥**：基于浏览器的 OAuth 意味着无需轮换或存储 API 密钥
 - **独立计费**：ChatGPT OAuth 使用与直接 OpenAI API 计费分开
 
@@ -63,15 +63,15 @@ git add .
 uvx gac
 
 # 或者为单次提交覆盖模型
-uvx gac -m chatgpt-oauth:gpt-5.5
+uvx gac -m chatgpt-oauth:gpt-5.6-luna
 ```
 
 ## 可用模型
 
 ChatGPT OAuth 提供对 Codex 优化模型的访问。当前模型包括：
 
-- `gpt-5.5` — 最新且最强大的 Codex 模型
-- `gpt-5.4` — 上一代 Codex 模型
+- `gpt-5.6-sol` — 最新且最强大的 Codex 模型
+- `gpt-5.5` — 上一代 Codex 模型
 - `gpt-5.3-codex` — 第三代 Codex 模型
 
 查看 [OpenAI 文档](https://platform.openai.com/docs/models) 获取可用模型的完整列表。

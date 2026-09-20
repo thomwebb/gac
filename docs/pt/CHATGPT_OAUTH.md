@@ -13,7 +13,7 @@ O ChatGPT OAuth permite que você aproveite sua assinatura existente do ChatGPT 
 ## Benefícios
 
 - **Custo-benefício**: Use sua assinatura existente do ChatGPT Plus/Pro em vez de pagar separadamente pelo acesso à API
-- **Mesmos modelos**: Acesse modelos otimizados para Codex (`gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`)
+- **Mesmos modelos**: Acesse modelos otimizados para Codex (`gpt-5.6-sol`, `gpt-5.6-luna`, `gpt-5.3-codex`)
 - **Sem gerenciamento de chave de API**: OAuth baseado em navegador significa que não há chaves de API para rotacionar ou armazenar
 - **Cobrança separada**: O uso do ChatGPT OAuth é separado da cobrança direta da API da OpenAI
 
@@ -63,15 +63,15 @@ git add .
 uvx gac
 
 # Ou substitua o modelo para um único commit
-uvx gac -m chatgpt-oauth:gpt-5.5
+uvx gac -m chatgpt-oauth:gpt-5.6-luna
 ```
 
 ## Modelos disponíveis
 
 O ChatGPT OAuth fornece acesso a modelos otimizados para Codex. Os modelos atuais incluem:
 
-- `gpt-5.5` — Modelo Codex mais recente e capaz
-- `gpt-5.4` — Modelo Codex de geração anterior
+- `gpt-5.6-sol` — Modelo Codex mais recente e capaz
+- `gpt-5.5` — Modelo Codex de geração anterior
 - `gpt-5.3-codex` — Modelo Codex de terceira geração
 
 Consulte a [documentação da OpenAI](https://platform.openai.com/docs/models) para obter a lista completa de modelos disponíveis.

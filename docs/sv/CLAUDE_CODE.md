@@ -13,7 +13,7 @@ Claude Code är Anthropics prenumerationstjänst som tillhandahåller OAuth-base
 ## Fördelar
 
 - **Kostnadseffektivt**: Använd ditt befintliga Claude Code-abonnemang istället för att betala separat för API-åtkomst
-- **Samma modeller**: Åtkomst till samma Claude-modeller (t.ex. `claude-sonnet-4-5`)
+- **Samma modeller**: Åtkomst till samma Claude-modeller (t.ex. `claude-sonnet-5`)
 - **Separater fakturering**: Claude Code-användning är separerad från Anthropic API-fakturering
 
 ## Konfiguration
@@ -62,14 +62,14 @@ git add .
 uvx gac
 
 # Eller åsidosätt modellen för ett enskilt commit
-uvx gac -m claude-code:claude-sonnet-4-5
+uvx gac -m claude-code:claude-sonnet-5
 ```
 
 ## Tillgängliga modeller
 
 Claude Code ger tillgång till samma modeller som Anthropic API:en. Nuvarande Claude 4.5-familjmodeller inkluderar:
 
-- `claude-sonnet-4-5` - Senaste och mest intelligenta Sonnet-modellen, bäst för kodning
+- `claude-sonnet-5` - Senaste och mest intelligenta Sonnet-modellen, bäst för kodning
 - `claude-haiku-4-5` - Snabb och effektiv
 - `claude-opus-4-5` - Mest kapabla modellen för komplex resonemang
 

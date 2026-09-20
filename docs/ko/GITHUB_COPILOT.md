@@ -10,9 +10,9 @@ GitHub Copilot OAuth 는 **Device Flow** 를 사용합니다 — 로컬 콜백 �
 
 이를 통해 단일 구독으로 여러 제공업체의 모델에 액세스할 수 있습니다:
 
-- **OpenAI** — `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`
-- **Anthropic** — `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5`
-- **Google** — `gemini-2.5-pro`, `gemini-2.5-flash`
+- **OpenAI** — `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`
+- **Anthropic** — `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5`
+- **Google** — `gemini-3.8-flash`, `gemini-3.7-flash`
 
 ## 장점
 
@@ -68,9 +68,9 @@ git add .
 uvx gac
 
 # 또는 단일 커밋에 대해 모델 재정의
-uvx gac -m copilot:gpt-4.1
-uvx gac -m copilot:claude-sonnet-4.5
-uvx gac -m copilot:gemini-2.5-pro
+uvx gac -m copilot:gpt-5.6-luna
+uvx gac -m copilot:claude-sonnet-5
+uvx gac -m copilot:gemini-3.8-flash
 ```
 
 ## 사용 가능한 모델
@@ -79,9 +79,9 @@ Copilot 은 여러 제공업체의 모델에 대한 액세스를 제공합니다
 
 | 제공업체  | 모델                                                                                           |
 | --------- | ---------------------------------------------------------------------------------------------- |
-| OpenAI    | `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`                                           |
-| Anthropic | `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5` |
-| Google    | `gemini-2.5-pro`, `gemini-2.5-flash`                                                           |
+| OpenAI    | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`                  |
+| Anthropic | `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5` |
+| Google    | `gemini-3.8-flash`, `gemini-3.7-flash`                                                         |
 
 > **참고:** 로그인 후 표시되는 모델 목록은 참고용이며, GitHub 가 새로운 모델을 추가함에 따라 구식이 될 수 있습니다. 최신 사용 가능한 모델은 [GitHub Copilot 문서](https://docs.github.com/en/copilot) 를 확인하세요.
 
