@@ -170,10 +170,10 @@ class TestDiffCLI:
                     color=False,
                 )
 
-        # Verify the limit was derived from the (small) Ollama context window
+        # Verify the limit was derived from the model's assumed context window
         call_args = mock_truncate.call_args[0]
         assert call_args[1] == resolve_diff_token_limit("ollama:llama3")
-        assert call_args[1] < 8192
+        assert call_args[1] == 76_800
 
     @patch("gac.diff_cli.get_diff")
     def test_color_output_direct(self, mock_get_diff):

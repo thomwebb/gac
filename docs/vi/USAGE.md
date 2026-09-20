@@ -425,6 +425,7 @@ Bạn có thể tùy chỉnh hành vi của gac với các biến môi trường
 - `GAC_REASONING_EFFORT=medium` - Kiểm soát độ sâu lập luận/suy nghĩ cho các mô hình hỗ trợ suy nghĩ mở rộng (low, medium, high, xhigh, max). Để trống để sử dụng mặc định của từng mô hình. Chỉ gửi đến các nhà cung cấp tương thích (kiểu OpenAI; không phải Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Token tối đa cho thông điệp đã tạo (tự động scale 2-5x khi sử dụng `--group` dựa trên số lượng tệp; ghi đè để đi cao hơn hoặc thấp hơn)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Cảnh báo khi các gợi ý vượt quá số lượng token này
+- `GAC_MAX_DIFF_TOKENS=48000` - Giới hạn cứng số token diff trong prompt (mặc định: suy ra từ cửa sổ ngữ cảnh của mô hình)
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Sử dụng gợi ý hệ thống tùy chỉnh để tạo thông điệp commit
 - `GAC_LANGUAGE=Spanish` - Tạo thông điệp commit bằng ngôn ngữ cụ thể (ví dụ, Spanish, French, Japanese, German). Hỗ trợ tên đầy đủ hoặc mã ISO (es, fr, ja, de, zh-CN). Sử dụng `uvx gac language` để lựa chọn tương tác
 - `GAC_TRANSLATE_PREFIXES=true` - Dịch các tiền tố commit tiêu chuẩn (feat, fix, v.v.) vào ngôn ngữ đích (mặc định: false, giữ tiền tố bằng tiếng Anh)

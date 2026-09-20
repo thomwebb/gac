@@ -265,6 +265,44 @@ class TestValidateConfig:
         for value in ("none", "low", "medium", "high", "xhigh", "max", None):
             validate_config({"reasoning_effort": value})
 
+    # max_diff_tokens parsing and validation tests
+    def test_max_diff_tokens_unset_is_none(self, tmp_path, monkeypatch):
+        """GAC_MAX_DIFF_TOKENS unset or empty loads as None (derive from model)."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.delenv("GAC_MAX_DIFF_TOKENS", raising=False)
+
+        with patch("gac.config.Path.home") as mock_home:
+            mock_home.return_value = tmp_path / "nonexistent_home"
+            config = load_config()
+        assert config["max_diff_tokens"] is None
+
+        monkeypatch.setenv("GAC_MAX_DIFF_TOKENS", "")
+        with patch("gac.config.Path.home") as mock_home:
+            mock_home.return_value = tmp_path / "nonexistent_home"
+            config = load_config()
+        assert config["max_diff_tokens"] is None
+
+    def test_max_diff_tokens_set_is_int(self, tmp_path, monkeypatch):
+        """GAC_MAX_DIFF_TOKENS loads as an int when set."""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv("GAC_MAX_DIFF_TOKENS", "48000")
+
+        with patch("gac.config.Path.home") as mock_home:
+            mock_home.return_value = tmp_path / "nonexistent_home"
+            config = load_config()
+        assert config["max_diff_tokens"] == 48000
+
+    def test_max_diff_tokens_below_floor_rejected(self):
+        """Values under the 2048 floor fail validation."""
+        with pytest.raises(ConfigError, match=r"max_diff_tokens must be >= 2048"):
+            validate_config({"max_diff_tokens": 100})
+
+    def test_max_diff_tokens_valid_passes(self):
+        """Values at or above the floor pass validation."""
+        validate_config({"max_diff_tokens": 2048})
+        validate_config({"max_diff_tokens": 500_000})
+        validate_config({})  # Key absent is fine
+
     def test_reasoning_effort_none_is_allowed(self):
         """Test that reasoning_effort=None (unset) is valid."""
         validate_config({"reasoning_effort": None})

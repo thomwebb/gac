@@ -475,6 +475,7 @@ git config --global user.email "your.email@example.com"
 - `GAC_REASONING_EFFORT=medium` - 拡張思考をサポートするモデルの推論/思考深度を制御（low、medium、high、xhigh、max）。設定しない場合は各モデルのデフォルトを使用。互換性のあるプロバイダー（OpenAI スタイル、Anthropic 以外）にのみ送信されます。
 - `GAC_MAX_OUTPUT_TOKENS=4096` - 生成されたメッセージの最大トークン数（`--group` 使用時にファイル数に基づいて自動的に 2-5 倍にスケーリング；これ以上または以下にするには上書き）
 - `GAC_WARNING_LIMIT_TOKENS=4096` - プロンプトがこのトークン数を超えた場合に警告
+- `GAC_MAX_DIFF_TOKENS=48000` - プロンプトに含める diff トークンの上限（デフォルト：モデルのコンテキストウィンドウから導出）
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - コミットメッセージ生成にカスタムシステムプロンプトを使用
 - `GAC_LANGUAGE=Spanish` - 特定の言語でコミットメッセージを生成（例: Spanish, French, Japanese, German）。完全な名前または ISO コードをサポート（es, fr, ja, de, zh-CN）。対話的な選択には `uvx gac language` を使用
 - `GAC_TRANSLATE_PREFIXES=true` - 従来のコミットプレフィックス（feat, fix など）を対象言語に翻訳（デフォルト: false、プレフィックスは英語のまま）

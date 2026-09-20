@@ -17,9 +17,11 @@ class TestResolveContextLimit:
         assert resolve_context_limit("anthropic:claude-haiku-4-5") == 200_000
         assert resolve_context_limit("gemini:gemini-3.5-flash-lite") == 1_000_000
 
-    def test_local_runtimes_default_small(self):
-        assert resolve_context_limit("ollama:llama3") == 8_192
-        assert resolve_context_limit("lm-studio:gemma4") == 8_192
+    def test_local_runtimes_assume_modern_windows(self):
+        """Local runtimes assume 128k — users with smaller models set GAC_MAX_DIFF_TOKENS."""
+        assert resolve_context_limit("ollama:llama3") == 128_000
+        assert resolve_context_limit("lm-studio:gemma4") == 128_000
+        assert resolve_context_limit("custom-openai:my-proxy-model") == 128_000
 
     def test_unknown_provider_falls_back(self):
         assert resolve_context_limit("mystery-provider:some-model") == DEFAULT_CONTEXT_LIMIT
@@ -43,9 +45,10 @@ class TestResolveContextLimit:
 class TestResolveDiffTokenLimit:
     """Test diff budget derivation from the model context window."""
 
-    def test_small_context_scales_down(self):
-        # 8k window * 0.6 = 4915 — far below the 192k default cap
-        assert resolve_diff_token_limit("ollama:llama3") == 4915
+    def test_default_budget_is_window_fraction(self):
+        # 128k window * 0.6 = 76800
+        assert resolve_diff_token_limit("ollama:llama3") == 76_800
+        assert resolve_diff_token_limit("openai:gpt-5.6-luna") == 76_800
 
     def test_large_context_is_capped_by_default(self):
         # 1M window would allow 600k, but the 192k default cap applies
@@ -54,8 +57,9 @@ class TestResolveDiffTokenLimit:
     def test_configured_limit_wins_when_smaller(self):
         assert resolve_diff_token_limit("openai:gpt-5.6-luna", configured=50_000) == 50_000
 
-    def test_context_budget_wins_when_smaller(self):
-        assert resolve_diff_token_limit("openai:gpt-5.6-luna", configured=500_000) == 76_800
+    def test_configured_limit_overrides_heuristic_entirely(self):
+        """An explicit cap is used as-is — even above the heuristic budget."""
+        assert resolve_diff_token_limit("openai:gpt-5.6-luna", configured=500_000) == 500_000
 
     def test_minimum_budget_floor(self):
         # A hypothetical tiny window cannot push the budget below the floor
@@ -75,11 +79,11 @@ class TestPreprocessUsesResolvedLimit:
         from gac.preprocess import preprocess_per_file_diffs
 
         per_file = [("src/a.py", "diff --git a/src/a.py b/src/a.py\n@@ -1 +1 @@\n-x\n+y\n")]
-        with patch("gac.preprocess.smart_truncate_diff", wraps=None) as mock_trunc:
+        with patch("gac.preprocess.smart_truncate_diff") as mock_trunc:
             mock_trunc.return_value = "processed"
             preprocess_per_file_diffs(per_file, model="ollama:llama3")
 
-        assert mock_trunc.call_args[0][1] == 4915
+        assert mock_trunc.call_args[0][1] == 76_800
 
     def test_per_file_diffs_explicit_limit_overrides(self):
         from unittest.mock import patch

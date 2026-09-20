@@ -25,6 +25,7 @@ class GACConfig(TypedDict, total=False):
     max_retries: int
     log_level: str
     warning_limit_tokens: int
+    max_diff_tokens: int | None
     always_include_scope: bool
     always_grouped: bool
     skip_secret_scan: bool
@@ -57,6 +58,7 @@ _CONFIG_VALIDATORS: list[tuple[str, type | tuple[type, ...], float | int | None,
     ("max_output_tokens", int, 1, 100000),
     ("max_retries", int, 1, 10),
     ("warning_limit_tokens", int, 1, None),
+    ("max_diff_tokens", int, 2048, None),
     ("hook_timeout", int, 1, None),
     ("diff_context_lines", int, 0, 100),
 ]
@@ -81,6 +83,21 @@ def _parse_reasoning_effort_env() -> str | None:
     if lower in _VALID_REASONING_EFFORT_VALUES:
         return lower
     return value
+
+
+def _parse_max_diff_tokens_env() -> int | None:
+    """Parse GAC_MAX_DIFF_TOKENS from the environment.
+
+    Empty/whitespace-only values are treated as unset (budget derived from
+    the model's assumed context window instead).
+    """
+    raw = os.getenv("GAC_MAX_DIFF_TOKENS")
+    if raw is None:
+        return None
+    value = raw.strip()
+    if value == "":
+        return None
+    return int(value)
 
 
 def _parse_diff_context_lines_env() -> int:
@@ -162,6 +179,7 @@ def load_config() -> GACConfig:
         "max_retries": int(os.getenv("GAC_RETRIES", EnvDefaults.MAX_RETRIES)),
         "log_level": os.getenv("GAC_LOG_LEVEL", Logging.DEFAULT_LEVEL),
         "warning_limit_tokens": int(os.getenv("GAC_WARNING_LIMIT_TOKENS", EnvDefaults.WARNING_LIMIT_TOKENS)),
+        "max_diff_tokens": _parse_max_diff_tokens_env(),
         "always_include_scope": _parse_bool_env("GAC_ALWAYS_INCLUDE_SCOPE", EnvDefaults.ALWAYS_INCLUDE_SCOPE),
         "always_grouped": _parse_bool_env("GAC_ALWAYS_GROUPED", EnvDefaults.ALWAYS_GROUPED),
         "skip_secret_scan": _parse_bool_env("GAC_SKIP_SECRET_SCAN", EnvDefaults.SKIP_SECRET_SCAN),

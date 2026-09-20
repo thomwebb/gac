@@ -1,17 +1,18 @@
-"""Conservative per-provider context window limits.
+"""Per-provider context window assumptions and diff budget resolution.
 
-Used to derive a diff token budget that fits the *configured* model instead
-of assuming every provider has a huge context window (issue #79).  Values are
-deliberately conservative: they bound the git-diff portion of the prompt, and
-underestimating a limit only means slightly earlier truncation, never an API
-error.
+Used to derive a diff token budget for the *configured* model (issue #79).
+Windows are deliberately optimistic: most modern catalogs (cloud and local)
+ship 128k+ contexts, and an oversized prompt now fails with a clear,
+actionable error (see ``providers/error_handler.py``) rather than silently
+degrading.  Users who know their model is smaller can set an explicit cap
+via ``GAC_MAX_DIFF_TOKENS``.
 """
 
 from gac.constants.defaults import Utility
 
-# Conservative context-window defaults per provider key (tokens).
-# Local runtimes (Ollama, LM Studio) default small because model catalogs are
-# user-controlled and frequently ship 4k-8k context models.
+# Optimistic context-window defaults per provider key (tokens).
+# Local runtimes (Ollama, LM Studio) assume modern defaults — users with
+# smaller models can cap explicitly via GAC_MAX_DIFF_TOKENS.
 PROVIDER_CONTEXT_LIMITS: dict[str, int] = {
     # OpenAI-compatible frontier hosts
     "openai": 128_000,
@@ -51,11 +52,10 @@ PROVIDER_CONTEXT_LIMITS: dict[str, int] = {
     "wafer": 128_000,
     "zai": 128_000,
     "zai-coding": 128_000,
-    # Local runtimes — catalogs are user-controlled, assume small windows
-    "lm-studio": 8_192,
-    "ollama": 8_192,
-    # Unknown custom endpoints
-    "custom-openai": 32_768,
+    # Local runtimes and custom endpoints — assume modern default windows
+    "lm-studio": 128_000,
+    "ollama": 128_000,
+    "custom-openai": 128_000,
 }
 
 DEFAULT_CONTEXT_LIMIT: int = 32_768
@@ -78,10 +78,13 @@ def resolve_context_limit(model: str) -> int:
 def resolve_diff_token_limit(model: str, configured: int | None = None) -> int:
     """Derive the git-diff token budget for *model*.
 
-    The budget is the smaller of the configured cap (default
-    ``Utility.DEFAULT_DIFF_TOKEN_LIMIT``) and ``_DIFF_BUDGET_FRACTION`` of the
-    model's context window, never below ``_MIN_DIFF_BUDGET``.
+    When *configured* is provided (e.g. ``GAC_MAX_DIFF_TOKENS``), it is used
+    directly as the budget — explicit user configuration overrides the
+    heuristic entirely.  Otherwise the budget is ``_DIFF_BUDGET_FRACTION``
+    of the model's assumed context window, capped at
+    ``Utility.DEFAULT_DIFF_TOKEN_LIMIT`` and never below ``_MIN_DIFF_BUDGET``.
     """
-    cap = configured if configured is not None else Utility.DEFAULT_DIFF_TOKEN_LIMIT
+    if configured is not None:
+        return max(_MIN_DIFF_BUDGET, configured)
     context_budget = int(resolve_context_limit(model) * _DIFF_BUDGET_FRACTION)
-    return max(_MIN_DIFF_BUDGET, min(cap, context_budget))
+    return max(_MIN_DIFF_BUDGET, min(Utility.DEFAULT_DIFF_TOKEN_LIMIT, context_budget))

@@ -470,6 +470,7 @@ git config --global user.email "your.email@example.com"
 - `GAC_REASONING_EFFORT=medium` - 확장된 사고를 지원하는 모델의 추론/사고 깊이 제어 (low, medium, high, xhigh, max). 설정하지 않으면 각 모델의 기본값을 사용합니다. 호환되는 공급자(OpenAI 스타일, Anthropic 제외)에게만 전송됩니다.
 - `GAC_MAX_OUTPUT_TOKENS=4096` - 생성된 메시지용 최대 토큰 (`--group` 사용 시 파일 수에 따라 자동으로 2-5배 조정됨; 더 높거나 낮게 설정하려면 재정의)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - 프롬프트가 이 토큰 수를 초과하면 경고
+- `GAC_MAX_DIFF_TOKENS=48000` - 프롬프트에 포함할 diff 토큰 상한 (기본값: 모델 컨텍스트 윈도우에서 파생)
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - 커밋 메시지 생성을 위해 커스텀 시스템 프롬프트 사용
 - `GAC_LANGUAGE=Spanish` - 특정 언어로 커밋 메시지 생성 (예: Spanish, French, Japanese, German). 전체 이름 또는 ISO 코드 지원 (es, fr, ja, de, zh-CN). 대화형 선택을 위해 `uvx gac language` 사용
 - `GAC_TRANSLATE_PREFIXES=true` - 컨벤셔널 커밋 접두사 (feat, fix 등)를 대상 언어로 번역 (기본값: false, 접두사를 영어로 유지)

@@ -476,6 +476,7 @@ git config --global user.email "your.email@example.com"
 - `GAC_REASONING_EFFORT=medium` - 控制支持扩展思考模型的推理/思考深度（low、medium、high、xhigh、max）。不设置则使用各模型默认值。仅发送至兼容的提供者（OpenAI 风格；非 Anthropic）。
 - `GAC_MAX_OUTPUT_TOKENS=4096` - 生成信息的最大令牌数（使用 `--group` 时根据文件数量自动缩放 2-5 倍；覆盖以提高或降低）
 - `GAC_WARNING_LIMIT_TOKENS=4096` - 当提示超过此令牌数时发出警告
+- `GAC_MAX_DIFF_TOKENS=48000` - 提示词中包含的 diff token 硬上限（默认：根据模型上下文窗口推导）
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - 使用自定义系统提示进行提交信息生成
 - `GAC_LANGUAGE=Spanish` - 以特定语言生成提交信息（例如，Spanish、French、Japanese、German）。支持完整名称或 ISO 代码（es、fr、ja、de、zh-CN）。使用 `uvx gac language` 进行交互式选择
 - `GAC_TRANSLATE_PREFIXES=true` - 将常规提交前缀（feat、fix 等）翻译为目标语言（默认值：false，保持前缀为英语）

@@ -136,7 +136,8 @@ class GitStateValidator:
         logger.debug(f"Preprocessing {len(per_file_diffs)} per-file diffs")
         if model is None:
             raise ConfigError("Model must be specified via GAC_MODEL environment variable or --model flag")
-        processed_diff = preprocess_per_file_diffs(per_file_diffs, model=model)
+        max_diff_tokens = self.config.get("max_diff_tokens")
+        processed_diff = preprocess_per_file_diffs(per_file_diffs, token_limit=max_diff_tokens, model=model)
         logger.debug(f"Processed diff ({len(processed_diff)} characters)")
 
         return GitState(

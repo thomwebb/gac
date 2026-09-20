@@ -474,6 +474,7 @@ Sie können das Verhalten von gac mit diesen optionalen Umgebungsvariablen anpas
 - `GAC_REASONING_EFFORT=medium` - Steuert die Argumentations-/Denktiefe für Modelle, die erweitertes Denken unterstützen (low, medium, high, xhigh, max). Nicht setzen, um den Standard des jeweiligen Modells zu verwenden. Wird nur an kompatible Anbieter gesendet (OpenAI-Stil; nicht Anthropic).
 - `GAC_MAX_OUTPUT_TOKENS=4096` - Maximale Tokens für generierte Nachrichten (automatisch 2-5x skaliert bei Verwendung von `--group` basierend auf Dateianzahl; überschreiben, um höher oder niedriger zu gehen)
 - `GAC_WARNING_LIMIT_TOKENS=4096` - Warnen, wenn Prompts diese Token-Anzahl überschreiten
+- `GAC_MAX_DIFF_TOKENS=48000` - Obergrenze für Diff-Tokens im Prompt (Standard: aus dem Kontextfenster des Modells abgeleitet)
 - `GAC_SYSTEM_PROMPT_PATH=/path/to/custom_prompt.txt` - Einen benutzerdefinierten System-Prompt für die Commit-Nachrichtengenerierung verwenden
 - `GAC_LANGUAGE=Spanish` - Commit-Nachrichten in einer bestimmten Sprache generieren (z.B. Spanish, French, Japanese, German). Unterstützt vollständige Namen oder ISO-Codes (es, fr, ja, de, zh-CN). Verwenden Sie `uvx gac language` für interaktive Auswahl
 - `GAC_TRANSLATE_PREFIXES=true` - Konventionelle Commit-Präfixe (feat, fix, etc.) in die Zielsprache übersetzen (Standard: false, behält Präfixe in Englisch)
