@@ -18,7 +18,7 @@ class EnvDefaults:
     HOOK_TIMEOUT: int = 120  # Timeout for pre-commit and lefthook hooks in seconds
     USE_50_72_RULE: bool = False  # Enforce 50/72 rule for commit messages
     SIGNOFF: bool = False  # Add Signed-off-by line to commit message
-    REASONING_EFFORT: str | None = None  # "none", "low", "medium", "high", or None (use model default)
+    REASONING_EFFORT: str | None = None  # "none", "low", "medium", "high", "xhigh", "max", or None (use model default)
 
 
 class ProviderDefaults:
