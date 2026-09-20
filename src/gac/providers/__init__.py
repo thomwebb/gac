@@ -28,7 +28,6 @@ from .fireworks import FireworksProvider
 from .gemini import GeminiProvider
 from .groq import GroqProvider
 from .kimi_coding import KimiCodingProvider
-from .lilac import LilacProvider
 from .lmstudio import LMStudioProvider
 from .minimax import MinimaxProvider
 from .mistral import MistralProvider
@@ -69,7 +68,6 @@ register_provider("fireworks", FireworksProvider)
 register_provider("gemini", GeminiProvider)
 register_provider("groq", GroqProvider)
 register_provider("kimi-coding", KimiCodingProvider)
-register_provider("lilac", LilacProvider)
 register_provider("lm-studio", LMStudioProvider)
 register_provider("minimax", MinimaxProvider)
 register_provider("mistral", MistralProvider)

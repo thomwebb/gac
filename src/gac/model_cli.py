@@ -98,7 +98,6 @@ def _configure_model(existing_env: dict[str, str]) -> bool:
         ("GitHub Copilot (OAuth)", "gpt-5.6-luna"),
         ("Groq", "openai/gpt-oss-120b"),
         ("Kimi for Coding", "kimi-for-coding"),
-        ("Lilac", "google/gemma-4-31b-it"),
         ("LM Studio", "gemma4"),
         ("MiniMax.io", "MiniMax-M3"),
         ("Mistral", "devstral-2512"),
