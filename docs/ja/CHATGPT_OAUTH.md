@@ -13,7 +13,7 @@ ChatGPT OAuth を使用すると、既存の ChatGPT Plus または Pro サブ�
 ## 利点
 
 - **コスト効果**：既存の ChatGPT Plus/Pro サブスクリプションを使用し、API アクセスを別途支払う必要がありません
-- **同じモデル**：Codex 最適化モデル（`gpt-5.5`、`gpt-5.4`、`gpt-5.3-codex`）にアクセスできます
+- **同じモデル**：Codex 最適化モデル（`gpt-5.6-sol`、`gpt-5.6-luna`、`gpt-5.3-codex`）にアクセスできます
 - **API キー管理不要**：ブラウザベースの OAuth により、API キーをローテーションまたは保存する必要がありません
 - **個別課金**：ChatGPT OAuth の使用は、直接 OpenAI API 課金とは別です
 
@@ -63,15 +63,15 @@ git add .
 uvx gac
 
 # または、単一のコミットのためにモデルを上書きする
-uvx gac -m chatgpt-oauth:gpt-5.5
+uvx gac -m chatgpt-oauth:gpt-5.6-luna
 ```
 
 ## 利用可能なモデル
 
 ChatGPT OAuth は Codex 最適化モデルへのアクセスを提供します。現在のモデルには次のものがあります：
 
-- `gpt-5.5` — 最新で最も強力な Codex モデル
-- `gpt-5.4` — 前世代の Codex モデル
+- `gpt-5.6-sol` — 最新で最も強力な Codex モデル
+- `gpt-5.5` — 前世代の Codex モデル
 - `gpt-5.3-codex` — 第 3 世代の Codex モデル
 
 利用可能なモデルの完全なリストについては、[OpenAI ドキュメント](https://platform.openai.com/docs/models) を確認してください。

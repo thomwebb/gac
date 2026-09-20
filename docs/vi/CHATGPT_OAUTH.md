@@ -13,7 +13,7 @@ ChatGPT OAuth cho phép bạn tận dụng gói đăng ký ChatGPT Plus hoặc P
 ## Lợi ích
 
 - **Hiệu quả chi phí**: Sử dụng gói đăng ký ChatGPT Plus/Pro hiện có của bạn thay vì phải trả tiền riêng cho quyền truy cập API
-- **Cùng các mô hình**: Truy cập các mô hình tối ưu hóa Codex (`gpt-5.5`, `gpt-5.4`, `gpt-5.3-codex`)
+- **Cùng các mô hình**: Truy cập các mô hình tối ưu hóa Codex (`gpt-5.6-sol`, `gpt-5.6-luna`, `gpt-5.3-codex`)
 - **Không cần quản lý khóa API**: OAuth dựa trên trình duyệt có nghĩa là không cần xoay hoặc lưu trữ khóa API
 - **Thanh toán riêng biệt**: Việc sử dụng ChatGPT OAuth được tách riêng khỏi thanh toán API OpenAI trực tiếp
 
@@ -63,15 +63,15 @@ git add .
 uvx gac
 
 # Hoặc ghi đè mô hình cho một commit duy nhất
-uvx gac -m chatgpt-oauth:gpt-5.5
+uvx gac -m chatgpt-oauth:gpt-5.6-luna
 ```
 
 ## Các mô hình có sẵn
 
 ChatGPT OAuth cung cấp quyền truy cập vào các mô hình tối ưu hóa Codex. Các mô hình hiện tại bao gồm:
 
-- `gpt-5.5` — Mô hình Codex mới nhất và mạnh mẽ nhất
-- `gpt-5.4` — Mô hình Codex thế hệ trước
+- `gpt-5.6-sol` — Mô hình Codex mới nhất và mạnh mẽ nhất
+- `gpt-5.5` — Mô hình Codex thế hệ trước
 - `gpt-5.3-codex` — Mô hình Codex thế hệ thứ ba
 
 Kiểm tra [tài liệu OpenAI](https://platform.openai.com/docs/models) để biết danh sách đầy đủ các mô hình có sẵn.

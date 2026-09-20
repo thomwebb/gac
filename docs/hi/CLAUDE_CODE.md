@@ -13,7 +13,7 @@ Claude Code Anthropic की सदस्यता सेवा है जो OA
 ## लाभ
 
 - **लागत प्रभावी**: अलग से API पहुंच के लिए भुगतान करने के बजाय अपनी मौजूदा Claude Code सदस्यता का उपयोग करें
-- **समान मॉडल**: समान Claude मॉडल्स तक पहुंच (जैसे `claude-sonnet-4-5`)
+- **समान मॉडल**: समान Claude मॉडल्स तक पहुंच (जैसे `claude-sonnet-5`)
 - **अलग बिलिंग**: Claude Code का उपयोग Anthropic API बिलिंग से अलग है
 
 ## सेटअप
@@ -62,14 +62,14 @@ git add .
 uvx gac
 
 # या एकल कमिट के लिए मॉडल को ओवरराइड करें
-uvx gac -m claude-code:claude-sonnet-4-5
+uvx gac -m claude-code:claude-sonnet-5
 ```
 
 ## उपलब्ध मॉडल
 
 Claude Code Anthropic API के समान मॉडल तक पहुंच प्रदान करता है। वर्तमान Claude 4.5 परिवार मॉडल में शामिल हैं:
 
-- `claude-sonnet-4-5` - नवीनतम और सबसे बुद्धिमान Sonnet मॉडल, कोडिंग के लिए सर्वोत्तम
+- `claude-sonnet-5` - नवीनतम और सबसे बुद्धिमान Sonnet मॉडल, कोडिंग के लिए सर्वोत्तम
 - `claude-haiku-4-5` - तेज़ और कुशल
 - `claude-opus-4-5` - जटिल तर्क के लिए सबसे सक्षम मॉडल
 

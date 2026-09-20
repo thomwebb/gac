@@ -13,7 +13,7 @@ Claude Code là dịch vụ đăng ký của Anthropic cung cấp quyền truy c
 ## Lợi ích
 
 - **Hiệu quả về chi phí**: Sử dụng đăng ký Claude Code hiện có của bạn thay vì trả riêng cho quyền truy cập API
-- **Cùng mô hình**: Truy cập các mô hình Claude tương tự (ví dụ: `claude-sonnet-4-5`)
+- **Cùng mô hình**: Truy cập các mô hình Claude tương tự (ví dụ: `claude-sonnet-5`)
 - **Thanh toán riêng biệt**: Việc sử dụng Claude Code tách biệt với thanh toán API Anthropic
 
 ## Cài đặt
@@ -62,14 +62,14 @@ git add .
 uvx gac
 
 # Hoặc ghi đè mô hình cho một commit duy nhất
-uvx gac -m claude-code:claude-sonnet-4-5
+uvx gac -m claude-code:claude-sonnet-5
 ```
 
 ## Các mô hình có sẵn
 
 Claude Code cung cấp quyền truy cập vào các mô hình tương tự như API Anthropic. Các mô hình gia đình Claude 4.5 hiện tại bao gồm:
 
-- `claude-sonnet-4-5` - Mô hình Sonnet mới nhất và thông minh nhất, tốt nhất cho lập trình
+- `claude-sonnet-5` - Mô hình Sonnet mới nhất và thông minh nhất, tốt nhất cho lập trình
 - `claude-haiku-4-5` - Nhanh và hiệu quả
 - `claude-opus-4-5` - Mô hình có khả năng nhất cho lý luận phức tạp
 

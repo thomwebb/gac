@@ -13,7 +13,7 @@ Claude Code é o serviço de assinatura da Anthropic que fornece acesso aos mode
 ## Benefícios
 
 - **Custo-efetivo**: Use sua assinatura Claude Code existente em vez de pagar separadamente por acesso à API
-- **Mesmos modelos**: Acesse os mesmos modelos Claude (ex., `claude-sonnet-4-5`)
+- **Mesmos modelos**: Acesse os mesmos modelos Claude (ex., `claude-sonnet-5`)
 - **Cobrança separada**: O uso do Claude Code é separado da cobrança da API Anthropic
 
 ## Configuração
@@ -62,14 +62,14 @@ git add .
 uvx gac
 
 # Ou sobrescreva o modelo para um único commit
-uvx gac -m claude-code:claude-sonnet-4-5
+uvx gac -m claude-code:claude-sonnet-5
 ```
 
 ## Modelos Disponíveis
 
 Claude Code fornece acesso aos mesmos modelos que a API Anthropic. Os modelos atuais da família Claude 4.5 incluem:
 
-- `claude-sonnet-4-5` - Modelo Sonnet mais recente e inteligente, melhor para codificação
+- `claude-sonnet-5` - Modelo Sonnet mais recente e inteligente, melhor para codificação
 - `claude-haiku-4-5` - Rápido e eficiente
 - `claude-opus-4-5` - Modelo mais capaz para raciocínio complexo
 

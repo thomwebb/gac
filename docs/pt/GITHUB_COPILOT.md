@@ -10,9 +10,9 @@ O GitHub Copilot OAuth usa o **Device Flow** — um método de autenticação se
 
 Isso lhe dá acesso a modelos de múltiplos provedores através de uma única assinatura:
 
-- **OpenAI** — `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`
-- **Anthropic** — `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5`
-- **Google** — `gemini-2.5-pro`, `gemini-2.5-flash`
+- **OpenAI** — `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`
+- **Anthropic** — `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5`
+- **Google** — `gemini-3.8-flash`, `gemini-3.7-flash`
 
 ## Benefícios
 
@@ -68,9 +68,9 @@ git add .
 uvx gac
 
 # Ou substitua o modelo para um único commit
-uvx gac -m copilot:gpt-4.1
-uvx gac -m copilot:claude-sonnet-4.5
-uvx gac -m copilot:gemini-2.5-pro
+uvx gac -m copilot:gpt-5.6-luna
+uvx gac -m copilot:claude-sonnet-5
+uvx gac -m copilot:gemini-3.8-flash
 ```
 
 ## Modelos disponíveis
@@ -79,9 +79,9 @@ O Copilot fornece acesso a modelos de múltiplos provedores. Os modelos atuais i
 
 | Provedor  | Modelos                                                                                        |
 | --------- | ---------------------------------------------------------------------------------------------- |
-| OpenAI    | `gpt-4o`, `gpt-4.1`, `gpt-4.1-mini`, `o3`, `o4-mini`                                           |
-| Anthropic | `claude-opus-4.6`, `claude-opus-4`, `claude-sonnet-4`, `claude-sonnet-4.5`, `claude-haiku-4.5` |
-| Google    | `gemini-2.5-pro`, `gemini-2.5-flash`                                                           |
+| OpenAI    | `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `gpt-5.3-codex`, `gpt-5-mini`                  |
+| Anthropic | `claude-opus-5`, `claude-sonnet-5`, `claude-opus-4.8`, `claude-sonnet-4.6`, `claude-haiku-4.5` |
+| Google    | `gemini-3.8-flash`, `gemini-3.7-flash`                                                         |
 
 > **Nota:** A lista de modelos mostrada após o login é informativa e pode ficar desatualizada conforme o GitHub adiciona novos modelos. Consulte a [documentação do GitHub Copilot](https://docs.github.com/en/copilot) para os modelos disponíveis mais recentes.
 
