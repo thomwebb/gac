@@ -27,6 +27,13 @@ from gac.errors import AIError
 
 MAX_ERROR_RESPONSE_LENGTH = 200
 
+# Bodies of HTTP 400 responses that actually mean "prompt exceeds context window"
+_CONTEXT_LIMIT_PATTERN = re.compile(
+    r"context (length|window|size)|maximum context|too many (input )?tokens|"
+    r"prompt is too long|input.*exceed|token limit|reduce.*length",
+    re.IGNORECASE,
+)
+
 SENSITIVE_PATTERNS = [
     re.compile(r"sk-[A-Za-z0-9_-]{20,}"),  # OpenAI keys
     re.compile(r"sk-ant-[A-Za-z0-9_-]{20,}"),  # Anthropic keys
@@ -107,6 +114,15 @@ def handle_provider_errors(provider_name: str) -> Callable[[Callable[..., Any]],
                     raise AIError.model_error(
                         f"{provider_name}: Model not found or endpoint not available",
                         suggestion="Run 'uvx gac model list' to see supported models, or check the model name.",
+                    ) from e
+                elif e.response.status_code == 400 and _CONTEXT_LIMIT_PATTERN.search(sanitized_response):
+                    raise AIError.model_error(
+                        f"{provider_name}: Prompt exceeds the model's context window",
+                        suggestion=(
+                            "The staged diff is too large for this model. Try a model with a larger "
+                            "context window, commit in smaller batches (stage fewer files), or use "
+                            "grouped commits with 'gac -g'."
+                        ),
                     ) from e
                 elif e.response.status_code >= 500:
                     raise AIError.connection_error(

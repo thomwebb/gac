@@ -93,7 +93,6 @@ class GitStateValidator:
         Returns:
             GitState if staged changes exist, None if no staged changes found.
         """
-        from gac.constants import Utility
 
         # Validate repository
         repo_root = self.validate_repository()
@@ -137,9 +136,7 @@ class GitStateValidator:
         logger.debug(f"Preprocessing {len(per_file_diffs)} per-file diffs")
         if model is None:
             raise ConfigError("Model must be specified via GAC_MODEL environment variable or --model flag")
-        processed_diff = preprocess_per_file_diffs(
-            per_file_diffs, token_limit=Utility.DEFAULT_DIFF_TOKEN_LIMIT, model=model
-        )
+        processed_diff = preprocess_per_file_diffs(per_file_diffs, model=model)
         logger.debug(f"Processed diff ({len(processed_diff)} characters)")
 
         return GitState(

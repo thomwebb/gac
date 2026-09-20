@@ -22,11 +22,13 @@ The diff command is particularly useful for:
 """
 
 import logging
+import os
 import sys
 
 import click
 
 from gac.config import _parse_diff_context_lines_env
+from gac.constants import resolve_diff_token_limit
 from gac.diff_scoring import smart_truncate_diff
 from gac.errors import GitError, with_error_handling
 from gac.git import get_diff, get_staged_files
@@ -80,9 +82,11 @@ def _diff_implementation(
         # Convert the diff text to the format expected by smart_truncate_diff
         # (list of tuples with (section, score))
         if isinstance(diff_text, str):
+            model = os.getenv("GAC_MODEL", "")
+            token_limit = max_tokens or resolve_diff_token_limit(model)
             sections = split_diff_into_sections(diff_text)
             scored_sections = [(section, 1.0) for section in sections]
-            diff_text = smart_truncate_diff(scored_sections, max_tokens or 1000, "anthropic:claude-3-haiku-latest")
+            diff_text = smart_truncate_diff(scored_sections, token_limit, model)
 
     if color:
         # Use git's colored diff output

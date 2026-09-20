@@ -10,7 +10,7 @@ import logging
 import re
 
 from gac.ai_utils import count_tokens
-from gac.constants import FilePatterns, Utility
+from gac.constants import FilePatterns, Utility, resolve_diff_token_limit
 from gac.diff_scoring import score_sections, smart_truncate_diff
 
 logger = logging.getLogger(__name__)
@@ -38,8 +38,8 @@ _GENERATED_PATTERNS: list[re.Pattern[str]] = [
 
 def preprocess_diff(
     diff: str,
-    token_limit: int = Utility.DEFAULT_DIFF_TOKEN_LIMIT,
-    model: str = "anthropic:claude-3-haiku-latest",
+    token_limit: int | None = None,
+    model: str = "",
     per_section_limit: int | None = Utility.PER_FILE_DIFF_TOKEN_LIMIT,
 ) -> str:
     """Preprocess a git diff to make it more suitable for AI analysis.
@@ -52,8 +52,11 @@ def preprocess_diff(
 
     Args:
         diff: The git diff to process
-        token_limit: Maximum tokens for the combined diff (default 192K).
-        model: Model identifier for token counting
+        token_limit: Maximum tokens for the combined diff.  When ``None``,
+            derived from the model's context window via
+            ``resolve_diff_token_limit`` (capped at 192K by default).
+        model: Model identifier (``provider:model``) for token counting and
+            limit resolution.
         per_section_limit: Maximum tokens per individual file section (default 16K).
 
     Returns:
@@ -61,6 +64,9 @@ def preprocess_diff(
     """
     if not diff:
         return diff
+
+    if token_limit is None:
+        token_limit = resolve_diff_token_limit(model)
 
     initial_tokens = count_tokens(diff, model)
     if initial_tokens <= token_limit * 0.8:
@@ -78,8 +84,8 @@ def preprocess_diff(
 
 def preprocess_per_file_diffs(
     per_file_diffs: list[tuple[str, str]],
-    token_limit: int = Utility.DEFAULT_DIFF_TOKEN_LIMIT,
-    model: str = "anthropic:claude-haiku-latest",
+    token_limit: int | None = None,
+    model: str = "",
     per_section_limit: int | None = Utility.PER_FILE_DIFF_TOKEN_LIMIT,
 ) -> str:
     """Preprocess per-file diffs, bypassing regex-based section splitting.
@@ -92,8 +98,11 @@ def preprocess_per_file_diffs(
 
     Args:
         per_file_diffs: List of (filename, diff) tuples.
-        token_limit: Maximum tokens for the combined diff (default 192K).
-        model: Model identifier for token counting.
+        token_limit: Maximum tokens for the combined diff.  When ``None``,
+            derived from the model's context window via
+            ``resolve_diff_token_limit`` (capped at 192K by default).
+        model: Model identifier (``provider:model``) for token counting and
+            limit resolution.
         per_section_limit: Maximum tokens per individual file (default 16K).
             Sections exceeding this are truncated before the total-budget
             check.  Pass ``None`` to disable per-section truncation.
@@ -103,6 +112,9 @@ def preprocess_per_file_diffs(
     """
     if not per_file_diffs:
         return ""
+
+    if token_limit is None:
+        token_limit = resolve_diff_token_limit(model)
 
     logger.info(
         f"Processing {len(per_file_diffs)} per-file diffs"

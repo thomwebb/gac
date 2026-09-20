@@ -15,6 +15,12 @@ from gac.constants.commit import CommitMessageConstants, FileStatus
 from gac.constants.defaults import EnvDefaults, Logging, ProviderDefaults, Utility
 from gac.constants.file_patterns import CodePatternImportance, FilePatterns, FileTypeImportance
 from gac.constants.languages import Languages
+from gac.constants.model_limits import (
+    DEFAULT_CONTEXT_LIMIT,
+    PROVIDER_CONTEXT_LIMITS,
+    resolve_context_limit,
+    resolve_diff_token_limit,
+)
 
 __all__ = [
     # From defaults
@@ -28,6 +34,11 @@ __all__ = [
     "CodePatternImportance",
     # From languages
     "Languages",
+    # From model_limits
+    "DEFAULT_CONTEXT_LIMIT",
+    "PROVIDER_CONTEXT_LIMITS",
+    "resolve_context_limit",
+    "resolve_diff_token_limit",
     # From commit
     "FileStatus",
     "CommitMessageConstants",

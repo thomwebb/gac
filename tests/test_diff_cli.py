@@ -135,40 +135,45 @@ class TestDiffCLI:
         mock_split.return_value = ["section1", "section2"]
         mock_truncate.return_value = "truncated diff"
 
-        with patch("builtins.print"):
-            _diff_implementation(
-                filter=False,
-                truncate=True,
-                max_tokens=1000,
-                staged=False,
-                color=False,
-            )
+        with patch.dict("os.environ", {"GAC_MODEL": "openai:gpt-5.6-luna"}):
+            with patch("builtins.print"):
+                _diff_implementation(
+                    filter=False,
+                    truncate=True,
+                    max_tokens=1000,
+                    staged=False,
+                    color=False,
+                )
 
         mock_split.assert_called_once_with("long diff content")
         expected_sections = [("section1", 1.0), ("section2", 1.0)]
-        mock_truncate.assert_called_once_with(expected_sections, 1000, "anthropic:claude-3-haiku-latest")
+        mock_truncate.assert_called_once_with(expected_sections, 1000, "openai:gpt-5.6-luna")
 
     @patch("gac.diff_cli.get_diff")
     @patch("gac.diff_cli.split_diff_into_sections")
     @patch("gac.diff_cli.smart_truncate_diff")
     def test_truncate_with_default_max_tokens_direct(self, mock_truncate, mock_split, mock_get_diff):
-        """Test truncation with default max_tokens (line 83) - direct call."""
+        """Truncation with no explicit max_tokens derives the limit from the model context."""
+        from gac.constants import resolve_diff_token_limit
+
         mock_get_diff.return_value = "diff content"
         mock_split.return_value = ["section1"]
         mock_truncate.return_value = "truncated"
 
-        with patch("builtins.print"):
-            _diff_implementation(
-                filter=False,
-                truncate=True,
-                max_tokens=None,  # Should default to 1000
-                staged=False,
-                color=False,
-            )
+        with patch.dict("os.environ", {"GAC_MODEL": "ollama:llama3"}):
+            with patch("builtins.print"):
+                _diff_implementation(
+                    filter=False,
+                    truncate=True,
+                    max_tokens=None,
+                    staged=False,
+                    color=False,
+                )
 
-        # Verify default max_tokens is used
+        # Verify the limit was derived from the (small) Ollama context window
         call_args = mock_truncate.call_args[0]
-        assert call_args[1] == 1000
+        assert call_args[1] == resolve_diff_token_limit("ollama:llama3")
+        assert call_args[1] < 8192
 
     @patch("gac.diff_cli.get_diff")
     def test_color_output_direct(self, mock_get_diff):

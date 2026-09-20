@@ -73,6 +73,24 @@ def _function_connection_error():
 
 
 @handle_provider_errors("TestProvider")
+def _function_context_limit_error():
+    """Helper function that raises a 400 context-length error."""
+    mock_response = MagicMock()
+    mock_response.status_code = 400
+    mock_response.text = "This model's maximum context length is 8192 tokens. However, your messages resulted in 41050 tokens. Please reduce the length of the messages."
+    raise httpx.HTTPStatusError("400", request=MagicMock(), response=mock_response)
+
+
+@handle_provider_errors("TestProvider")
+def _function_plain_bad_request_error():
+    """Helper function that raises a 400 error unrelated to context length."""
+    mock_response = MagicMock()
+    mock_response.status_code = 400
+    mock_response.text = "Invalid request payload"
+    raise httpx.HTTPStatusError("400", request=MagicMock(), response=mock_response)
+
+
+@handle_provider_errors("TestProvider")
 def _function_generic_error():
     """Helper function that raises generic error."""
     raise Exception("Generic error")
@@ -109,6 +127,23 @@ class TestErrorHandler:
 
         error = exc_info.value
         assert "not found" in str(error).lower() or "model" in str(error).lower()
+
+    def test_context_limit_error_conversion(self):
+        """400 context-length errors get an actionable message (issue #79)."""
+        with pytest.raises(AIError) as exc_info:
+            _function_context_limit_error()
+
+        error = exc_info.value
+        assert "context window" in str(error).lower()
+        suggestion = getattr(error, "suggestion", "") or ""
+        assert "context" in suggestion.lower() or "smaller" in suggestion.lower()
+
+    def test_plain_bad_request_not_misclassified(self):
+        """Unrelated 400s keep the generic model_error handling."""
+        with pytest.raises(AIError) as exc_info:
+            _function_plain_bad_request_error()
+
+        assert "context window" not in str(exc_info.value).lower()
 
     def test_server_error_conversion(self):
         """Test that 500 errors are converted to connection_error."""
