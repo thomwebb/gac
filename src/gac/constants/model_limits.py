@@ -26,6 +26,7 @@ PROVIDER_CONTEXT_LIMITS: dict[str, int] = {
     # Google
     "gemini": 1_000_000,
     # Cloud relays / aggregators (most host >=128k-context catalogs)
+    "atlascloud": 128_000,
     "cerebras": 128_000,
     "chutes": 128_000,
     "crof": 128_000,
