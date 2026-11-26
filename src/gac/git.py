@@ -216,14 +216,16 @@ def get_staged_files(file_type: str | None = None, existing_only: bool = False) 
         GitError: If the underlying git command fails (e.g. not inside a
             repository, corrupted index, etc.).
     """
-    result = run_git_command(["diff", "--name-only", "--cached"])
+    # -z gives raw NUL-separated paths; without it git quotes names with
+    # non-ASCII or special characters (e.g. "caf\303\251.py").
+    result = run_git_command(["diff", "--name-only", "-z", "--cached"])
     if not result.success:
         raise GitError(result.fail_message("Failed to list staged files"))
     if not result.output:
         return []
 
     # Parse and filter the file list
-    files = [line.strip() for line in result.output.splitlines() if line.strip()]
+    files = [f for f in result.output.split("\0") if f]
 
     if file_type:
         files = [f for f in files if f.endswith(file_type)]
@@ -244,7 +246,7 @@ def get_staged_status() -> str:
     Raises:
         GitError: If the underlying git command fails.
     """
-    result = run_git_command(["diff", "--name-status", "--staged"])
+    result = run_git_command(["diff", "--name-status", "-z", "--staged"])
     if not result.success:
         raise GitError(result.fail_message("Failed to get staged status"))
     if not result.output:
@@ -259,19 +261,20 @@ def get_staged_status() -> str:
         "T": "typechange",
     }
 
+    # With -z each entry is "STATUS\0path\0", or "R100\0old\0new\0" for
+    # renames and copies, which carry two paths.
+    tokens = [t for t in result.output.split("\0") if t]
     status_lines = ["Changes to be committed:"]
-    for line in result.output.splitlines():
-        line = line.strip()
-        if not line:
-            continue
+    i = 0
+    while i < len(tokens):
+        change_type = tokens[i][0]  # First char is the status (M, A, D, R, etc.)
+        path_count = 2 if change_type in ("R", "C") else 1
+        paths = tokens[i + 1 : i + 1 + path_count]
+        i += 1 + path_count
+        if len(paths) < path_count:
+            break
 
-        # Parse status line (e.g., "M\tfile.py" or "R100\told.py\tnew.py")
-        parts = line.split("\t")
-        if len(parts) < 2:
-            continue
-
-        change_type = parts[0][0]  # First char is the status (M, A, D, R, etc.)
-        file_path = parts[-1]  # Last part is the new/current file path
+        file_path = paths[-1]  # Last path is the new/current file path
 
         status_label = status_map.get(change_type, "modified")
         status_lines.append(f"\t{status_label}:   {file_path}")

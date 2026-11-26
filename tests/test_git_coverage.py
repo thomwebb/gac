@@ -2,7 +2,7 @@
 
 Targeting uncovered lines:
 - Lines 40-71: run_subprocess_with_encoding_fallback (encoding errors, subprocess errors, all-failed)
-- Line 139: get_staged_status with malformed line (< 2 tab-separated parts)
+- Line 139: get_staged_status with a truncated entry (status with no path)
 - Lines 172->176: get_diff exception path (SubprocessError etc.)
 - Lines 346-370, 363-364: detect_rename_mappings edge cases
 """
@@ -127,25 +127,25 @@ class TestRunSubprocessWithEncodingFallback:
                     assert mock_logger.debug.call_count >= 2
 
 
-# ── Line 139: get_staged_status with malformed line ─────────────────
+# ── Line 139: get_staged_status with a truncated entry ──────────────
 
 
 class TestGetStagedStatusMalformedLine:
-    """Test get_staged_status with various malformed input lines."""
+    """Test get_staged_status with various malformed input."""
 
-    def test_malformed_line_skipped(self):
-        """Lines with fewer than 2 tab-separated parts should be skipped."""
+    def test_truncated_entry_skipped(self):
+        """A trailing status with no path should be skipped."""
         with patch("gac.git.run_git_command") as mock_run:
-            mock_run.return_value = GitCommandResult.ok("M\tfile1.py\nmalformed_line\nA\tfile2.py")
+            mock_run.return_value = GitCommandResult.ok("M\0file1.py\0A\0file2.py\0R100\0old.py")
             result = get_staged_status()
             assert "file1.py" in result
             assert "file2.py" in result
-            assert "malformed_line" not in result
+            assert "old.py" not in result
 
     def test_empty_lines_skipped(self):
-        """Empty lines should be skipped."""
+        """Empty fields should be skipped."""
         with patch("gac.git.run_git_command") as mock_run:
-            mock_run.return_value = GitCommandResult.ok("M\tfile1.py\n\nA\tfile2.py")
+            mock_run.return_value = GitCommandResult.ok("M\0file1.py\0\0A\0file2.py\0")
             result = get_staged_status()
             assert "file1.py" in result
             assert "file2.py" in result
@@ -153,7 +153,7 @@ class TestGetStagedStatusMalformedLine:
     def test_unknown_change_type_uses_modified(self):
         """Unknown change type characters should default to 'modified'."""
         with patch("gac.git.run_git_command") as mock_run:
-            mock_run.return_value = GitCommandResult.ok("X\tunknown_file.py")
+            mock_run.return_value = GitCommandResult.ok("X\0unknown_file.py\0")
             result = get_staged_status()
             assert "modified:   unknown_file.py" in result
 
