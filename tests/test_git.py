@@ -46,7 +46,7 @@ def test_get_commit_hash_success(monkeypatch):
 def test_get_staged_files_all():
     """Test get_staged_files with no filtering."""
     with patch("gac.git.run_git_command") as mock_run:
-        mock_run.return_value = GitCommandResult.ok("file1.py\nfile2.md\nfile3.txt")
+        mock_run.return_value = GitCommandResult.ok("file1.py\0file2.md\0file3.txt\0")
         result = get_staged_files()
         assert result == ["file1.py", "file2.md", "file3.txt"]
 
@@ -68,7 +68,7 @@ def test_get_staged_files_empty():
 def test_get_staged_files_filter_by_type():
     """Test get_staged_files with file type filtering."""
     with patch("gac.git.run_git_command") as mock_run:
-        mock_run.return_value = GitCommandResult.ok("file1.py\nfile2.md\nfile3.txt\nfile4.py")
+        mock_run.return_value = GitCommandResult.ok("file1.py\0file2.md\0file3.txt\0file4.py\0")
         result = get_staged_files(file_type=".py")
         assert result == ["file1.py", "file4.py"]
 
@@ -76,7 +76,7 @@ def test_get_staged_files_filter_by_type():
 def test_get_staged_files_existing_only():
     """Test get_staged_files with existing_only flag."""
     with patch("gac.git.run_git_command") as mock_run, patch("os.path.isfile") as mock_isfile:
-        mock_run.return_value = GitCommandResult.ok("file1.py\nfile2.md\nfile3.txt")
+        mock_run.return_value = GitCommandResult.ok("file1.py\0file2.md\0file3.txt\0")
         mock_isfile.side_effect = [True, False, True]  # file2.md doesn't exist
         result = get_staged_files(existing_only=True)
         assert result == ["file1.py", "file3.txt"]
@@ -86,12 +86,12 @@ def test_get_staged_files_existing_only():
     "git_output,expected_content",
     [
         (
-            "M\tfile1.py\nA\tfile2.md\nD\tfile3.txt",
+            "M\0file1.py\0A\0file2.md\0D\0file3.txt\0",
             ["modified:   file1.py", "new file:   file2.md", "deleted:   file3.txt"],
         ),
-        ("R100\told_file.py\tnew_file.py", ["renamed:   new_file.py"]),
+        ("R100\0old_file.py\0new_file.py\0", ["renamed:   new_file.py"]),
         (
-            "M\tmodified.py\nA\tadded.py\nD\tdeleted.py\nR100\told.py\tnew.py\nC\tcopied.py\nT\ttype_changed.py",
+            "M\0modified.py\0A\0added.py\0D\0deleted.py\0R100\0old.py\0new.py\0C75\0orig.py\0copied.py\0T\0type_changed.py\0",
             [
                 "modified:   modified.py",
                 "new file:   added.py",
@@ -101,7 +101,7 @@ def test_get_staged_files_existing_only():
                 "typechange:   type_changed.py",
             ],
         ),
-        ("M\tfile1.py\n\n\nA\tfile2.py\n", ["modified:   file1.py", "new file:   file2.py"]),
+        ("M\0file1.py\0A\0file2.py\0", ["modified:   file1.py", "new file:   file2.py"]),
     ],
 )
 def test_get_staged_status_formats(git_output, expected_content):

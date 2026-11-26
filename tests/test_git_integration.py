@@ -18,6 +18,7 @@ from gac.git import (
     get_commit_hash,
     get_current_branch,
     get_repo_root,
+    get_staged_diffs_per_file,
     get_staged_files,
     get_staged_status,
     run_git_command,
@@ -139,6 +140,20 @@ class TestStagedFilesDetection:
         subprocess.run(["git", "add", "gone.txt"], check=True, capture_output=True)
         files = get_staged_files()
         assert "gone.txt" in files
+
+    def test_non_ascii_file_name_not_quoted(self, git_repo):
+        """Non-ASCII names must come back as real paths, not git's quoted form."""
+        (git_repo / "café.py").write_text("x = 1\n")
+        subprocess.run(["git", "add", "café.py"], check=True, capture_output=True)
+        assert get_staged_files() == ["café.py"]
+        assert "new file:   café.py" in get_staged_status()
+        assert [name for name, _ in get_staged_diffs_per_file()] == ["café.py"]
+
+    def test_renamed_non_ascii_file_status(self, git_repo):
+        subprocess.run(["git", "mv", "hello.txt", "héllo.txt"], check=True, capture_output=True)
+        status = get_staged_status()
+        assert "renamed:   héllo.txt" in status
+        assert "hello.txt" not in status
 
 
 class TestCorruptedGitState:
